@@ -1,1 +1,1 @@
-tuwad.
+tuwad
