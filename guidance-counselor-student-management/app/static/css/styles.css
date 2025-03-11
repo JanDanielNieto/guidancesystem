@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
@@ -14,6 +14,16 @@ header {
 
 h1 {
     margin: 0;
+}a {
+    text-decoration: none;
+    color: #626c78;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+.mainfont {
+    font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
 }
 
 .container {
