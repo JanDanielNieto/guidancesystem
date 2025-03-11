@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add Student Record</h2>
+<form method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
+    <label for="reason">Reason:</label>
+    <input type="text" id="reason" name="reason" required><br>
+    <label for="type_of_offense">Type of Offense:</label>
+    <input type="text" id="type_of_offense" name="type_of_offense" required><br>
+    <label for="additional_info">Additional Info:</label>
+    <textarea id="additional_info" name="additional_info"></textarea><br>
+    <button type="submit">Add Record</button>
+</form>
+{% endblock %}

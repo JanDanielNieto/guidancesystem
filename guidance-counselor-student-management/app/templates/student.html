@@ -1,23 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <title>Student Record</title>
-</head>
-<body>
-    <div class="container">
-        <h1>Student Record</h1>
-        <div class="student-details">
-            <h2>{{ student.name }}</h2>
-            <p><strong>Student ID:</strong> {{ student.student_id }}</p>
-            <p><strong>Reason for Offence:</strong> {{ student.reason }}</p>
-            <p><strong>Type of Offence:</strong> {{ student.type_of_offence }}</p>
-            <p><strong>Date:</strong> {{ student.date }}</p>
-            <p><strong>Time:</strong> {{ student.time }}</p>
-        </div>
-        <a href="{{ url_for('index') }}" class="btn">Back to Student List</a>
-    </div>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Student Records</h2>
+<a href="{{ url_for('main.add_student') }}">Add Student Record</a>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Reason</th>
+        <th>Type of Offense</th>
+        <th>Date and Time</th>
+        <th>Additional Info</th>
+    </tr>
+    {% for record in records %}
+    <tr>
+        <td>{{ record.name }}</td>
+        <td>{{ record.reason }}</td>
+        <td>{{ record.type_of_offense }}</td>
+        <td>{{ record.date_time }}</td>
+        <td>{{ record.additional_info }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
