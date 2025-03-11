@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Student Record</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Record</h1>
+        <div class="student-details">
+            <h2>{{ student.name }}</h2>
+            <p><strong>Student ID:</strong> {{ student.student_id }}</p>
+            <p><strong>Reason for Offence:</strong> {{ student.reason }}</p>
+            <p><strong>Type of Offence:</strong> {{ student.type_of_offence }}</p>
+            <p><strong>Date:</strong> {{ student.date }}</p>
+            <p><strong>Time:</strong> {{ student.time }}</p>
+        </div>
+        <a href="{{ url_for('index') }}" class="btn">Back to Student List</a>
+    </div>
+</body>
+</html>
