@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from PyQt5.uic import loadUi
-from models.user import User
-from middleware.session_checker import Session
-from views.dashboard import DashboardWindow
+from ..models.user import User
+from ..middleware.session_checker import Session
+from .dashboard import DashboardWindow
 
 
 class LoginWindow(QMainWindow):
