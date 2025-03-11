@@ -14,7 +14,19 @@ header {
 
 h1 {
     margin: 0;
-}a {
+
+
+}
+
+p {
+    padding: 10px;
+}
+
+h2 {
+    padding: 10px;
+}
+
+a {
     text-decoration: none;
     color: #626c78;
 }
@@ -26,30 +38,24 @@ a:hover {
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
 }
 
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-}
-
-.table {
+table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
 }
 
-.table th, .table td {
+table th, .table td {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
 }
 
-.table th {
+table th {
     background-color: #35424a;
     color: white;
 }
 
-.table tr:nth-child(even) {
+table tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
@@ -63,24 +69,42 @@ a:hover {
     border-radius: 5px;
 }
 
-.btn:hover {
-    background-color: #45a049;
-}
-
-.form-group {
-    margin: 15px 0;
-}
-
 label {
     display: block;
     margin-bottom: 5px;
 }
 
-input[type="text"], input[type="date"], input[type="time"], select {
-    width: 100%;
+form {
+    font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
     padding: 10px;
-    border: 1px solid #dddddd;
-    border-radius: 5px;
+    font-size: 20px;
+}  
+button[type="submit"]{
+    font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
+    font-weight: bold;
+    background-color: #000000;
+    color: white;
+    border: none;
+    padding: 15px 65px;
+    position: absolute;
+    right: 70px;
+    cursor: pointer;
+}
+button[type="submit"]:hover {
+    background-color: #393939;
+}
+
+input[type="text"], input[type="date"], input[type="time"], select {
+    width: 30%;
+    padding: 15px;
+    border: 1px solid #000000;
+    
+}
+textarea{
+    width: 30%;
+    padding: 15px;
+    border: 1px solid #000000;
+    resize:none;
 }
 
 input[type="submit"] {
