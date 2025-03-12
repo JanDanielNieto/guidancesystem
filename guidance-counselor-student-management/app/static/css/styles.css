@@ -34,6 +34,31 @@ a:hover {
     text-decoration: underline;
 }
 
+.bgimage{
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: rgba(255, 255, 255, 0.301);
+    background-blend-mode: lighten;
+}
+
+.dashboard{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    position: relative;
+    top: 50px;
+    font-size: 150%;
+    color: #ffde59;
+    background: #38B6FF;
+    margin: auto;
+    border-radius: 40px;
+    padding: 10px;
+    width: 250px;
+    height: 60px;
+}
+
 .mainfont {
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
 }
