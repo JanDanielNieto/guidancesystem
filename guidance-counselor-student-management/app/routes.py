@@ -5,7 +5,11 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return redirect(url_for('main.manage_records'))
+    return redirect(url_for('main.dashboard'))
+
+@main.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
 
 @main.route('/manage_records')
 def manage_records():
