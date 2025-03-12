@@ -6,7 +6,7 @@ body {
 }
 
 header {
-    background: #35424a;
+    background: #38B6FF;
     color: #ffffff;
     padding: 10px 0;
     text-align: center;
@@ -28,7 +28,7 @@ h2 {
 
 a {
     text-decoration: none;
-    color: #626c78;
+    color: #ffde59;
 }
 a:hover {
     text-decoration: underline;
@@ -39,24 +39,25 @@ a:hover {
 }
 
 table {
+    border: 1px solid #000000;
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
 }
 
-table th, .table td {
-    border: 1px solid #dddddd;
+table th, table td {
+    border: 1px solid #ffffff;
     text-align: left;
     padding: 8px;
 }
 
 table th {
-    background-color: #35424a;
+    background-color: #38B6FF;
     color: white;
 }
 
 table tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #929292;
 }
 
 .btn {
