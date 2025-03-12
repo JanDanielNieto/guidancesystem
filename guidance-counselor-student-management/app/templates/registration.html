@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidance Counselor's Student Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>Welcome!</header>
+    <header class="mainfront">
+        <h1>Account Registration</h1>
+        <p>Already Registered?</p>
+    </header>
+    <a href="{{ url_for('main.login') }}" class="capsule-button">Login</a>
+    <form method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required><br>
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password" required><br>
+        <label for="confirm_password">Confirm Password:</label>
+        <input type="text" id="confirm_password" name="confirm_password" required><br>
+        <button type="create">Create Account</button>
+    </form>
+</body>
+</html>
