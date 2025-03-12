@@ -1,48 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guidance Counselor's Student Management System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <header>
-        <h1>Guidance Counselor's Student Management System</h1>
-        <nav>
-            <a href="{{ url_for('main.add_student') }}">Add New Student Record</a>
-        </nav>
-    </header>
-    <main class="mainfont">
-        <h2>Student Records</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Student ID</th>
-                    <th>Name</th>
-                    <th>Reason for Offence</th>
-                    <th>Type of Offence</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td>{{ student.id }}</td>
-                    <td>{{ student.name }}</td>
-                    <td>{{ student.reason }}</td>
-                    <td>{{ student.type_of_offence }}</td>
-                    <td>{{ student.date }}</td>
-                    <td>{{ student.time }}</td>
-                    <td>
-                        <a href="{{ url_for('main.view_student', student_id=student.id) }}">View</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </main>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Student Records</h2>
+<a href="{{ url_for('main.add_student') }}">Add Student Record</a>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Reason</th>
+        <th>Type of Offense</th>
+        <th>Date and Time</th>
+        <th>Additional Info</th>
+    </tr>
+    {% for record in records %}
+    <tr>
+        <td>{{ record.name }}</td>
+        <td>{{ record.reason }}</td>
+        <td>{{ record.type_of_offense }}</td>
+        <td>{{ record.date_time }}</td>
+        <td>{{ record.additional_info }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

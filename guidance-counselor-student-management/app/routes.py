@@ -5,12 +5,12 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return render_template('view_records.html')
+    return redirect(url_for('main.manage_records'))
 
-@main.route('/view_records')
-def view_records():
+@main.route('/manage_records')
+def manage_records():
     records = StudentRecord.query.all()
-    return render_template('view_records.html', records=records)
+    return render_template('manage_records.html', records=records)
 
 @main.route('/add_student', methods=['GET', 'POST'])
 def add_student():
@@ -29,6 +29,19 @@ def add_student():
         db.session.add(new_record)
         db.session.commit()
 
-        return redirect(url_for('main.add_student'))
+        return redirect(url_for('main.manage_records'))
 
     return render_template('add_student.html')
+
+@main.route('/add_report', methods=['GET', 'POST'])
+def add_report():
+    if request.method == 'POST':
+        # Handle the form submission for adding a report
+        pass
+
+    return render_template('add_report.html')
+
+@main.route('/logout')
+def logout():
+    # Placeholder for logout functionality
+    return "Logout Page"
