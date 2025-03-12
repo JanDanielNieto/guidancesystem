@@ -7,10 +7,10 @@ main = Blueprint('main', __name__)
 def index():
     return render_template('view_records.html')
 
-@main.route('/student')
-def student():
+@main.route('/view_records')
+def view_records():
     records = StudentRecord.query.all()
-    return render_template('student.html', records=records)
+    return render_template('view_records.html', records=records)
 
 @main.route('/add_student', methods=['GET', 'POST'])
 def add_student():
