@@ -123,6 +123,18 @@ button[type="submit"]:hover {
     background-color: #393939;
 }
 
+button[type="search"]{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 20px;
+    position: absolute;
+    left: 450px;
+    top: 223px;
+    cursor: pointer;
+    padding:10px;
+    width: 100px;
+    height: 50px;
+}
+
 input[type="text"], input[type="date"], input[type="time"], select {
     width: 30%;
     padding: 15px;
