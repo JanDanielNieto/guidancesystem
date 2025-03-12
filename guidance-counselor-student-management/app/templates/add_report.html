@@ -3,18 +3,18 @@
 {% block content %}
 <h2>Add Report</h2>
 <form method="POST">
-    <form method="GET" action="{{ url_for('index') }}">
-        <input type="text" name="query" placeholder="Search by name" value="{{ query }}">
-        <select name="purpose">
-            <option value="">All Purposes</option>
-            {% for purpose in purposes %}
-            <option value="{{ purpose }}" {% if purpose_filter == purpose %}selected{% endif %}>{{ purpose }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Search</button>
-    </form>
     <label for="description">Description:</label>
     <input type="text" id="description" name="description" required><br>
     <button type="submit">Add Report</button>
+</form>
+<form method="GET" action="{{ url_for('main.index') }}">
+    <input type="text" name="query" placeholder="Search by name" value="{{ query }}">
+    <select name="purpose">
+        <option value="">All Purposes</option>
+        {% for purpose in purposes %}
+        <option value="{{ purpose }}" {% if purpose_filter == purpose %}selected{% endif %}>{{ purpose }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
 </form>
 {% endblock %}
