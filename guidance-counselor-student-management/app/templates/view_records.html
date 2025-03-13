@@ -1,34 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Student Records</h2>
-<a href="{{ url_for('main.add_student') }}">Add Student Record</a>
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Grade & Section</th>
-        <th>Birthday</th>
-        <th>Address</th>
-        <th>Father's Name</th>
-        <th>Mother's Name</th>
-        <th>Reason</th>
-        <th>Type of Offense</th>
-        <th>Date and Time</th>
-        <th>Additional Info</th>
-    </tr>
-    {% for record in records %}
-    <tr>
-        <td>{{ record.name }}</td>
-        <td>{{ record.grade_section }}</td>
-        <td>{{ record.birthday }}</td>
-        <td>{{ record.address }}</td>
-        <td>{{ record.father_name }}</td>
-        <td>{{ record.mother_name }}</td>
-        <td>{{ record.reason }}</td>
-        <td>{{ record.type_of_offense }}</td>
-        <td>{{ record.date_time }}</td>
-        <td>{{ record.additional_info }}</td>
-    </tr>
-    {% endfor %}
-</table>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidance Counselor's Student Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<header>
+    <nav>
+        <a href="{{ url_for('main.add_student') }}">Add Student Record</a>
+    </nav>
+</header>
+
+<main class="mainfont">
+    <h2>Student Records</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Grade & Section</th>
+                <th>Birthday</th>
+                <th>Address</th>
+                <th>Father's Name</th>
+                <th>Mother's Name</th>
+                <th>Reason</th>
+                <th>Type of Offense</th>
+                <th>Date and Time</th>
+                <th>Additional Info</th>
+            </tr>
+        </thead>
+        
+        {% for record in records %}
+        <tr>
+            <td>{{ record.name }}</td>
+            <td>{{ record.grade_section }}</td>
+            <td>{{ record.birthday }}</td>
+            <td>{{ record.address }}</td>
+            <td>{{ record.father_name }}</td>
+            <td>{{ record.mother_name }}</td>
+            <td>{{ record.reason }}</td>
+            <td>{{ record.type_of_offense }}</td>
+            <td>{{ record.date_time }}</td>
+            <td>{{ record.additional_info }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</main>
+
 {% endblock %}
