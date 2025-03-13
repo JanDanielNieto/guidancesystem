@@ -155,10 +155,17 @@ button[type="search"]{
 
 input[type="text"], input[type="date"], input[type="time"], select {
     width: 30%;
-    padding: 15px;
     border: 1px solid #000000;
-    
 }
+
+.textboxsmall {
+    padding: 10px;
+}
+
+.textbox {
+    padding: 15px;
+}
+
 .textarea{
     width: 30%;
     padding: 45px;
