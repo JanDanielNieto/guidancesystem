@@ -2,10 +2,15 @@
 
 {% block content %}
 <h2>Student Records</h2>
-<a href="{{ url_for('main.add_student_offense') }}">Add Student Record</a>
+<a href="{{ url_for('main.add_student') }}">Add Student Record</a>
 <table>
     <tr>
         <th>Name</th>
+        <th>Grade & Section</th>
+        <th>Birthday</th>
+        <th>Address</th>
+        <th>Father's Name</th>
+        <th>Mother's Name</th>
         <th>Reason</th>
         <th>Type of Offense</th>
         <th>Date and Time</th>
@@ -14,6 +19,11 @@
     {% for record in records %}
     <tr>
         <td>{{ record.name }}</td>
+        <td>{{ record.grade_section }}</td>
+        <td>{{ record.birthday }}</td>
+        <td>{{ record.address }}</td>
+        <td>{{ record.father_name }}</td>
+        <td>{{ record.mother_name }}</td>
         <td>{{ record.reason }}</td>
         <td>{{ record.type_of_offense }}</td>
         <td>{{ record.date_time }}</td>

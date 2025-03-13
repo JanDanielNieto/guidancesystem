@@ -16,6 +16,11 @@ def manage_records():
     records = StudentRecord.query.all()
     return render_template('manage_records.html', records=records)
 
+@main.route('/view_records')
+def view_records():
+    records = StudentRecord.query.all()
+    return render_template('view_records.html', records=records)
+
 @main.route('/add_student', methods=['GET', 'POST'])
 def add_student():
     if request.method == 'POST':
