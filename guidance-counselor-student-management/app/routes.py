@@ -80,7 +80,13 @@ def add_report():
 
     return render_template('add_report.html')
 
-@main.route('/logout')
-def logout():
-    # Placeholder for logout functionality
-    return "Logout Page"
+
+@main.route('/registration')
+def registration():
+    # Placeholder for registration functionality
+     return render_template('registration.html')
+
+@main.route('/login')
+def login():
+    # Placeholder for login functionality
+    return render_template('login.html')
