@@ -35,7 +35,7 @@ def add_student():
 
         return redirect(url_for('main.manage_records'))
 
-    return render_template('add_student.html')
+    return render_template('add_student_offense.html')
 
 @main.route('/add_report', methods=['GET', 'POST'])
 def add_report():
