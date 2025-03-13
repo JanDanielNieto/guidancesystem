@@ -159,12 +159,11 @@ input[type="text"], input[type="date"], input[type="time"], select {
     border: 1px solid #000000;
     
 }
-textarea[type="text"] {
+.textarea{
     width: 30%;
-    height: 40%;
-    padding: 15px;
+    padding: 45px;
     border: 1px solid #000000;
-    
+    resize: none;
 }
 
 input[type="submit"] {
