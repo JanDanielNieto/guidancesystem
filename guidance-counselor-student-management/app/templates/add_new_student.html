@@ -2,54 +2,71 @@
 
 {% block content %}
 <h2>Add New Student</h2>
-<form  method="POST">
-    <label for="name">Name:</label>
-    <input class="textboxsmall" type="text" id="name" name="name" required><br>
 
-    <label for="grade_section">Grade & Section:</label>
-    <input class="textboxsmall" type="text" id="grade_section" name="grade_section" required><br>
+<h2>Information:</h2>
+<form action="POST">
 
-    <label for="birthdate">Birthdate:</label>
-    <input class="textboxsmall" type="date" id="birthdate" name="birthdate" required><br>
+    <div class="form-section">
+        <label for="name">Name:</label>
+        <input class="textbox-length" type="text" id="name" name="name" required>
 
-    <label for="age">Age:</label>
-    <input class="textboxsmall" type="number" id="age" name="age" required><br>
+        <label for="grade_section">Grade & Section:</label>
+        <input class="textboxsmall" type="text" id="grade_section" name="grade_section" required>
 
-    <label for="mother_tongue">Mother Tongue:</label>
-    <input class="textboxsmall" type="text" id="mother_tongue" name="mother_tongue" required><br>
+        <label for="birthdate">Birthdate:</label>
+        <input class="textboxsmall" type="date" id="birthdate" name="birthdate" required>
 
-    <label for="ethnic_group">Ethnic Group:</label>
-    <input class="textboxsmall" type="text" id="ethnic_group" name="ethnic_group" required><br>
+        <label for="age">Age:</label>
+        <input class="textbox-short" type="number" id="age" name="age" required>
 
-    <label for="religion">Religion:</label>
-    <input class="textboxsmall" type="text" id="religion" name="religion" required><br>
+        <div class="form-section">
+            <label for="mother_tongue">Mother Tongue:</label>
+        <input class="textboxsmall" type="text" id="mother_tongue" name="mother_tongue" required>
 
-    <label for="address_house_no">House No/Street/Sitio/Purok:</label>
-    <input class="textboxsmall" type="text" id="address_house_no" name="address_house_no" required><br>
+        <label for="ethnic_group">Ethnic Group:</label>
+        <input class="textboxsmall" type="text" id="ethnic_group" name="ethnic_group" required>
 
-    <label for="address_barangay">Barangay:</label>
-    <input class="textboxsmall" type="text" id="address_barangay" name="address_barangay" required><br>
+        <label for="religion">Religion:</label>
+        <input class="textboxsmall" type="text" id="religion" name="religion" required>
+        </div>
+    </div>
 
-    <label for="address_city">Municipality/City:</label>
-    <input class="textboxsmall" type="text" id="address_city" name="address_city" required><br>
+<h3>Address:</h3>
+    <div class="form-section">
+        <label for="address_house_no">House No/Street/Sitio/Purok:</label>
+        <input class="textboxsmall" type="text" id="address_house_no" name="address_house_no" required>
 
-    <label for="address_province">Province:</label>
-    <input class="textboxsmall" type="text" id="address_province" name="address_province" required><br>
+        <label for="address_barangay">Barangay:</label>
+        <input class="textboxsmall" type="text" id="address_barangay" name="address_barangay" required>
 
-    <label for="mother_name">Mother's Name:</label>
-    <input class="textboxsmall" type="text" id="mother_name" name="mother_name" required><br>
+        <label for="address_city">Municipality/City:</label>
+        <input class="textboxsmall" type="text" id="address_city" name="address_city" required>
 
-    <label for="father_name">Father's Name:</label>
-    <input class="textboxsmall" type="text" id="father_name" name="father_name" required><br>
+        <div class="form-section">
+            <label for="address_province">Province:</label>
+        <input class="textboxsmall" type="text" id="address_province" name="address_province" required>
+        </div>
+        
+    </div>
 
-    <label for="guardian_name">Guardian's Name (if no parent):</label>
-    <input class="textboxsmall" type="text" id="guardian_name" name="guardian_name"><br>
+<h3>Parent/Guardian Info:</h3>
+    <div class="form-section1">
+        <div class="form-section">
+            <label for="mother_name">Mother's Name:</label>
+            <input class="textbox-length" type="text" id="mother_name" name="mother_name" required>
+            <label for="contact_number">Contact No.:</label>
+            <input class="textbox-length" type="text" id="contact_number" name="contact_number" required>
+        </div>
 
-    <label for="contact_number">Contact Number of Parent or Guardian:</label>
-    <input class="textboxsmall" type="text" id="contact_number" name="contact_number" required><br>
-
-    <label for="learning_modality">Learning Modality:</label>
-    <input class="textboxsmall" type="text" id="learning_modality" name="learning_modality" required><br>
+        <div class="form-section">
+            <label for="father_name">Father's Name:</label>
+            <input class="textbox-length" type="text" id="father_name" name="father_name" required>
+            <label for="contact_number">Contact No.:</label>
+            <input class="textbox-length" type="text" id="contact_number" name="contact_number" required>
+        </div>
+        <label for="guardian_name">Guardian's Name (if no parent):</label>
+        <input class="textboxsmall" type="text" id="guardian_name" name="guardian_name"> 
+    </div>
 
     <button type="submit">Add Student</button>
 </form>

@@ -32,11 +32,12 @@ header {
 h1 {
     margin: 0;
 
-
 }
 
 p {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     padding: 10px;
+    font-size: 19px;
 }
 
 h2 {
@@ -44,8 +45,12 @@ h2 {
 }
 
 a {
+    font-size: 20px;
+    background-color: #000000;
+    border-radius: 40px;
+    padding: 5px 15px;
     text-decoration: none;
-    color: #ffde59;
+    color: #ffffff;
 }
 a:hover {
     text-decoration: underline;
@@ -152,7 +157,7 @@ button[type="submit"]{
     right: 70px;
     cursor: pointer;
 }
-button[type="submit"]:hover button[type="create"]:hover, button[type="login"]:hover{
+button[type="submit"]:hover, button[type="create"]:hover, button[type="login"]:hover{
     background-color: #393939;
 }
 
@@ -171,7 +176,7 @@ button[type="search"]{
     font-size: 20px;
     position: absolute;
     left: 450px;
-    top: 223px;
+    top: 175px;
     cursor: pointer;
     padding:10px;
     width: 100px;
@@ -179,16 +184,24 @@ button[type="search"]{
 }
 
 input[type="text"], input[type="date"], input[type="time"], select {
-    width: 30%;
     border: 1px solid #000000;
 }
 
 .textboxsmall {
-    padding: 10px;
+    padding: 5px;
+}
+
+.textbox-length {
+    width: 20%;
+}
+
+.textbox-short {
+    width: 50px;
 }
 
 .textbox {
     padding: 15px;
+    width: 30%;
 }
 
 .textarea{
@@ -197,6 +210,22 @@ input[type="text"], input[type="date"], input[type="time"], select {
     border: 1px solid #000000;
     resize: none;
 }
+
+.form-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 10px;
+}
+
+.form-section2 {
+    gap: 20px;
+}
+
+h3 {
+    padding: 5px;
+}
+
 
 input[type="submit"] {
     background-color: #35424a;
