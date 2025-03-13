@@ -1,21 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Add Student Offense Record</h2>
+<h2>Add Student Offense Record for {{ student.name }}</h2>
 <form method="POST">
-    <label for="name">Name:</label><br>
+    <label for="offense_type">Offense Type:</label>
+    <select name="offense_type" id="offense_type" required>
+        <option value="">Select Offense Type</option>
+        <option value="Academic Offenses">Academic Offenses</option>
+        <option value="Behavioral Offenses">Behavioral Offenses</option>
+        <option value="Physical and Verbal Misconduct">Physical and Verbal Misconduct</option>
+        <option value="Substance-Related Offenses">Substance-Related Offenses</option>
+        <option value="Cyber Offenses">Cyber Offenses</option>
+        <option value="Attendance-Related Offenses">Attendance-Related Offenses</option>
+        <option value="Theft and Property Offenses">Theft and Property Offenses</option>
+        <option value="Weapons and Safety Violations">Weapons and Safety Violations</option>
+        <option value="Sexual Misconduct">Sexual Misconduct</option>
+        <option value="Gang and Group-Related Offenses">Gang and Group-Related Offenses</option>
+    </select><br>
+
     <label for="reason">Reason:</label>
-    <input type="text" id="reason" name="reason" required>
-    <select name="offensetype">
-        <option value="">Offense Types</option>
-        {% for purpose in purposes %}
-        <option value="{{ purpose }}" {% if purpose_filter == purpose %}selected{% endif %}>{{ purpose }}</option>
-        {% endfor %}
-    </select>
-    <form method="POST">
-        <label for="description">Additional Info:</label>
-        <textarea class="textarea" type="text" id="addinfo" name="addinfo" required></textarea><br>
-    </form>
-    <button type="submit">Add Record</button>
+    <input type="text" id="reason" name="reason" required><br>
+
+    <label for="additional_info">Additional Info:</label>
+    <textarea class="textarea" id="additional_info" name="additional_info"></textarea><br>
+
+    <button type="submit">Add Offense</button>
 </form>
 {% endblock %}

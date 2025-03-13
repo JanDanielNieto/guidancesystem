@@ -9,7 +9,7 @@ class StudentRecord(db.Model):
     birthdate = db.Column(db.Date, nullable=False)
     age = db.Column(db.Integer, nullable=False)
     mother_tongue = db.Column(db.String(50), nullable=False)
-    ethnic_group = db.Column(db.String(50), nullable=False)
+    ethnic_group = db.Column(db.String(50), nullable=True)
     religion = db.Column(db.String(50), nullable=False)
     address_house_no = db.Column(db.String(100), nullable=False)
     address_barangay = db.Column(db.String(100), nullable=False)
@@ -18,11 +18,20 @@ class StudentRecord(db.Model):
     mother_name = db.Column(db.String(100), nullable=False)
     father_name = db.Column(db.String(100), nullable=False)
     guardian_name = db.Column(db.String(100), nullable=True)
-    contact_number = db.Column(db.String(15), nullable=False)
+    contact_number = db.Column(db.String(15), nullable=True)
     reason = db.Column(db.String(200), nullable=True)
     type_of_offense = db.Column(db.String(100), nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
     additional_info = db.Column(db.Text, nullable=True)
+    offenses = db.relationship('OffenseRecord', backref='student', lazy=True)
+
+class OffenseRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student_record.id'), nullable=False)
+    offense_type = db.Column(db.String(100), nullable=False)
+    reason = db.Column(db.String(200), nullable=False)
+    additional_info = db.Column(db.Text, nullable=True)
+    date_time = db.Column(db.DateTime, default=datetime.utcnow)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)

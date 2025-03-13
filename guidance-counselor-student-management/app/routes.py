@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from .models import db, StudentRecord, User
+from .models import db, StudentRecord, OffenseRecord, User
 from datetime import datetime
 
 main = Blueprint('main', __name__)
@@ -14,7 +14,7 @@ def dashboard():
 
 @main.route('/manage_records')
 def manage_records():
-    records = StudentRecord.query.all()
+    records = OffenseRecord.query.all()
     return render_template('manage_records.html', records=records)
 
 @main.route('/view_records')
@@ -25,7 +25,8 @@ def view_records():
 @main.route('/view_profile/<int:student_id>')
 def view_profile(student_id):
     student = StudentRecord.query.get_or_404(student_id)
-    return render_template('profile.html', student=student)
+    offenses = OffenseRecord.query.filter_by(student_id=student_id).all()
+    return render_template('profile.html', student=student, offenses=offenses)
 
 @main.route('/add_student', methods=['GET', 'POST'])
 def add_student():
@@ -66,9 +67,49 @@ def add_student():
         db.session.add(new_record)
         db.session.commit()
 
-        return redirect(url_for('main.manage_records'))
+        return redirect(url_for('main.view_records'))
 
     return render_template('add_new_student.html')
+
+@main.route('/add_offense/<int:student_id>', methods=['GET', 'POST'])
+def add_offense(student_id):
+    student = StudentRecord.query.get_or_404(student_id)
+    if request.method == 'POST':
+        offense_type = request.form['offense_type']
+        reason = request.form['reason']
+        additional_info = request.form['additional_info']
+
+        new_offense = OffenseRecord(
+            student_id=student_id,
+            offense_type=offense_type,
+            reason=reason,
+            additional_info=additional_info
+        )
+        db.session.add(new_offense)
+        db.session.commit()
+
+        return redirect(url_for('main.view_profile', student_id=student_id))
+
+    return render_template('add_student_offense.html', student=student)
+
+@main.route('/edit_offense/<int:offense_id>', methods=['GET', 'POST'])
+def edit_offense(offense_id):
+    offense = OffenseRecord.query.get_or_404(offense_id)
+    if request.method == 'POST':
+        offense.offense_type = request.form['offense_type']
+        offense.reason = request.form['reason']
+        offense.additional_info = request.form['additional_info']
+        db.session.commit()
+        return redirect(url_for('main.manage_records'))
+
+    return render_template('edit_offense.html', offense=offense)
+
+@main.route('/delete_offense/<int:offense_id>', methods=['POST'])
+def delete_offense(offense_id):
+    offense = OffenseRecord.query.get_or_404(offense_id)
+    db.session.delete(offense)
+    db.session.commit()
+    return redirect(url_for('main.manage_records'))
 
 @main.route('/add_report', methods=['GET', 'POST'])
 def add_report():
@@ -77,11 +118,6 @@ def add_report():
         pass
 
     return render_template('add_report.html')
-
-@main.route('/logout')
-def logout():
-    # Placeholder for logout functionality
-    return redirect(url_for('main.index'))
 
 @main.route('/registration', methods=['GET', 'POST'])
 def registration():

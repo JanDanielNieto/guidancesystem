@@ -4,7 +4,7 @@
 <h2>Add New Student</h2>
 
 <h2>Information:</h2>
-<form action="POST">
+<form method="POST">
 
     <div class="form-section">
         <label for="name">Name:</label>
@@ -18,17 +18,17 @@
 
         <label for="age">Age:</label>
         <input class="textbox-short" type="number" id="age" name="age" required>
+    </div>
 
-        <div class="form-section">
-            <label for="mother_tongue">Mother Tongue:</label>
+    <div class="form-section">
+        <label for="mother_tongue">Mother Tongue:</label>
         <input class="textboxsmall" type="text" id="mother_tongue" name="mother_tongue" required>
 
         <label for="ethnic_group">Ethnic Group:</label>
-        <input class="textboxsmall" type="text" id="ethnic_group" name="ethnic_group" required>
+        <input class="textboxsmall" type="text" id="ethnic_group" name="ethnic_group">
 
         <label for="religion">Religion:</label>
         <input class="textboxsmall" type="text" id="religion" name="religion" required>
-        </div>
     </div>
 
 <h3>Address:</h3>
@@ -42,11 +42,8 @@
         <label for="address_city">Municipality/City:</label>
         <input class="textboxsmall" type="text" id="address_city" name="address_city" required>
 
-        <div class="form-section">
-            <label for="address_province">Province:</label>
+        <label for="address_province">Province:</label>
         <input class="textboxsmall" type="text" id="address_province" name="address_province" required>
-        </div>
-        
     </div>
 
 <h3>Parent/Guardian Info:</h3>
@@ -55,14 +52,14 @@
             <label for="mother_name">Mother's Name:</label>
             <input class="textbox-length" type="text" id="mother_name" name="mother_name" required>
             <label for="contact_number">Contact No.:</label>
-            <input class="textbox-length" type="text" id="contact_number" name="contact_number" required>
+            <input class="textbox-length" type="text" id="contact_number" name="contact_number" pattern="\d{11}">
         </div>
 
         <div class="form-section">
             <label for="father_name">Father's Name:</label>
             <input class="textbox-length" type="text" id="father_name" name="father_name" required>
             <label for="contact_number">Contact No.:</label>
-            <input class="textbox-length" type="text" id="contact_number" name="contact_number" required>
+            <input class="textbox-length" type="text" id="contact_number" name="contact_number" pattern="\d{11}">
         </div>
         <label for="guardian_name">Guardian's Name (if no parent):</label>
         <input class="textboxsmall" type="text" id="guardian_name" name="guardian_name"> 
