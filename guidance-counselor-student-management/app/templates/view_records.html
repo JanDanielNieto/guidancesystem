@@ -9,12 +9,7 @@
         <th>Grade & Section</th>
         <th>Birthday</th>
         <th>Address</th>
-        <th>Father's Name</th>
-        <th>Mother's Name</th>
-        <th>Reason</th>
-        <th>Type of Offense</th>
-        <th>Date and Time</th>
-        <th>Additional Info</th>
+        <th>Actions</th>
     </tr>
     {% for record in records %}
     <tr>
@@ -22,12 +17,7 @@
         <td>{{ record.grade_section }}</td>
         <td>{{ record.birthday }}</td>
         <td>{{ record.address }}</td>
-        <td>{{ record.father_name }}</td>
-        <td>{{ record.mother_name }}</td>
-        <td>{{ record.reason }}</td>
-        <td>{{ record.type_of_offense }}</td>
-        <td>{{ record.date_time }}</td>
-        <td>{{ record.additional_info }}</td>
+        <td><a href="{{ url_for('main.view_profile', student_id=record.id) }}">View Profile</a></td>
     </tr>
     {% endfor %}
 </table>

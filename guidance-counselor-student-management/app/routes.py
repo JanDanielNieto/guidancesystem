@@ -21,6 +21,11 @@ def view_records():
     records = StudentRecord.query.all()
     return render_template('view_records.html', records=records)
 
+@main.route('/view_profile/<int:student_id>')
+def view_profile(student_id):
+    student = StudentRecord.query.get_or_404(student_id)
+    return render_template('profile.html', student=student)
+
 @main.route('/add_student', methods=['GET', 'POST'])
 def add_student():
     if request.method == 'POST':

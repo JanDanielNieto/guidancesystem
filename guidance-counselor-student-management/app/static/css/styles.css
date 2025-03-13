@@ -160,3 +160,22 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background-color: #45a049;
 }
+.profile-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.profile-picture {
+    margin-right: 20px;
+}
+
+.profile-picture img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.profile-details {
+    font-size: 16px;
+}
