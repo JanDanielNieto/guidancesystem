@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add Student Offense Record</h2>
+<form method="POST">
+    <label for="name">Name:</label><br>
+    <label for="reason">Reason:</label>
+    <input type="text" id="reason" name="reason" required>
+    <select name="offensetype">
+        <option value="">Offense Types</option>
+        {% for purpose in purposes %}
+        <option value="{{ purpose }}" {% if purpose_filter == purpose %}selected{% endif %}>{{ purpose }}</option>
+        {% endfor %}
+    </select>
+    <label for="additional_info">Additional Info:</label>
+    <textarea id="additional_info" name="additional_info"></textarea><br>
+    <button type="submit">Add Record</button>
+</form>
+{% endblock %}
