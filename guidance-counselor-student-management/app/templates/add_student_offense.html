@@ -12,8 +12,10 @@
         <option value="{{ purpose }}" {% if purpose_filter == purpose %}selected{% endif %}>{{ purpose }}</option>
         {% endfor %}
     </select>
-    <label for="additional_info">Additional Info:</label>
-    <textarea id="additional_info" name="additional_info"></textarea><br>
+    <form method="POST">
+        <label for="description">Additional Info:</label>
+        <textarea type="text" id="description" name="description" required><br>
+    </form>
     <button type="submit">Add Record</button>
 </form>
 {% endblock %}
