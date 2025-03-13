@@ -76,6 +76,21 @@ a:hover {
     height: 60px;
 }
 
+.logout {
+    background: #000000;
+    color: #ffffff;
+    width: 100px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    position: relative;
+    left: 90%;
+    top: -280px;
+    font-size: 100%;
+}
+
 .mainfont {
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
 }
