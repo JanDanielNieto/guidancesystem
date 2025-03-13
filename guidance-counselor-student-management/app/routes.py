@@ -6,7 +6,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return redirect(url_for('main.registration'))
+    return redirect(url_for('main.dashboard'))
 
 @main.route('/dashboard')
 def dashboard():
@@ -45,7 +45,6 @@ def add_student():
         father_name = request.form['father_name']
         guardian_name = request.form['guardian_name']
         contact_number = request.form['contact_number']
-        learning_modality = request.form['learning_modality']
 
         new_record = StudentRecord(
             name=name,
@@ -62,8 +61,7 @@ def add_student():
             mother_name=mother_name,
             father_name=father_name,
             guardian_name=guardian_name,
-            contact_number=contact_number,
-            learning_modality=learning_modality
+            contact_number=contact_number
         )
         db.session.add(new_record)
         db.session.commit()
@@ -80,6 +78,10 @@ def add_report():
 
     return render_template('add_report.html')
 
+@main.route('/logout')
+def logout():
+    # Placeholder for logout functionality
+    return redirect(url_for('main.index'))
 
 @main.route('/registration', methods=['GET', 'POST'])
 def registration():
