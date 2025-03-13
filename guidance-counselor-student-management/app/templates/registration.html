@@ -5,24 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guidance Counselor's Student Management System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        function togglePasswordVisibility() {
+            var passwordField = document.getElementById("password");
+            var confirmPasswordField = document.getElementById("confirm_password");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                confirmPasswordField.type = "text";
+            } else {
+                passwordField.type = "password";
+                confirmPasswordField.type = "password";
+            }
+        }
+    </script>
 </head>
 <body class="bgimage" style="background-image: url('{{ url_for('static', filename='images/school_bg.jpeg') }}');">
     <header>Welcome!</header>
     <header class="mainfront">
-        <h1>Account Registration</h1>
-        <p>Already Registered? <a href="{{ url_for('main.login') }}" class="capsule-button">Login</a></p>
+        <h1>BSSAA Guidance Hub</h1>
+        <p>Registration</p>
     </header>
     
     <form method="POST">
         <label for="name">Name:</label>
         <input class="textbox" type="text" id="name" name="name" required><br>
         <label for="email">Email:</label>
-        <input class="textbox" type="text" id="email" name="email" required><br>
+        <input type="email" id="email" name="email" required><br>
         <label for="password">Password:</label>
-        <input class="textbox" type="text" id="password" name="password" required><br>
+        <input type="password" id="password" name="password" required><br>
         <label for="confirm_password">Confirm Password:</label>
-        <input class="textbox" type="text" id="confirm_password" name="confirm_password" required><br>
-        <button type="create">Create Account</button>
+        <input type="password" id="confirm_password" name="confirm_password" required><br>
+        <input type="checkbox" onclick="togglePasswordVisibility()"> Show Password<br>
+        <button type="submit">Create Account</button>
     </form>
 </body>
 </html>

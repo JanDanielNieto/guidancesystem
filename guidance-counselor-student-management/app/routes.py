@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from .models import db, StudentRecord
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from .models import db, StudentRecord, User
 from datetime import datetime
 
 main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return redirect(url_for('main.dashboard'))
+    return redirect(url_for('main.registration'))
 
 @main.route('/dashboard')
 def dashboard():
@@ -81,12 +81,40 @@ def add_report():
     return render_template('add_report.html')
 
 
-@main.route('/registration')
+@main.route('/registration', methods=['GET', 'POST'])
 def registration():
-    # Placeholder for registration functionality
-     return render_template('registration.html')
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
 
-@main.route('/login')
+        if password != confirm_password:
+            flash('Passwords do not match!')
+            return redirect(url_for('main.registration'))
+
+        user = User(name=name, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+
+        flash('Account created successfully!')
+        return redirect(url_for('main.dashboard'))
+
+    return render_template('registration.html')
+
+@main.route('/login', methods=['GET', 'POST'])
 def login():
-    # Placeholder for login functionality
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = User.query.filter_by(email=email).first()
+
+        if user is None or not user.check_password(password):
+            flash('Invalid email or password')
+            return redirect(url_for('main.login'))
+
+        flash('Logged in successfully!')
+        return redirect(url_for('main.dashboard'))
+
     return render_template('login.html')
