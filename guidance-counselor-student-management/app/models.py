@@ -19,7 +19,6 @@ class StudentRecord(db.Model):
     father_name = db.Column(db.String(100), nullable=False)
     guardian_name = db.Column(db.String(100), nullable=True)
     contact_number = db.Column(db.String(15), nullable=False)
-    learning_modality = db.Column(db.String(50), nullable=False)
     reason = db.Column(db.String(200), nullable=True)
     type_of_offense = db.Column(db.String(100), nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
