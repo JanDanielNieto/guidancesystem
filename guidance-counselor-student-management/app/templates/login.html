@@ -5,20 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guidance Counselor's Student Management System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        function togglePasswordVisibility() {
+            var passwordField = document.getElementById("password");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+            } else {
+                passwordField.type = "password";
+            }
+        }
+    </script>
 </head>
 <body class="bgimage" style="background-image: url('{{ url_for('static', filename='images/school_bg.jpeg') }}');">
     <header>Welcome!</header>
     <header class="mainfront">
-        <h1>Login</h1>
-        <p>Don't have an account yet?</p>
+        <h1>BSSAA Guidance Hub</h1>
+        <p>Welcome Back!</p>
     </header>
-    <a href="{{ url_for('main.registration') }}" class="capsule-button">Login</a>
+    <a href="{{ url_for('main.registration') }}" class="capsule-button">Register</a>
     <form method="POST">
         <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required><br>
+        <input type="email" id="email" name="email" required><br>
         <label for="password">Password:</label>
-        <input type="text" id="password" name="password" required><br>
-        <button type="login">Login</button>
+        <input type="password" id="password" name="password" required><br>
+        <input type="checkbox" onclick="togglePasswordVisibility()"> Show Password<br>
+        <button type="submit">Login</button>
     </form>
 </body>
 </html>
