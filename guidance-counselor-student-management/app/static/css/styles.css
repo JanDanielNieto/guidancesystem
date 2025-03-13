@@ -152,8 +152,18 @@ button[type="submit"]{
     right: 70px;
     cursor: pointer;
 }
-button[type="submit"]:hover {
+button[type="submit"]:hover button[type="create"]:hover, button[type="login"]:hover{
     background-color: #393939;
+}
+
+button[type="create"], button[type="login"]{
+    font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
+    font-weight: bold;
+    background-color: #000000;
+    color: white;
+    border: none;
+    padding: 15px 65px;
+    cursor: pointer;
 }
 
 button[type="search"]{
