@@ -147,6 +147,16 @@ label {
     margin-bottom: 5px;
 }
 
+.subheader{
+    font-size: larger;
+    color: rgb(230, 227, 171);
+    font-weight: bolder;
+    font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
+    align-items: center;
+    text-align: center;
+    background-color: #b0dbf5e8;
+}
+
 form {
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
     padding: 10px;
