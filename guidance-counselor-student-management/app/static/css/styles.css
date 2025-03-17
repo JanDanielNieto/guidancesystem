@@ -27,6 +27,7 @@ header {
     color: #ffffff;
     padding: 10px 0;
     text-align: center;
+    text-shadow: -1px 0 rgb(54, 53, 31), 0 1px rgb(54, 53, 31), 1px 0 rgb(54, 53, 31), 0 -1px rgb(54, 53, 31);
 }
 
 h1 {
