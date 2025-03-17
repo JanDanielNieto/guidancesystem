@@ -47,6 +47,7 @@ h2 {
 a {
     font-size: 20px;
     background-color: #b0dbf5;
+    margin: 0px 5px;
     border-radius: 40px;
     padding: 5px 15px;
     text-decoration: none;
@@ -166,7 +167,7 @@ button[type="submit"]:hover, button[type="create"]:hover, button[type="login"]:h
     background-color: #8ebdda;
 }
 
-button[type="create"], button[type="login"]{
+button[type="create"], button[type="login"], button[type="report"]{
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
     font-weight: bold;
     background-color: #b0dbf5;
@@ -242,11 +243,16 @@ input[type="text"], input[type="date"], input[type="time"], select {
     font-size: 20px;
     background-color: #b0dbf5;
     border-radius: 40px;
-    margin: 0px 10px;
+    margin: 0px 1px;
     padding: 5px 15px;
     text-decoration: none;
     color: #0e0e0e;
-    
+    border: none;
+    cursor: pointer;
+}
+
+.inline:hover{
+    background-color: #93c3e1;
 }
 
 

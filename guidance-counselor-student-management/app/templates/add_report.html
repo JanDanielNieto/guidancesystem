@@ -5,7 +5,7 @@
 
 <form method="GET" action="{{ url_for('main.add_report') }}">
     <input class="textbox" type="text" name="query" placeholder="Search by name" value="{{ request.args.get('query', '') }}"><br>
-    <button type="submit">Search</button><br>
+    <button type="search">Search</button><br>
 </form>
 
 {% if students %}
@@ -28,7 +28,7 @@
 
     <label for="description">Description:</label>
     <textarea class="textarea" id="description" name="description" required></textarea><br>
-    <button type="submit">Add Report</button>
+    <button type="report">Add Report</button>
 </form>
 {% endif %}
 {% endblock %}
