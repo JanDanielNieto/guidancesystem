@@ -5,7 +5,7 @@
 <a href="{{ url_for('main.add_student') }}" class="capsule-button">Add New Student</a>
 
 <form method="GET" action="{{ url_for('main.view_records') }}">
-    <input type="text" name="search" placeholder="Search by name" value="{{ request.args.get('search', '') }}">
+    <input class="searchbox" type="text" name="search" placeholder="Search by name" value="{{ request.args.get('search', '') }}">
     <button type="submit">Search</button>
 </form>
 

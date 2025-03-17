@@ -8,7 +8,7 @@ body {
     min-height: 100vh;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #FEFEFA;
 }
 
 main {
@@ -23,7 +23,7 @@ footer {
 }
 
 header {
-    background: #38B6FF;
+    background: #383bff;
     color: #ffffff;
     padding: 10px 0;
     text-align: center;
@@ -46,11 +46,11 @@ h2 {
 
 a {
     font-size: 20px;
-    background-color: #000000;
+    background-color: #dab57d;
     border-radius: 40px;
     padding: 5px 15px;
     text-decoration: none;
-    color: #ffffff;
+    color: #0e0e0e;
 }
 a:hover {
     text-decoration: underline;
@@ -82,8 +82,8 @@ a:hover {
 }
 
 .logout {
-    background: #000000;
-    color: #ffffff;
+    background: #dab57d;
+    color: #0e0e0e;
     width: 100px;
     height: 25px;
     display: flex;
@@ -118,7 +118,7 @@ table th, table td {
 }
 
 table th {
-    background-color: #38B6FF;
+    background-color: #383bff;
     color: white;
 }
 
@@ -149,8 +149,8 @@ form {
 button[type="submit"]{
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
     font-weight: bold;
-    background-color: #000000;
-    color: white;
+    background-color: #dab57d;
+    color: #0e0e0e;
     border: none;
     padding: 15px 65px;
     position: absolute;
@@ -158,14 +158,14 @@ button[type="submit"]{
     cursor: pointer;
 }
 button[type="submit"]:hover, button[type="create"]:hover, button[type="login"]:hover{
-    background-color: #393939;
+    background-color: #a1855c;
 }
 
 button[type="create"], button[type="login"]{
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
     font-weight: bold;
-    background-color: #000000;
-    color: white;
+    background-color: #dab57d;
+    color: #0e0e0e;
     border: none;
     padding: 15px 65px;
     cursor: pointer;
@@ -200,8 +200,15 @@ input[type="text"], input[type="date"], input[type="time"], select {
 }
 
 .textbox {
+    padding: 10px;
+    width: 28%;
+}
+
+.searchbox{
     padding: 15px;
-    width: 30%;
+    width: 80%;
+    border: 1px solid #000000;
+    resize: none;
 }
 
 .textarea{
@@ -225,18 +232,20 @@ input[type="text"], input[type="date"], input[type="time"], select {
 .inline{
     display: inline;
     font-size: 20px;
-    background-color: #000000;
+    background-color: #dab57d;
     border-radius: 40px;
+    margin: 0px 10px;
     padding: 5px 15px;
     text-decoration: none;
-    color: #ffffff;
+    color: #0e0e0e;
     
 }
 
 button[type="delete"]:hover{
-    background-color: #393939;
+    background-color: #a1855c;
 
 }
+
 
 h3 {
     padding: 5px;
