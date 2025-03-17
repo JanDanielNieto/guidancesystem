@@ -17,7 +17,7 @@ main {
 
 footer {
     padding: 10px 0;
-    position: relative;
+    position: fixed;
     bottom: 0;
     width: 100%;
 }
@@ -46,14 +46,14 @@ h2 {
 
 a {
     font-size: 20px;
-    background-color: #dab57d;
+    background-color: #b0dbf5;
     border-radius: 40px;
     padding: 5px 15px;
     text-decoration: none;
     color: #0e0e0e;
 }
 a:hover {
-    text-decoration: underline;
+    background-color: #93c3e1;
 }
 
 .bgimage{
@@ -73,7 +73,7 @@ a:hover {
     top: 50px;
     font-size: 150%;
     color: #ffde59;
-    background: #38B6FF;
+    background: #383bff;
     margin: auto;
     border-radius: 40px;
     padding: 10px;
@@ -82,7 +82,7 @@ a:hover {
 }
 
 .logout {
-    background: #dab57d;
+    background: #b0dbf5;
     color: #0e0e0e;
     width: 100px;
     height: 25px;
@@ -94,6 +94,11 @@ a:hover {
     left: 90%;
     top: -280px;
     font-size: 100%;
+    
+}
+
+.logout:hover {
+    background: #93c3e1;
 }
 
 .mainfont {
@@ -149,7 +154,7 @@ form {
 button[type="submit"]{
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
     font-weight: bold;
-    background-color: #dab57d;
+    background-color: #b0dbf5;
     color: #0e0e0e;
     border: none;
     padding: 15px 65px;
@@ -157,30 +162,33 @@ button[type="submit"]{
     right: 70px;
     cursor: pointer;
 }
-button[type="submit"]:hover, button[type="create"]:hover, button[type="login"]:hover{
-    background-color: #a1855c;
+button[type="submit"]:hover, button[type="create"]:hover, button[type="login"]:hover, button[type="delete"]:hover, button[type="search"]:hover{
+    background-color: #8ebdda;
 }
 
 button[type="create"], button[type="login"]{
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
     font-weight: bold;
-    background-color: #dab57d;
+    background-color: #b0dbf5;
     color: #0e0e0e;
     border: none;
     padding: 15px 65px;
     cursor: pointer;
+    
 }
 
 button[type="search"]{
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-size: 20px;
     position: absolute;
-    left: 450px;
+    background-color: #b0dbf5;
+    left: 420px;
     top: 175px;
     cursor: pointer;
-    padding:10px;
+    padding:5px;
     width: 100px;
-    height: 50px;
+    height: 40px;
+    border: none;
 }
 
 input[type="text"], input[type="date"], input[type="time"], select {
@@ -232,7 +240,7 @@ input[type="text"], input[type="date"], input[type="time"], select {
 .inline{
     display: inline;
     font-size: 20px;
-    background-color: #dab57d;
+    background-color: #b0dbf5;
     border-radius: 40px;
     margin: 0px 10px;
     padding: 5px 15px;
@@ -241,10 +249,6 @@ input[type="text"], input[type="date"], input[type="time"], select {
     
 }
 
-button[type="delete"]:hover{
-    background-color: #a1855c;
-
-}
 
 
 h3 {
