@@ -6,7 +6,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return redirect(url_for('main.dashboard'))
+    return redirect(url_for('main.registration'))
 
 @main.route('/dashboard')
 def dashboard():
