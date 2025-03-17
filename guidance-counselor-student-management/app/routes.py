@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from .models import db, StudentRecord, OffenseRecord, User
+from app.models import db, StudentRecord, OffenseRecord, User
 from datetime import datetime
 
 main = Blueprint('main', __name__)
@@ -14,12 +14,23 @@ def dashboard():
 
 @main.route('/manage_records')
 def manage_records():
-    records = OffenseRecord.query.all()
+    search = request.args.get('search')
+    if search:
+        records = OffenseRecord.query.join(StudentRecord).filter(
+            (StudentRecord.name.ilike(f'%{search}%')) | 
+            (OffenseRecord.offense_type.ilike(f'%{search}%'))
+        ).all()
+    else:
+        records = OffenseRecord.query.all()
     return render_template('manage_records.html', records=records)
 
 @main.route('/view_records')
 def view_records():
-    records = StudentRecord.query.all()
+    search = request.args.get('search')
+    if search:
+        records = StudentRecord.query.filter(StudentRecord.name.ilike(f'%{search}%')).all()
+    else:
+        records = StudentRecord.query.all()
     return render_template('view_records.html', records=records)
 
 @main.route('/view_profile/<int:student_id>')
@@ -113,11 +124,37 @@ def delete_offense(offense_id):
 
 @main.route('/add_report', methods=['GET', 'POST'])
 def add_report():
+    query = request.args.get('query')
+    students = []
+    purposes = [
+        "Academic Offenses", "Behavioral Offenses", "Physical and Verbal Misconduct",
+        "Substance-Related Offenses", "Cyber Offenses", "Attendance-Related Offenses",
+        "Theft and Property Offenses", "Weapons and Safety Violations", "Sexual Misconduct",
+        "Gang and Group-Related Offenses"
+    ]
+    if query:
+        students = StudentRecord.query.filter(StudentRecord.name.ilike(f'%{query}%')).all()
     if request.method == 'POST':
-        # Handle the form submission for adding a report
-        pass
+        student_id = request.form['student_id']
+        offense_type = request.form['offense_type']
+        description = request.form['description']
 
-    return render_template('add_report.html')
+        new_offense = OffenseRecord(
+            student_id=student_id,
+            offense_type=offense_type,
+            reason=description
+        )
+        db.session.add(new_offense)
+        db.session.commit()
+
+        return redirect(url_for('main.manage_records'))
+
+    return render_template('add_report.html', students=students, purposes=purposes)
+
+@main.route('/logout')
+def logout():
+    # Placeholder for logout functionality
+    return redirect(url_for('main.index'))
 
 @main.route('/registration', methods=['GET', 'POST'])
 def registration():
