@@ -148,11 +148,10 @@ label {
 }
 
 .subheader{
-    font-size: larger;
-    color: rgb(230, 227, 171);
+    font-size: 25px;
+    color: rgb(255, 233, 107);
     font-weight: bolder;
     font-family: ROBOTO-VARIABLE-FONT, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
-    align-items: center;
     text-align: center;
     background-color: #b0dbf5e8;
 }
