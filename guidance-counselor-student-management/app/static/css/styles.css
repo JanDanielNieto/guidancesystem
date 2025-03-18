@@ -139,8 +139,9 @@ table tr:nth-child(even) {
 }
 
 .btn {
-    display: inline-block;
-    padding: 10px 15px;
+    position: relative;
+    right: 40px;
+    padding: 5px 15px;
     margin: 10px 0;
     background-color: #35424a;
     color: white;
@@ -316,4 +317,9 @@ input[type="submit"]:hover {
 
 .profile-details2 {
     font-size: 16px;
+}
+
+.btn:hover{
+    background-color: #628194;
+    cursor: pointer;
 }

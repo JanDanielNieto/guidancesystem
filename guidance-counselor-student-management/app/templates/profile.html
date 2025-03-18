@@ -7,7 +7,7 @@
     <img src="{{ url_for('static', filename='profilepic/' + (student.profile_picture or 'profile_placeholder.png')) }}" alt="Profile Picture" width="150" height="150">
     <form method="POST" enctype="multipart/form-data">
         <input type="file" name="photo" accept="image/*">
-        <button type="submit" class="btn btn-primary btn-sm">Upload</button>
+        <button type="upload" class="btn btn-primary btn-sm">Upload</button>
     </form>
 </div>
 <div class="profile-container">
