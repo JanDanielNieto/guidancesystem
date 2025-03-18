@@ -4,6 +4,7 @@ from datetime import datetime
 from flask_uploads import UploadSet, IMAGES, configure_uploads
 from werkzeug.utils import secure_filename
 import os
+from flask import current_app as app
 
 main = Blueprint('main', __name__)
 
@@ -136,14 +137,15 @@ def view_profile(student_id):
         photo = request.files['photo']
         if photo.filename != '':
             filename = secure_filename(photo.filename)
-            file_path = os.path.join('static/profilepic', filename)
+            file_path = os.path.join(app.root_path, 'static', 'profilepic', filename)
             os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Ensure the directory exists
             photo.save(file_path)
             student.profile_picture = filename
             db.session.commit()
+            print(f"Profile picture updated to: {student.profile_picture}")  # Debug print statement
             flash('Profile picture updated successfully', 'success')
     return render_template('profile.html', student=student, offenses=offenses)
-
+    
 @main.route('/add_offense/<int:student_id>', methods=['GET', 'POST'])
 def add_offense(student_id):
     student = StudentRecord.query.get_or_404(student_id)
@@ -260,5 +262,4 @@ def login():
 
         flash('Logged in successfully!')
         return redirect(url_for('main.dashboard'))
-
     return render_template('login.html')
