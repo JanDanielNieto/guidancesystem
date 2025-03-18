@@ -1,19 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<h2>Student Profile</h2>
 <div class="profile-picture">
     <img src="{{ url_for('static', filename='images/profile_placeholder.png') }}" alt="Profile Picture">
 </div>
-<h2>Student Profile</h2>
 <div class="profile-container">
     <div class="profile-details">
-        <p><strong>LRN:</strong> {{ student.lrn }}</p>
         <p><strong>Name:</strong> {{ student.name }}</p>
+        <p><strong>LRN:</strong> {{ student.lrn }}</p>
         <p><strong>Grade & Section:</strong> {{ student.grade_section }}</p>
         <p><strong>Birthday:</strong> {{ student.birthdate }}</p>
+    </div>
+    <div class="profile-details2">
         <p><strong>Address:</strong> {{ student.address_house_no }}, {{ student.address_barangay }}, {{ student.address_city }}, {{ student.address_province }}</p>
         <p><strong>Father's Name:</strong> {{ student.father_name }}</p>
         <p><strong>Mother's Name:</strong> {{ student.mother_name }}</p>
+    </div>
+    <div class="profile-details">
         <p><strong>Reason:</strong> {{ student.reason }}</p>
         <p><strong>Type of Offense:</strong> {{ student.type_of_offense }}</p>
         <p><strong>Date and Time:</strong> {{ student.date_time }}</p>
