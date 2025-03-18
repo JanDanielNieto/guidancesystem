@@ -24,7 +24,6 @@ footer {
     padding: 10px 0;
     bottom: 0;
     width: 100%;
-    text-align: center;
 }
 
 header {
@@ -48,6 +47,14 @@ p {
 
 h2 {
     padding: 10px;
+}
+
+.smallnote{
+    font-weight: light;
+    font-size: 14px;
+    position: relative;
+    left: 14px;
+    top: -12px;
 }
 
 a {
@@ -124,7 +131,7 @@ table {
 }
 
 table th, table td {
-    border: 1px solid #ffffff;
+    border: 1px solid #cccccc;
     text-align: left;
     padding: 8px;
 }
@@ -134,9 +141,6 @@ table th {
     color: white;
 }
 
-table tr:nth-child(even) {
-    background-color: #929292;
-}
 
 .btn {
     position: relative;
@@ -299,24 +303,56 @@ input[type="submit"]:hover {
 
 .profile-picture {
     margin-right: 20px;
+    flex: 1;
+    min-width: 150px;
+    position: relative;
+    left: 20px;
+    z-index: 1;
 }
 
 .profile-picture img {
     width: 150px;
     height: 150px;
     border-radius: 50%;
+    z-index: 2;
 }
 
 .profile-details {
     font-size: 12px;
     display: flex;
     flex-wrap: wrap;
-    gap: -30px;
-    padding-bottom: 10px;
+    flex: 2;
+    min-width: 200px;
 }
 
 .profile-details2 {
     font-size: 16px;
+}
+
+.profile-details3 {
+    font-weight: lighter;
+    font-size: 34px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    flex: 2;
+    position: relative;
+    right: 50px;
+    top: -40px;
+    background-color: #8ebdda71;
+    width: 100vw; /* Make the background span the entire viewport width */
+    margin-left: -50vw; /* Offset the left margin to start from the left edge */
+    margin-right: -50vw; /* Offset the right margin to end at the right edge */
+    padding-left: 50vw; /* Add padding to align the content correctly */
+    padding-right: 50vw;
+    
+}
+
+.proftable{
+    position: relative;
+    left: 20px;
+    top: -200px;
+    width: 95%;
 }
 
 .btn:hover{
