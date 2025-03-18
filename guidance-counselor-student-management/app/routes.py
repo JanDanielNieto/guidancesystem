@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.models import db, StudentRecord, OffenseRecord, User
 from datetime import datetime
+from flask_uploads import UploadSet, IMAGES, configure_uploads
+from werkzeug.utils import secure_filename
+import os
 
 main = Blueprint('main', __name__)
 
@@ -125,10 +128,20 @@ def view_records():
         records = StudentRecord.query.all()
     return render_template('view_records.html', records=records)
 
-@main.route('/view_profile/<int:student_id>')
+@main.route('/view_profile/<int:student_id>', methods=['GET', 'POST'])
 def view_profile(student_id):
     student = StudentRecord.query.get_or_404(student_id)
     offenses = OffenseRecord.query.filter_by(student_id=student_id).all()
+    if request.method == 'POST' and 'photo' in request.files:
+        photo = request.files['photo']
+        if photo.filename != '':
+            filename = secure_filename(photo.filename)
+            file_path = os.path.join('static/profilepic', filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Ensure the directory exists
+            photo.save(file_path)
+            student.profile_picture = filename
+            db.session.commit()
+            flash('Profile picture updated successfully', 'success')
     return render_template('profile.html', student=student, offenses=offenses)
 
 @main.route('/add_offense/<int:student_id>', methods=['GET', 'POST'])
