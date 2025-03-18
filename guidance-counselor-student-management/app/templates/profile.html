@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="profile-picture">
+    <img src="{{ url_for('static', filename='images/profile_placeholder.png') }}" alt="Profile Picture">
+</div>
 <h2>Student Profile</h2>
 <div class="profile-container">
-    <div class="profile-picture">
-        <img src="{{ url_for('static', filename='images/profile_placeholder.png') }}" alt="Profile Picture">
-    </div>
     <div class="profile-details">
         <p><strong>LRN:</strong> {{ student.lrn }}</p>
         <p><strong>Name:</strong> {{ student.name }}</p>
