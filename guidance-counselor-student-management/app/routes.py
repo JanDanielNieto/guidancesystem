@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from .models import db, StudentRecord, OffenseRecord, User
+from app.models import db, StudentRecord, OffenseRecord, User
 from datetime import datetime
 
 main = Blueprint('main', __name__)
@@ -12,36 +12,41 @@ def index():
 def dashboard():
     return render_template('dashboard.html')
 
-@main.route('/manage_records')
-def manage_records():
-    search = request.args.get('search')
-    if search:
-        records = OffenseRecord.query.join(StudentRecord).filter(
-            (StudentRecord.name.ilike(f'%{search}%')) | 
-            (OffenseRecord.offense_type.ilike(f'%{search}%')) |
-            (StudentRecord.lrn.ilike(f'%{search}%'))
-        ).all()
-    else:
-        records = OffenseRecord.query.all()
-    return render_template('manage_records.html', records=records)
+@main.route('/manage_students')
+def manage_students():
+    students = StudentRecord.query.all()
+    return render_template('manage_students.html', students=students)
 
-@main.route('/view_records')
-def view_records():
-    search = request.args.get('search')
-    if search:
-        records = StudentRecord.query.filter(
-            (StudentRecord.name.ilike(f'%{search}%')) |
-            (StudentRecord.lrn.ilike(f'%{search}%'))
-        ).all()
-    else:
-        records = StudentRecord.query.all()
-    return render_template('view_records.html', records=records)
-
-@main.route('/view_profile/<int:student_id>')
-def view_profile(student_id):
+@main.route('/edit_student/<int:student_id>', methods=['GET', 'POST'])
+def edit_student(student_id):
     student = StudentRecord.query.get_or_404(student_id)
-    offenses = OffenseRecord.query.filter_by(student_id=student_id).all()
-    return render_template('profile.html', student=student, offenses=offenses)
+    if request.method == 'POST':
+        student.lrn = request.form['lrn']
+        student.name = request.form['name']
+        student.grade_section = request.form['grade_section']
+        student.birthdate = datetime.strptime(request.form['birthdate'], '%Y-%m-%d')
+        student.age = request.form['age']
+        student.mother_tongue = request.form['mother_tongue']
+        student.ethnic_group = request.form['ethnic_group']
+        student.religion = request.form['religion']
+        student.address_house_no = request.form['address_house_no']
+        student.address_barangay = request.form['address_barangay']
+        student.address_city = request.form['address_city']
+        student.address_province = request.form['address_province']
+        student.mother_name = request.form['mother_name']
+        student.father_name = request.form['father_name']
+        student.guardian_name = request.form['guardian_name']
+        student.contact_number = request.form['contact_number']
+        db.session.commit()
+        return redirect(url_for('main.manage_students'))
+    return render_template('edit_student.html', student=student)
+
+@main.route('/delete_student/<int:student_id>', methods=['POST'])
+def delete_student(student_id):
+    student = StudentRecord.query.get_or_404(student_id)
+    db.session.delete(student)
+    db.session.commit()
+    return redirect(url_for('main.manage_students'))
 
 @main.route('/add_student', methods=['GET', 'POST'])
 def add_student():
@@ -84,9 +89,40 @@ def add_student():
         db.session.add(new_record)
         db.session.commit()
 
-        return redirect(url_for('main.view_records'))
+        return redirect(url_for('main.manage_students'))
 
     return render_template('add_new_student.html')
+
+@main.route('/manage_records')
+def manage_records():
+    search = request.args.get('search')
+    if search:
+        records = OffenseRecord.query.join(StudentRecord).filter(
+            (StudentRecord.name.ilike(f'%{search}%')) | 
+            (OffenseRecord.offense_type.ilike(f'%{search}%')) |
+            (StudentRecord.lrn.ilike(f'%{search}%'))
+        ).all()
+    else:
+        records = OffenseRecord.query.all()
+    return render_template('manage_records.html', records=records)
+
+@main.route('/view_records')
+def view_records():
+    search = request.args.get('search')
+    if search:
+        records = StudentRecord.query.filter(
+            (StudentRecord.name.ilike(f'%{search}%')) |
+            (StudentRecord.lrn.ilike(f'%{search}%'))
+        ).all()
+    else:
+        records = StudentRecord.query.all()
+    return render_template('view_records.html', records=records)
+
+@main.route('/view_profile/<int:student_id>')
+def view_profile(student_id):
+    student = StudentRecord.query.get_or_404(student_id)
+    offenses = OffenseRecord.query.filter_by(student_id=student_id).all()
+    return render_template('profile.html', student=student, offenses=offenses)
 
 @main.route('/add_offense/<int:student_id>', methods=['GET', 'POST'])
 def add_offense(student_id):
