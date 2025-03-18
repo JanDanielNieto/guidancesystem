@@ -24,6 +24,7 @@ class StudentRecord(db.Model):
     type_of_offense = db.Column(db.String(100), nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
     additional_info = db.Column(db.Text, nullable=True)
+    profile_picture = db.Column(db.String(100), nullable=True)
     offenses = db.relationship('OffenseRecord', backref='student', lazy=True)
 
 class OffenseRecord(db.Model):
