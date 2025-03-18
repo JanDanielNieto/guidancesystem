@@ -19,12 +19,7 @@ class StudentRecord(db.Model):
     mother_name = db.Column(db.String(100), nullable=False)
     father_name = db.Column(db.String(100), nullable=False)
     guardian_name = db.Column(db.String(100), nullable=True)
-    contact_number = db.Column(db.String(15), nullable=True)
-    reason = db.Column(db.String(200), nullable=True)
-    type_of_offense = db.Column(db.String(100), nullable=True)
-    date_time = db.Column(db.DateTime, default=datetime.utcnow)
-    additional_info = db.Column(db.Text, nullable=True)
-    offenses = db.relationship('OffenseRecord', backref='student', lazy=True)
+    offenses = db.relationship('OffenseRecord', backref='student', cascade='all, delete-orphan', lazy=True)
 
 class OffenseRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)

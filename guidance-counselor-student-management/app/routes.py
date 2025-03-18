@@ -17,9 +17,9 @@ def manage_students():
     students = StudentRecord.query.all()
     return render_template('manage_students.html', students=students)
 
-@main.route('/edit_student/<int:student_id>', methods=['GET', 'POST'])
-def edit_student(student_id):
-    student = StudentRecord.query.get_or_404(student_id)
+@main.route('/edit_student/<int:id>', methods=['GET', 'POST'])
+def edit_student(id):
+    student = StudentRecord.query.get_or_404(id)
     if request.method == 'POST':
         student.lrn = request.form['lrn']
         student.name = request.form['name']
@@ -38,14 +38,20 @@ def edit_student(student_id):
         student.guardian_name = request.form['guardian_name']
         student.contact_number = request.form['contact_number']
         db.session.commit()
+        flash('Student record updated successfully', 'success')
         return redirect(url_for('main.manage_students'))
     return render_template('edit_student.html', student=student)
 
-@main.route('/delete_student/<int:student_id>', methods=['POST'])
-def delete_student(student_id):
-    student = StudentRecord.query.get_or_404(student_id)
-    db.session.delete(student)
-    db.session.commit()
+@main.route('/delete_student/<int:id>', methods=['POST'])
+def delete_student(id):
+    student = StudentRecord.query.get_or_404(id)
+    try:
+        db.session.delete(student)
+        db.session.commit()
+        flash('Student deleted successfully', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting student: {str(e)}', 'danger')
     return redirect(url_for('main.manage_students'))
 
 @main.route('/add_student', methods=['GET', 'POST'])
@@ -89,6 +95,7 @@ def add_student():
         db.session.add(new_record)
         db.session.commit()
 
+        flash('New student added successfully', 'success')
         return redirect(url_for('main.manage_students'))
 
     return render_template('add_new_student.html')
@@ -141,6 +148,7 @@ def add_offense(student_id):
         db.session.add(new_offense)
         db.session.commit()
 
+        flash('Offense added successfully', 'success')
         return redirect(url_for('main.view_profile', student_id=student_id))
 
     return render_template('add_student_offense.html', student=student)
@@ -153,6 +161,7 @@ def edit_offense(offense_id):
         offense.reason = request.form['reason']
         offense.additional_info = request.form['additional_info']
         db.session.commit()
+        flash('Offense record updated successfully', 'success')
         return redirect(url_for('main.manage_records'))
 
     return render_template('edit_offense.html', offense=offense)
@@ -162,6 +171,7 @@ def delete_offense(offense_id):
     offense = OffenseRecord.query.get_or_404(offense_id)
     db.session.delete(offense)
     db.session.commit()
+    flash('Offense deleted successfully', 'success')
     return redirect(url_for('main.manage_records'))
 
 @main.route('/add_report', methods=['GET', 'POST'])
@@ -192,6 +202,7 @@ def add_report():
         db.session.add(new_offense)
         db.session.commit()
 
+        flash('Report added successfully', 'success')
         return redirect(url_for('main.manage_records'))
 
     return render_template('add_report.html', students=students, purposes=purposes)
