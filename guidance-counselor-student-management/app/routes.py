@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from app.models import db, StudentRecord, OffenseRecord, User
+from .models import db, StudentRecord, OffenseRecord, User
 from datetime import datetime
 
 main = Blueprint('main', __name__)
@@ -18,7 +18,8 @@ def manage_records():
     if search:
         records = OffenseRecord.query.join(StudentRecord).filter(
             (StudentRecord.name.ilike(f'%{search}%')) | 
-            (OffenseRecord.offense_type.ilike(f'%{search}%'))
+            (OffenseRecord.offense_type.ilike(f'%{search}%')) |
+            (StudentRecord.lrn.ilike(f'%{search}%'))
         ).all()
     else:
         records = OffenseRecord.query.all()
@@ -28,7 +29,10 @@ def manage_records():
 def view_records():
     search = request.args.get('search')
     if search:
-        records = StudentRecord.query.filter(StudentRecord.name.ilike(f'%{search}%')).all()
+        records = StudentRecord.query.filter(
+            (StudentRecord.name.ilike(f'%{search}%')) |
+            (StudentRecord.lrn.ilike(f'%{search}%'))
+        ).all()
     else:
         records = StudentRecord.query.all()
     return render_template('view_records.html', records=records)
@@ -42,6 +46,7 @@ def view_profile(student_id):
 @main.route('/add_student', methods=['GET', 'POST'])
 def add_student():
     if request.method == 'POST':
+        lrn = request.form['lrn']
         name = request.form['name']
         grade_section = request.form['grade_section']
         birthdate = datetime.strptime(request.form['birthdate'], '%Y-%m-%d')
@@ -59,6 +64,7 @@ def add_student():
         contact_number = request.form['contact_number']
 
         new_record = StudentRecord(
+            lrn=lrn,
             name=name,
             grade_section=grade_section,
             birthdate=birthdate,
@@ -133,7 +139,10 @@ def add_report():
         "Gang and Group-Related Offenses"
     ]
     if query:
-        students = StudentRecord.query.filter(StudentRecord.name.ilike(f'%{query}%')).all()
+        students = StudentRecord.query.filter(
+            (StudentRecord.name.ilike(f'%{query}%')) |
+            (StudentRecord.lrn.ilike(f'%{query}%'))
+        ).all()
     if request.method == 'POST':
         student_id = request.form['student_id']
         offense_type = request.form['offense_type']

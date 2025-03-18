@@ -5,12 +5,13 @@
 <a href="{{ url_for('main.add_student') }}" class="capsule-button">Add New Student</a>
 
 <form method="GET" action="{{ url_for('main.view_records') }}">
-    <input class="searchbox" type="text" name="search" placeholder="Search by name" value="{{ request.args.get('search', '') }}">
+    <input class="searchbox" type="text" name="search" placeholder="Search by name or LRN" value="{{ request.args.get('search', '') }}">
     <button type="submit">Search</button>
 </form>
 
 <table>
     <tr>
+        <th>LRN</th>
         <th>Name</th>
         <th>Grade & Section</th>
         <th>Birthday</th>
@@ -19,6 +20,7 @@
     </tr>
     {% for record in records %}
     <tr>
+        <td>{{ record.lrn }}</td>
         <td>{{ record.name }}</td>
         <td>{{ record.grade_section }}</td>
         <td>{{ record.birthdate }}</td>

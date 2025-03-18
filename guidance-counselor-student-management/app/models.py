@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 class StudentRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    lrn = db.Column(db.String(12), nullable=False, unique=True)
     name = db.Column(db.String(100), nullable=False)
     grade_section = db.Column(db.String(50), nullable=False)
     birthdate = db.Column(db.Date, nullable=False)
