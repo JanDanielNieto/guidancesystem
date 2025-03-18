@@ -7,20 +7,22 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <header>
-        <h1>BSSAA Guidance Hub</h1>
-        <nav>
-        <a href="{{ url_for('main.dashboard') }}">Home</a>
-        <a href="{{ url_for('main.registration') }}">Logout</a>      
-        </nav>
-    </header>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
-    <footer>
-        <p>&copy; {{ current_year }} Guidance Counselor's Office</p>
-    </footer>
+    <div class="wrapper">
+        <header>
+            <h1>BSSAA Guidance Hub</h1>
+            <nav>
+                <a href="{{ url_for('main.dashboard') }}">Home</a>
+                <a href="{{ url_for('main.registration') }}">Logout</a>      
+            </nav>
+        </header>
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+        <footer>
+            <p>&copy; {{ current_year }} Guidance Counselor's Office</p>
+        </footer>
+    </div>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>
