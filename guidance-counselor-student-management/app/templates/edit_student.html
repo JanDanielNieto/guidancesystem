@@ -52,18 +52,29 @@
         <div class="form-section">
             <label for="mother_name">Mother's Name:</label>
             <input class="textbox-length" type="text" id="mother_name" name="mother_name" value="{{ student.mother_name }}" required>
-            <label for="contact_number">Contact No.:</label>
-            <input class="textbox-length" type="text" id="contact_number" name="contact_number" value="{{ student.contact_number }}" pattern="\d{11}">
+            <label for="mother_contact">Mother's Contact No.:</label>
+            <input class="textbox-length" type="text" id="mother_contact" name="mother_contact" value="{{ student.mother_contact }}" pattern="\d{11}">
         </div>
 
         <div class="form-section">
             <label for="father_name">Father's Name:</label>
             <input class="textbox-length" type="text" id="father_name" name="father_name" value="{{ student.father_name }}" required>
-            <label for="contact_number">Contact No.:</label>
-            <input class="textbox-length" type="text" id="contact_number" name="contact_number" value="{{ student.contact_number }}" pattern="\d{11}">
+            <label for="father_contact">Father's Contact No.:</label>
+            <input class="textbox-length" type="text" id="father_contact" name="father_contact" value="{{ student.father_contact }}" pattern="\d{11}">
         </div>
         <label for="guardian_name">Guardian's Name (if no parent):</label>
-        <input class="textboxsmall" type="text" id="guardian_name" name="guardian_name" value="{{ student.guardian_name }}"> 
+        <input class="textboxsmall" type="text" id="guardian_name" name="guardian_name" value="{{ student.guardian_name }}">
+        <label for="guardian_contact">Guardian's Contact No.:</label>
+        <input class="textbox-length" type="text" id="guardian_contact" name="guardian_contact" value="{{ student.guardian_contact }}" pattern="\d{11}">
+    </div>
+
+    <div class="form-section">
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="male" {% if student.gender == 'male' %}selected{% endif %}>Male</option>
+            <option value="female" {% if student.gender == 'female' %}selected{% endif %}>Female</option>
+            <option value="other" {% if student.gender == 'other' %}selected{% endif %}>Other</option>
+        </select>
     </div>
 
     <button type="submit">Save Changes</button>
