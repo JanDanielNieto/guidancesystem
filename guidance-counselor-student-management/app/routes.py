@@ -30,6 +30,7 @@ def edit_student(id):
         student.grade_section = request.form['grade_section']
         student.birthdate = datetime.strptime(request.form['birthdate'], '%Y-%m-%d')
         student.age = request.form['age']
+        student.gender = request.form['gender']
         student.mother_tongue = request.form['mother_tongue']
         student.ethnic_group = request.form['ethnic_group']
         student.religion = request.form['religion']
@@ -38,9 +39,11 @@ def edit_student(id):
         student.address_city = request.form['address_city']
         student.address_province = request.form['address_province']
         student.mother_name = request.form['mother_name']
+        student.mother_contact = request.form['mother_contact']  # Add this line
         student.father_name = request.form['father_name']
+        student.father_contact = request.form['father_contact']  # Add this line
         student.guardian_name = request.form['guardian_name']
-        student.contact_number = request.form['contact_number']
+        student.guardian_contact = request.form['guardian_contact']  # Add this line
         db.session.commit()
         flash('Student record updated successfully', 'success')
         return redirect(url_for('main.manage_students'))
@@ -66,6 +69,7 @@ def add_student():
         grade_section = request.form['grade_section']
         birthdate = datetime.strptime(request.form['birthdate'], '%Y-%m-%d')
         age = request.form['age']
+        gender = request.form['gender']
         mother_tongue = request.form['mother_tongue']
         ethnic_group = request.form['ethnic_group']
         religion = request.form['religion']
@@ -74,9 +78,11 @@ def add_student():
         address_city = request.form['address_city']
         address_province = request.form['address_province']
         mother_name = request.form['mother_name']
+        mother_contact = request.form['mother_contact']  # Add this line
         father_name = request.form['father_name']
+        father_contact = request.form['father_contact']  # Add this line
         guardian_name = request.form['guardian_name']
-        contact_number = request.form['contact_number']
+        guardian_contact = request.form['guardian_contact']  # Add this line
 
         new_record = StudentRecord(
             lrn=lrn,
@@ -84,6 +90,7 @@ def add_student():
             grade_section=grade_section,
             birthdate=birthdate,
             age=age,
+            gender=gender,
             mother_tongue=mother_tongue,
             ethnic_group=ethnic_group,
             religion=religion,
@@ -92,9 +99,11 @@ def add_student():
             address_city=address_city,
             address_province=address_province,
             mother_name=mother_name,
+            mother_contact=mother_contact,  # Add this line
             father_name=father_name,
+            father_contact=father_contact,  # Add this line
             guardian_name=guardian_name,
-            contact_number=contact_number
+            guardian_contact=guardian_contact  # Add this line
         )
         db.session.add(new_record)
         db.session.commit()
@@ -103,6 +112,8 @@ def add_student():
         return redirect(url_for('main.manage_students'))
 
     return render_template('add_new_student.html')
+
+
 
 @main.route('/manage_records')
 def manage_records():

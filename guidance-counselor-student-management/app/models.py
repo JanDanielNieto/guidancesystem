@@ -9,6 +9,7 @@ class StudentRecord(db.Model):
     grade_section = db.Column(db.String(50), nullable=False)
     birthdate = db.Column(db.Date, nullable=False)
     age = db.Column(db.Integer, nullable=False)
+    gender = db.Column(db.String(10), nullable=False)
     mother_tongue = db.Column(db.String(50), nullable=False)
     ethnic_group = db.Column(db.String(50), nullable=True)
     religion = db.Column(db.String(50), nullable=False)
@@ -17,16 +18,17 @@ class StudentRecord(db.Model):
     address_city = db.Column(db.String(100), nullable=False)
     address_province = db.Column(db.String(100), nullable=False)
     mother_name = db.Column(db.String(100), nullable=False)
+    mother_contact = db.Column(db.String(15), nullable=True)  # Add this line
     father_name = db.Column(db.String(100), nullable=False)
+    father_contact = db.Column(db.String(15), nullable=True)  # Add this line
     guardian_name = db.Column(db.String(100), nullable=True)
-    contact_number = db.Column(db.String(15), nullable=True)
+    guardian_contact = db.Column(db.String(15), nullable=True)  # Add this line
     reason = db.Column(db.String(200), nullable=True)
     type_of_offense = db.Column(db.String(100), nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
     additional_info = db.Column(db.Text, nullable=True)
     profile_picture = db.Column(db.String(100), nullable=True)
     offenses = db.relationship('OffenseRecord', backref='student', lazy=True)
-
 class OffenseRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student_record.id'), nullable=False)

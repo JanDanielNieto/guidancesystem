@@ -26,9 +26,14 @@
     </div>
     <div class="profile-details2">
         <p><strong>Father's Name:</strong> {{ student.father_name }}</p>
+        <p><strong>Father's Contact:</strong> {{ student.father_contact }}</p> <!-- Add this line -->
         <p><strong>Mother's Name:</strong> {{ student.mother_name }}</p>
+        <p><strong>Mother's Contact:</strong> {{ student.mother_contact }}</p> <!-- Add this line -->
+        <p><strong>Guardian's Name:</strong> {{ student.guardian_name }}</p> <!-- Add this line -->
+        <p><strong>Guardian's Contact:</strong> {{ student.guardian_contact }}</p> <!-- Add this line -->
         <p><strong>Date and Time:</strong> {{ student.date_time }}</p>
     </div>
+</div>
 
 <div class="proftable">
 <h3>Offense History</h3>
@@ -49,7 +54,6 @@
     </tr>
     {% endfor %}
 </table>
-</div>
 </div>
 
 {% endblock %}
