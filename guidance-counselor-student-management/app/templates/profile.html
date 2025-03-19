@@ -15,20 +15,23 @@
     <div class="profile-details3">
         <h4><strong>Name:</strong> {{ student.name }}</h4>
         <h4>LRN: {{ student.lrn }}</h4>
+        <h4>Gender: {{ student.gender }}</h4>
     </div>
 </div>
 
 <div class="profile-container">
-    <div class="profile-details2">
+    <div class="profile-details">
         <p><strong>Grade & Section:</strong> {{ student.grade_section }}</p>
         <p><strong>Birthday:</strong> {{ student.birthdate }}</p>
         <p><strong>Address:</strong> {{ student.address_house_no }}, {{ student.address_barangay }}, {{ student.address_city }}, {{ student.address_province }}</p>
     </div>
-    <div class="profile-details2">
+    <div class="profile-details">
         <p><strong>Father's Name:</strong> {{ student.father_name }}</p>
         <p><strong>Father's Contact:</strong> {{ student.father_contact }}</p> <!-- Add this line -->
         <p><strong>Mother's Name:</strong> {{ student.mother_name }}</p>
         <p><strong>Mother's Contact:</strong> {{ student.mother_contact }}</p> <!-- Add this line -->
+    </div>
+    <div class="profile-details">
         <p><strong>Guardian's Name:</strong> {{ student.guardian_name }}</p> <!-- Add this line -->
         <p><strong>Guardian's Contact:</strong> {{ student.guardian_contact }}</p> <!-- Add this line -->
         <p><strong>Date and Time:</strong> {{ student.date_time }}</p>
