@@ -5,6 +5,9 @@ from flask_uploads import UploadSet, IMAGES, configure_uploads
 from werkzeug.utils import secure_filename
 import os
 from flask import current_app as app
+from .models import populate_database_from_excel
+
+ALLOWED_EXTENSIONS = {'xlsx'}
 
 main = Blueprint('main', __name__)
 
@@ -274,3 +277,25 @@ def login():
         flash('Logged in successfully!')
         return redirect(url_for('main.dashboard'))
     return render_template('login.html')
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@main.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            populate_database_from_excel(file_path)
+            flash('Database populated successfully')
+            return redirect(url_for('main.manage_students'))
+    return render_template('upload.html')

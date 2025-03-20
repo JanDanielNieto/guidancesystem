@@ -11,16 +11,25 @@
         <label for="name">Name:</label>
         <input class="textbox-length" type="text" id="name" name="name" value="{{ student.name }}" required>
 
-        <label for="grade_section">Grade & Section:</label>
-        <input class="textboxsmall" type="text" id="grade_section" name="grade_section" value="{{ student.grade_section }}" required>
+        <label for="grade">Grade:</label>
+        <select class="textboxsmall" id="grade" name="grade" required>
+            <option value="Grade 10" {% if student.grade == 'Grade 10' %}selected{% endif %}>Grade 10</option>
+            <option value="Grade 9" {% if student.grade == 'Grade 9' %}selected{% endif %}>Grade 9</option>
+            <option value="Grade 8" {% if student.grade == 'Grade 8' %}selected{% endif %}>Grade 8</option>
+            <option value="Grade 7" {% if student.grade == 'Grade 7' %}selected{% endif %}>Grade 7</option>
+        </select>
 
+        <label for="section">Section:</label>
+        <input class="textboxsmall" type="text" id="section" name="section" value="{{ student.section }}" required>
     </div>
+
     <div class="form-section">
         <label for="birthdate">Birthdate:</label>
         <input class="textboxsmall" type="date" id="birthdate" name="birthdate" value="{{ student.birthdate }}" required>
 
         <label for="age">Age:</label>
         <input class="textbox-short" type="number" id="age" name="age" value="{{ student.age }}" required>
+
         <label for="gender">Gender:</label>
         <select id="gender" name="gender" required>
             <option value="male" {% if student.gender == 'male' %}selected{% endif %}>Male</option>
@@ -28,6 +37,7 @@
             <option value="other" {% if student.gender == 'other' %}selected{% endif %}>Other</option>
         </select>
     </div>
+
     <div class="form-section">
         <label for="mother_tongue">Mother Tongue:</label>
         <input class="textboxsmall" type="text" id="mother_tongue" name="mother_tongue" value="{{ student.mother_tongue }}" required>
@@ -50,10 +60,8 @@
         <label for="address_city">Municipality/City:</label>
         <input class="textboxsmall" type="text" id="address_city" name="address_city" value="{{ student.address_city }}" required>
 
-        <div class="form-section">
-            <label for="address_province">Province:</label>
-        <input class="textboxsmall" type="text" id="address_province" name="address_province" required>
-        </div>  
+        <label for="address_province">Province:</label>
+        <input class="textboxsmall" type="text" id="address_province" name="address_province" value="{{ student.address_province }}" required>
     </div>
 
     <h3>Parent/Guardian Info:</h3>
