@@ -6,7 +6,7 @@ Flask-Login
 Flask-Uploads
 python-dotenv
 gunicorn
-werkzeug
+werkzeug==0.16.0
 datetime
 pandas
 openpyxl
