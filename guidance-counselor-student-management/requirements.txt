@@ -1,6 +1,5 @@
 Flask
 flask-sqlalchemy~=3.1.1
-SQLAlchemy~=2.0.27
 Flask-WTF
 Flask-Migrate
 Flask-Login
