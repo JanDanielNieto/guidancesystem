@@ -5,3 +5,4 @@ Flask-Migrate
 Flask-Login
 Flask-Uploads
 python-dotenv
+gunicorn
