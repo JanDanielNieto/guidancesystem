@@ -3,9 +3,11 @@ from app.models import db, StudentRecord, OffenseRecord, User
 from datetime import datetime
 from flask_uploads import UploadSet, IMAGES, configure_uploads
 from werkzeug.utils import secure_filename
+from sqlalchemy import func
 import os
 from flask import current_app as app
 from .models import populate_database_from_excel
+from app.extensions import db
 
 ALLOWED_EXTENSIONS = {'xlsx'}
 
@@ -307,25 +309,33 @@ def upload_file():
             return redirect(url_for('main.manage_students'))
     return render_template('upload.html')
 
-from flask import render_template
-from .models import StudentRecord, OffenseRecord
 
-from flask import render_template
-from .models import StudentRecord, OffenseRecord
-from sqlalchemy import func
 
 @main.route('/analytics')
 def analytics():
     total_students = StudentRecord.query.count()
-    
-    # Query for the number of offenses per student
-    offenses = db.session.query(StudentRecord.name, func.count(OffenseRecord.id).label('offense_count')).join(OffenseRecord).group_by(StudentRecord.name).all()
-    student_names = [offense[0] for offense in offenses]
-    offense_counts = [offense[1] for offense in offenses]
 
-    # Query for the types of offenses
-    offense_types = db.session.query(OffenseRecord.offense_type, func.count(OffenseRecord.id).label('type_count')).group_by(OffenseRecord.offense_type).all()
-    offense_labels = [offense[0] for offense in offense_types]
-    offense_type_counts = [offense[1] for offense in offense_types]
+    # Data for types of offenses chart
+    offense_type_data = db.session.query(
+        OffenseRecord.offense_type,
+        func.count(OffenseRecord.id).label('offense_type_count')
+    ).group_by(OffenseRecord.offense_type).all()
+    offense_labels = [data.offense_type for data in offense_type_data]
+    offense_type_counts = [data.offense_type_count for data in offense_type_data]
 
-    return render_template('analytics.html', total_students=total_students, student_names=student_names, offense_counts=offense_counts, offense_labels=offense_labels, offense_type_counts=offense_type_counts)
+    # Data for number of students with offenses chart
+    students_with_offenses_data = db.session.query(
+        StudentRecord.name,
+        func.count(OffenseRecord.id).label('offense_count')
+    ).join(OffenseRecord).group_by(StudentRecord.name).having(func.count(OffenseRecord.id) > 0).all()
+    students_with_offenses = [data.name for data in students_with_offenses_data]
+    students_with_offenses_counts = [data.offense_count for data in students_with_offenses_data]
+
+    return render_template(
+        'analytics.html',
+        total_students=total_students,
+        offense_labels=offense_labels,
+        offense_type_counts=offense_type_counts,
+        students_with_offenses=students_with_offenses,
+        students_with_offenses_counts=students_with_offenses_counts
+    )

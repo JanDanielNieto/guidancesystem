@@ -35,7 +35,7 @@ class StudentRecord(db.Model):
 class OffenseRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student_record.id'), nullable=False)
-    offense_type = db.Column(db.String(100), nullable=True)
+    offense_type = db.Column(db.String(100), nullable=True)  # Added this line
     reason = db.Column(db.String(200), nullable=True)
     additional_info = db.Column(db.Text, nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
