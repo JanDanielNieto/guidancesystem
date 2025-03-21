@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import func
 import os
 from flask import current_app as app
-from .models import populate_database_from_excel
+from .models import populate_database_from_excel, OffenseRecord, db
 from app.extensions import db
 
 ALLOWED_EXTENSIONS = {'xlsx'}
@@ -125,8 +125,6 @@ def add_student():
 
     return render_template('add_new_student.html')
 
-
-
 @main.route('/manage_records')
 def manage_records():
     search = request.args.get('search')
@@ -195,13 +193,12 @@ def add_offense(student_id):
 def edit_offense(offense_id):
     offense = OffenseRecord.query.get_or_404(offense_id)
     if request.method == 'POST':
-        offense.offense_type = request.form['offense_type']
         offense.reason = request.form['reason']
-        offense.additional_info = request.form['additional_info']
+        offense.offense_type = request.form['offense_type']
+        offense.date_time = datetime.strptime(request.form['date_time'], '%Y-%m-%dT%H:%M:%S')
         db.session.commit()
-        flash('Offense record updated successfully', 'success')
+        flash('Offense record updated successfully!', 'success')
         return redirect(url_for('main.manage_records'))
-
     return render_template('edit_offense.html', offense=offense)
 
 @main.route('/delete_offense/<int:offense_id>', methods=['POST'])
@@ -308,8 +305,6 @@ def upload_file():
             flash('Database populated successfully')
             return redirect(url_for('main.manage_students'))
     return render_template('upload.html')
-
-
 
 @main.route('/analytics')
 def analytics():
