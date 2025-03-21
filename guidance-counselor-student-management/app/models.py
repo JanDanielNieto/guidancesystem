@@ -52,6 +52,11 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+from datetime import datetime, date
+import pandas as pd
+from .extensions import db
+from .models import StudentRecord
+
 def populate_database_from_excel(file_path):
     # Read the Excel file
     excel_data = pd.ExcelFile(file_path)
@@ -65,6 +70,11 @@ def populate_database_from_excel(file_path):
         for index, row in data.iterrows():
             # Extract the values from the row
             lrn = row.get('LRN', None)
+            if pd.notna(lrn):
+                lrn = str(int(lrn)).zfill(12)  # Ensure LRN is 12 digits with no .0 at the end
+            else:
+                lrn = None
+
             name = row.get('NAME', None)
             section = row.get('Section', None)
             birthdate = row.get('BIRTH DATE (mm/dd/yyyy)', None)
