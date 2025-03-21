@@ -4,54 +4,27 @@
 <h2>Analytics Page</h2>
 <h2>Total Students: {{ total_students }}</h2>
 
-<div class="chart-container">
-    <div>
+<div class="chart-container" style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+    <div style="width: 45%;">
         <h3>Offense Distribution</h3>
-        <canvas id="offenseChart"></canvas>
+        <canvas id="offenseChart" width="200" height="200"></canvas>
     </div>
-    <div>
-        <h3>Types of Offenses</h3>
-        <canvas id="offenseTypeChart"></canvas>
+    <div style="width: 45%;">
+        <h3>Number of Students with Offenses</h3>
+        <canvas id="studentsWithOffensesChart" width="200" height="200"></canvas>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var studentNames = "{{ student_names|tojson|safe }}";
-    var offenseCounts = "{{ offense_counts|tojson|safe }}";
-    var offenseLabels = "{{ offense_labels|tojson|safe }}";
-    var offenseTypeCounts = "{{ offense_type_counts|tojson|safe }}";
-
-    // Bar chart for number of offenses per student
-    var ctx = document.getElementById('offenseChart').getContext('2d');
-    var offenseChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: studentNames,
-            datasets: [{
-                label: 'Number of Offenses',
-                data: offenseCounts,
-                backgroundColor: '#42a5f5',
-                borderColor: '#1e88e5',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            responsive: true,
-            scales: {
-                x: {
-                    beginAtZero: true,
-                },
-                y: {
-                    beginAtZero: true,
-                }
-            }
-        }
-    });
+    var offenseLabels = {{ offense_labels|tojson|safe }};
+    var offenseTypeCounts = {{ offense_type_counts|tojson|safe }};
+    var studentsWithOffenses = {{ students_with_offenses|tojson|safe }};
+    var studentsWithOffensesCounts = {{ students_with_offenses_counts|tojson|safe }};
 
     // Pie chart for types of offenses
-    var ctx2 = document.getElementById('offenseTypeChart').getContext('2d');
-    var offenseTypeChart = new Chart(ctx2, {
+    var ctx = document.getElementById('offenseChart').getContext('2d');
+    var offenseChart = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: offenseLabels,
@@ -74,8 +47,49 @@
             }]
         },
         options: {
-            maintainAspectRatio: false,
-            responsive: true
+            maintainAspectRatio: true,
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            var label = tooltipItem.label || '';
+                            var value = tooltipItem.raw || 0;
+                            var total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
+                            var percentage = ((value / total) * 100).toFixed(2);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Bar chart for number of students with offenses
+    var ctx3 = document.getElementById('studentsWithOffensesChart').getContext('2d');
+    var studentsWithOffensesChart = new Chart(ctx3, {
+        type: 'bar',
+        data: {
+            labels: studentsWithOffenses,
+            datasets: [{
+                label: 'Number of Students with Offenses',
+                data: studentsWithOffensesCounts,
+                backgroundColor: '#ff6384',
+                borderColor: '#ff6384',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: true,
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                },
+                y: {
+                    beginAtZero: true,
+                }
+            }
         }
     });
 </script>
