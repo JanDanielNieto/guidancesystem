@@ -306,3 +306,26 @@ def upload_file():
             flash('Database populated successfully')
             return redirect(url_for('main.manage_students'))
     return render_template('upload.html')
+
+from flask import render_template
+from .models import StudentRecord, OffenseRecord
+
+from flask import render_template
+from .models import StudentRecord, OffenseRecord
+from sqlalchemy import func
+
+@main.route('/analytics')
+def analytics():
+    total_students = StudentRecord.query.count()
+    
+    # Query for the number of offenses per student
+    offenses = db.session.query(StudentRecord.name, func.count(OffenseRecord.id).label('offense_count')).join(OffenseRecord).group_by(StudentRecord.name).all()
+    student_names = [offense[0] for offense in offenses]
+    offense_counts = [offense[1] for offense in offenses]
+
+    # Query for the types of offenses
+    offense_types = db.session.query(OffenseRecord.offense_type, func.count(OffenseRecord.id).label('type_count')).group_by(OffenseRecord.offense_type).all()
+    offense_labels = [offense[0] for offense in offense_types]
+    offense_type_counts = [offense[1] for offense in offense_types]
+
+    return render_template('analytics.html', total_students=total_students, student_names=student_names, offense_counts=offense_counts, offense_labels=offense_labels, offense_type_counts=offense_type_counts)

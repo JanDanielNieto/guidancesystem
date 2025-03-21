@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Analytics Page</h2>
+<h2>Total Students: {{ total_students }}</h2>
+
+<div class="chart-container">
+    <div>
+        <h3>Offense Distribution</h3>
+        <canvas id="offenseChart"></canvas>
+    </div>
+    <div>
+        <h3>Types of Offenses</h3>
+        <canvas id="offenseTypeChart"></canvas>
+    </div>
+</div>
+
+<script>
+    var studentNames = "{{ student_names|tojson|safe }}";
+    var offenseCounts = "{{ offense_counts|tojson|safe }}";
+    var offenseLabels = "{{ offense_labels|tojson|safe }}";
+    var offenseTypeCounts = "{{ offense_type_counts|tojson|safe }}";
+
+    // Bar chart for number of offenses per student
+    var ctx = document.getElementById('offenseChart').getContext('2d');
+    var offenseChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: studentNames,
+            datasets: [{
+                label: 'Number of Offenses',
+                data: offenseCounts,
+                backgroundColor: '#42a5f5',
+                borderColor: '#1e88e5',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                },
+                y: {
+                    beginAtZero: true,
+                }
+            }
+        }
+    });
+
+    // Pie chart for types of offenses
+    var ctx2 = document.getElementById('offenseTypeChart').getContext('2d');
+    var offenseTypeChart = new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: offenseLabels,
+            datasets: [{
+                label: 'Types of Offenses',
+                data: offenseTypeCounts,
+                backgroundColor: [
+                    '#ff6384',
+                    '#36a2eb',
+                    '#cc65fe',
+                    '#ffce56',
+                    '#ff9f40',
+                    '#ffcd56',
+                    '#4bc0c0',
+                    '#9966ff',
+                    '#ff6384',
+                    '#36a2eb'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true
+        }
+    });
+</script>
+{% endblock %}
