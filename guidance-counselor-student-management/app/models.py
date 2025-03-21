@@ -5,45 +5,46 @@ from .extensions import db
 
 class StudentRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    lrn = db.Column(db.String(12), nullable=False, unique=True)
-    name = db.Column(db.String(100), nullable=False)
-    grade = db.Column(db.String(20), nullable=False)
-    section = db.Column(db.String(50), nullable=False)
-    birthdate = db.Column(db.Date, nullable=False)
-    age = db.Column(db.Integer, nullable=False)
-    gender = db.Column(db.String(10), nullable=False)
-    mother_tongue = db.Column(db.String(50), nullable=False)
+    lrn = db.Column(db.String(12), nullable=True, unique=True)
+    name = db.Column(db.String(100), nullable=True)
+    grade = db.Column(db.String(20), nullable=True)
+    section = db.Column(db.String(50), nullable=True)
+    birthdate = db.Column(db.Date, nullable=True)
+    age = db.Column(db.Integer, nullable=True)
+    gender = db.Column(db.String(10), nullable=True)
+    mother_tongue = db.Column(db.String(50), nullable=True)
     ethnic_group = db.Column(db.String(50), nullable=True)
-    religion = db.Column(db.String(50), nullable=False)
-    address_house_no = db.Column(db.String(100), nullable=True)  # Changed to nullable=True
-    address_barangay = db.Column(db.String(100), nullable=False)
-    address_city = db.Column(db.String(100), nullable=False)
-    address_province = db.Column(db.String(100), nullable=True)  # Changed to nullable=True
-    mother_name = db.Column(db.String(100), nullable=False)
+    religion = db.Column(db.String(50), nullable=True)
+    address_house_no = db.Column(db.String(100), nullable=True)
+    address_barangay = db.Column(db.String(100), nullable=True)
+    address_city = db.Column(db.String(100), nullable=True)
+    address_province = db.Column(db.String(100), nullable=True)
+    mother_name = db.Column(db.String(100), nullable=True)
     mother_contact = db.Column(db.String(15), nullable=True)
-    father_name = db.Column(db.String(100), nullable=False)
+    father_name = db.Column(db.String(100), nullable=True)
     father_contact = db.Column(db.String(15), nullable=True)
     guardian_name = db.Column(db.String(100), nullable=True)
     guardian_contact = db.Column(db.String(15), nullable=True)
     reason = db.Column(db.String(200), nullable=True)
     type_of_offense = db.Column(db.String(100), nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
-    additional_info = db.Column(db.Text, nullable=True)
+    additional_info = db.Column(db.String, nullable=True)
     profile_picture = db.Column(db.String(100), nullable=True)
     offenses = db.relationship('OffenseRecord', backref='student', lazy=True)
+
 class OffenseRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student_record.id'), nullable=False)
-    offense_type = db.Column(db.String(100), nullable=False)
-    reason = db.Column(db.String(200), nullable=False)
+    offense_type = db.Column(db.String(100), nullable=True)
+    reason = db.Column(db.String(200), nullable=True)
     additional_info = db.Column(db.Text, nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    name = db.Column(db.String(100), nullable=True)
+    email = db.Column(db.String(100), unique=True, nullable=True)
+    password_hash = db.Column(db.String(128), nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -51,102 +52,39 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-
-
 def populate_database_from_excel(file_path):
-    sheets = {
-        'Grade 10': {
-            'lrn': 'LRN',
-            'name': 'NAME',
-            'section': 'Section',
-            'birthdate': 'BIRTH DATE (mm/dd/yyyy)',
-            'age': 'Age as of October 31',
-            'gender': 'SEX',
-            'mother_tongue': 'MOTHER TONGUE',
-            'ethnic_group': 'IP',
-            'religion': 'RELIGION',
-            'address_house_no': 'House No',  # Update this if necessary
-            'address_barangay': 'Barangay',
-            'address_city': 'Municipality/City',
-            'address_province': 'Province',  # Update this if necessary
-            'mother_name': "Mother's Maiden Name(Last Name, First Name, Middle Name)",
-            'mother_contact': 'Mother Contact',  # Update this if necessary
-            'father_name': "Father's Name(Last Name, First Name, Middle Name)",
-            'father_contact': 'Father Contact',  # Update this if necessary
-            'guardian_name': 'Guardian Name',
-            'guardian_contact': 'Contact Number of Parent or Guardian'
-        },
-        'Grade 9': {
-            'lrn': 'LRN',
-            'name': 'NAME',
-            'section': 'Section',
-            'birthdate': 'BIRTH DATE (mm/dd/yyyy)',
-            'age': 'Age as of October 31',
-            'gender': 'SEX',
-            'mother_tongue': 'MOTHER TONGUE',
-            'ethnic_group': 'IP',
-            'religion': 'RELIGION',
-            'address_house_no': 'House No',  # Update this if necessary
-            'address_barangay': 'Barangay',
-            'address_city': 'Municipality/City',
-            'address_province': 'Province',  # Update this if necessary
-            'mother_name': "Mother's Maiden Name(Last Name, First Name, Middle Name)",
-            'mother_contact': 'Mother Contact',  # Update this if necessary
-            'father_name': "Father's Name(Last Name, First Name, Middle Name)",
-            'father_contact': 'Father Contact',  # Update this if necessary
-            'guardian_name': 'Guardian Name',
-            'guardian_contact': 'Contact Number of Parent or Guardian'
-        },
-        'Grade 8': {
-            'lrn': 'LRN',
-            'name': 'NAME',
-            'section': 'Section',
-            'birthdate': 'BIRTH DATE (mm/dd/yyyy)',
-            'age': 'Age as of October 31',
-            'gender': 'SEX',
-            'mother_tongue': 'MOTHER TONGUE',
-            'ethnic_group': 'IP',
-            'religion': 'RELIGION',
-            'address_house_no': 'House No',  # Update this if necessary
-            'address_barangay': 'Barangay',
-            'address_city': 'Municipality/City',
-            'address_province': 'Province',  # Update this if necessary
-            'mother_name': "Mother's Maiden Name(Last Name, First Name, Middle Name)",
-            'mother_contact': 'Mother Contact',  # Update this if necessary
-            'father_name': "Father's Name(Last Name, First Name, Middle Name)",
-            'father_contact': 'Father Contact',  # Update this if necessary
-            'guardian_name': 'Guardian Name',
-            'guardian_contact': 'Contact Number of Parent or Guardian'
-        },
-        'Grade 7': {
-            'lrn': 'LRN',
-            'name': 'NAME',
-            'section': 'Section',
-            'birthdate': 'BIRTH DATE (mm/dd/yyyy)',
-            'age': 'Age as of October 31',
-            'gender': 'SEX',
-            'mother_tongue': 'MOTHER TONGUE',
-            'ethnic_group': 'IP',
-            'religion': 'RELIGION',
-            'address_house_no': 'House No',  # Update this if necessary
-            'address_barangay': 'Barangay',
-            'address_city': 'Municipality/City',
-            'address_province': 'Province',  # Update this if necessary
-            'mother_name': "Mother's Maiden Name(Last Name, First Name, Middle Name)",
-            'mother_contact': 'Mother Contact',  # Update this if necessary
-            'father_name': "Father's Name(Last Name, First Name, Middle Name)",
-            'father_contact': 'Father Contact',  # Update this if necessary
-            'guardian_name': 'Guardian Name',
-            'guardian_contact': 'Contact Number of Parent or Guardian'
-        }
-    }
-
-    for sheet, columns in sheets.items():
-        grade = sheet.split()[1]  # Extract the grade from the sheet name
-        data = pd.read_excel(file_path, sheet_name=sheet)
-        print(f"Columns in {sheet}: {data.columns.tolist()}")  # Print the column names
+    # Read the Excel file
+    excel_data = pd.ExcelFile(file_path)
+    
+    # Iterate over each sheet in the Excel file
+    for sheet_name in excel_data.sheet_names:
+        data = pd.read_excel(file_path, sheet_name=sheet_name)
+        print(f"Columns in {sheet_name}: {data.columns.tolist()}")  # Print the column names
+        
+        # Iterate over each row in the sheet
         for index, row in data.iterrows():
-            birthdate = row[columns['birthdate']]
+            # Extract the values from the row
+            lrn = row.get('LRN', None)
+            name = row.get('NAME', None)
+            section = row.get('Section', None)
+            birthdate = row.get('BIRTH DATE (mm/dd/yyyy)', None)
+            age = row.get('Age as of October 31', None)
+            gender = row.get('SEX', None)
+            mother_tongue = row.get('MOTHER TONGUE', None)
+            ethnic_group = row.get('IP', None)
+            religion = row.get('RELIGION', None)
+            address_house_no = row.get('House No', None)
+            address_barangay = row.get('Barangay', None)
+            address_city = row.get('Municipality/City', None)
+            address_province = row.get('Province', None)
+            mother_name = row.get("Mother's Maiden Name(Last Name, First Name, Middle Name)", None)
+            mother_contact = row.get('Mother Contact', None)
+            father_name = row.get("Father's Name(Last Name, First Name, Middle Name)", None)
+            father_contact = row.get('Father Contact', None)
+            guardian_name = row.get('Guardian Name', None)
+            guardian_contact = row.get('Contact Number of Parent or Guardian', None)
+
+            # Convert birthdate to date object
             if isinstance(birthdate, str):
                 try:
                     birthdate = datetime.strptime(birthdate, '%m/%d/%Y').date()
@@ -159,34 +97,11 @@ def populate_database_from_excel(file_path):
             else:
                 birthdate = None  # Handle unexpected types
 
-            # Ensure required fields are not None
-            lrn = row.get(columns['lrn'], None)
-            name = row.get(columns['name'], None)
-            section = row.get(columns['section'], None)
-            age = row.get(columns['age'], None)
-            gender = row.get(columns['gender'], None)
-            mother_tongue = row.get(columns['mother_tongue'], None)
-            ethnic_group = row.get(columns['ethnic_group'], None)
-            religion = row.get(columns['religion'], None)
-            address_house_no = row.get(columns['address_house_no'], None)
-            address_barangay = row.get(columns['address_barangay'], None)
-            address_city = row.get(columns['address_city'], None)
-            address_province = row.get(columns['address_province'], None)
-            mother_name = row.get(columns['mother_name'], None)
-            mother_contact = row.get(columns['mother_contact'], None)
-            father_name = row.get(columns['father_name'], None)
-            father_contact = row.get(columns['father_contact'], None)
-            guardian_name = row.get(columns['guardian_name'], None)
-            guardian_contact = row.get(columns['guardian_contact'], None)
-
-            # Skip rows with missing required fields
-            if not all([lrn, name, section, age, gender, religion, ethnic_group]):
-                continue
-
+            # Create a new StudentRecord object
             student = StudentRecord(
                 lrn=lrn,
                 name=name,
-                grade=grade,
+                grade=sheet_name.split()[1],  # Extract the grade from the sheet name
                 section=section,
                 birthdate=birthdate,
                 age=age,
