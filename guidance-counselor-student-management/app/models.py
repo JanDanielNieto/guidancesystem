@@ -52,10 +52,10 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-from datetime import datetime, date
-import pandas as pd
-from .extensions import db
-from .models import StudentRecord
+def calculate_age(birthdate):
+    today = date.today()
+    age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+    return age
 
 def populate_database_from_excel(file_path):
     # Read the Excel file
@@ -106,6 +106,10 @@ def populate_database_from_excel(file_path):
                 birthdate = birthdate
             else:
                 birthdate = None  # Handle unexpected types
+
+            # Calculate age if birthdate is available
+            if birthdate:
+                age = calculate_age(birthdate)
 
             # Create a new StudentRecord object
             student = StudentRecord(

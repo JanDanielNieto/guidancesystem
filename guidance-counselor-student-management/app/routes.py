@@ -19,9 +19,16 @@ def index():
 def dashboard():
     return render_template('dashboard.html')
 
-@main.route('/manage_students')
+@main.route('/manage_students', methods=['GET', 'POST'])
 def manage_students():
-    students = StudentRecord.query.all()
+    search_query = request.args.get('search', '')
+    if search_query:
+        students = StudentRecord.query.filter(
+            (StudentRecord.name.ilike(f'%{search_query}%')) |
+            (StudentRecord.lrn.ilike(f'%{search_query}%'))
+        ).all()
+    else:
+        students = StudentRecord.query.all()
     return render_template('manage_students.html', students=students)
 
 @main.route('/edit_student/<int:id>', methods=['GET', 'POST'])
