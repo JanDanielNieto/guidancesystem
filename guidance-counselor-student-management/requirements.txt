@@ -6,3 +6,5 @@ Flask-Login
 Flask-Uploads
 python-dotenv
 gunicorn
+werkzeug
+datetime
