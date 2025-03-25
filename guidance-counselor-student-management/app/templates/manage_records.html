@@ -12,7 +12,6 @@
 <table>
     <thead>
         <tr>
-            <th>Student ID</th>
             <th>Name</th>
             <th>Reason for Offense</th>
             <th>Type of Offense</th>
@@ -24,7 +23,6 @@
     <tbody>
         {% for offense in records %}
         <tr>
-            <td>{{ offense.student_id }}</td>
             <td>{{ offense.student.name }}</td>
             <td>{{ offense.reason }}</td>
             <td>{{ offense.offense_type }}</td>
