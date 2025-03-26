@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.models import db, StudentRecord, OffenseRecord, User
 from datetime import datetime
-from flask_uploads import UploadSet, IMAGES, configure_uploads
 from werkzeug.utils import secure_filename
 from sqlalchemy import func
 import os
