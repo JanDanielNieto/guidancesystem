@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify, session
-from bson.objectid import ObjectId
-from datetime import datetime, date
+from app.models import User
+from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
-from werkzeug.security import generate_password_hash, check_password_hash
-from app.models import User
+from werkzeug.security import generate_password_hash
+from bson import ObjectId
 
 ALLOWED_EXTENSIONS = {'xlsx'}
 
@@ -113,7 +113,7 @@ def add_student_offense(student_id):
             "offense_type": request.form['offense_type'],
             "reason": request.form['reason'],
             "additional_info": request.form['additional_info'],
-            "date_time": datetime.utcnow()
+            "date_time": datetime.now(timezone.utc)
         }
         offense_collection.insert_one(offense)
         flash('Offense record added successfully!', 'success')
