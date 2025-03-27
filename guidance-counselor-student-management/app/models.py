@@ -28,14 +28,14 @@ class StudentRecord(db.Model):
     reason = db.Column(db.String(200), nullable=True)
     type_of_offense = db.Column(db.String(100), nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
-    additional_info = db.Column(db.String, nullable=True)
+    additional_info = db.Column(db.Text, nullable=True)
     profile_picture = db.Column(db.String(100), nullable=True)
     offenses = db.relationship('OffenseRecord', backref='student', lazy=True)
 
 class OffenseRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student_record.id'), nullable=False)
-    offense_type = db.Column(db.String(100), nullable=True)  # Added this line
+    offense_type = db.Column(db.String(100), nullable=True)
     reason = db.Column(db.String(200), nullable=True)
     additional_info = db.Column(db.Text, nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)

@@ -7,6 +7,7 @@ import os
 from flask import current_app as app
 from .models import populate_database_from_excel, OffenseRecord, db
 from app.extensions import db
+from app import db
 
 ALLOWED_EXTENSIONS = {'xlsx'}
 
@@ -289,20 +290,21 @@ def allowed_file(filename):
 @main.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        # Check if the POST request has the file part
         if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
+            return "No file part in the request", 400
         file = request.files['file']
+        # If the user does not select a file, the browser submits an empty part
         if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
+            return "No selected file", 400
+        if file:
+            # Secure the filename and save the file
             filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            upload_directory = app.config['UPLOAD_FOLDER']
+            os.makedirs(upload_directory, exist_ok=True)  # Ensure the directory exists
+            file_path = os.path.join(upload_directory, filename)
             file.save(file_path)
-            populate_database_from_excel(file_path)
-            flash('Database populated successfully')
-            return redirect(url_for('main.manage_students'))
+            return f"File {filename} uploaded successfully!", 200
     return render_template('upload.html')
 
 @main.route('/analytics')
