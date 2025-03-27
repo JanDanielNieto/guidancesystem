@@ -1,10 +1,12 @@
-from app import create_app
+from app import create_app, db
+from flask_migrate import Migrate
 from flask import request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
 import os
 from app.models import populate_database_from_excel
 
 app = create_app()
+migrate = Migrate(app, db)  # Initialize Flask-Migrate
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
@@ -25,8 +27,12 @@ def upload_file():
             file.save(file_path)
             # Process the file (e.g., populate the database)
             populate_database_from_excel(file_path)
-            return redirect(url_for('upload_file'))
+
     return render_template('upload.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=os.getenv('FLASK_DEBUG', 'false').lower() == 'true')
+    app.run()
+
+# Expose the app instance for the Flask CLI
+# This allows Flask to locate the app when using commands like `flask db`
+app = app
