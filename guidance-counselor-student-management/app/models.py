@@ -1,7 +1,8 @@
 from datetime import datetime, date
 import pandas as pd
 from werkzeug.security import generate_password_hash, check_password_hash
-from .extensions import db
+from app.extensions import db
+
 
 class StudentRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,12 +26,9 @@ class StudentRecord(db.Model):
     father_contact = db.Column(db.String(15), nullable=True)
     guardian_name = db.Column(db.String(100), nullable=True)
     guardian_contact = db.Column(db.String(15), nullable=True)
-    reason = db.Column(db.String(200), nullable=True)
-    type_of_offense = db.Column(db.String(100), nullable=True)
-    date_time = db.Column(db.DateTime, default=datetime.utcnow)
-    additional_info = db.Column(db.Text, nullable=True)
     profile_picture = db.Column(db.String(100), nullable=True)
     offenses = db.relationship('OffenseRecord', backref='student', lazy=True)
+
 
 class OffenseRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,11 +38,12 @@ class OffenseRecord(db.Model):
     additional_info = db.Column(db.Text, nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=True)
-    email = db.Column(db.String(100), unique=True, nullable=True)
-    password_hash = db.Column(db.String(128), nullable=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password_hash = db.Column(db.Text, nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -52,26 +51,26 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 def calculate_age(birthdate):
     today = date.today()
     age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
     return age
 
+
 def populate_database_from_excel(file_path):
     # Read the Excel file
     excel_data = pd.ExcelFile(file_path)
-    
+
     # Iterate over each sheet in the Excel file
     for sheet_name in excel_data.sheet_names:
         data = pd.read_excel(file_path, sheet_name=sheet_name)
-        print(f"Columns in {sheet_name}: {data.columns.tolist()}")  # Print the column names
-        
+
         # Iterate over each row in the sheet
         for index, row in data.iterrows():
-            # Extract the values from the row
             lrn = row.get('LRN', None)
             if pd.notna(lrn):
-                lrn = str(int(lrn)).zfill(12)  # Ensure LRN is 12 digits with no .0 at the end
+                lrn = str(int(lrn)).zfill(12)  # Ensure LRN is 12 digits
             else:
                 lrn = None
 
@@ -105,7 +104,7 @@ def populate_database_from_excel(file_path):
             elif isinstance(birthdate, date):
                 birthdate = birthdate
             else:
-                birthdate = None  # Handle unexpected types
+                birthdate = None
 
             # Calculate age if birthdate is available
             if birthdate:

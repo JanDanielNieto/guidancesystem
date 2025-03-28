@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from app.models import db, StudentRecord, OffenseRecord, User
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -7,7 +7,7 @@ import os
 from flask import current_app as app
 from .models import populate_database_from_excel, OffenseRecord, db
 from app.extensions import db
-from app import db
+
 
 ALLOWED_EXTENSIONS = {'xlsx'}
 
@@ -33,6 +33,7 @@ def manage_students():
         students = StudentRecord.query.all()
     return render_template('manage_students.html', students=students)
 
+
 @main.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
     student = StudentRecord.query.get_or_404(id)
@@ -51,11 +52,11 @@ def edit_student(id):
         student.address_city = request.form['address_city']
         student.address_province = request.form['address_province']
         student.mother_name = request.form['mother_name']
-        student.mother_contact = request.form['mother_contact']  # Add this line
+        student.mother_contact = request.form['mother_contact']
         student.father_name = request.form['father_name']
-        student.father_contact = request.form['father_contact']  # Add this line
+        student.father_contact = request.form['father_contact']
         student.guardian_name = request.form['guardian_name']
-        student.guardian_contact = request.form['guardian_contact']  # Add this line
+        student.guardian_contact = request.form['guardian_contact']
         db.session.commit()
         flash('Student record updated successfully', 'success')
         return redirect(url_for('main.manage_students'))
@@ -64,65 +65,39 @@ def edit_student(id):
 @main.route('/delete_student/<int:id>', methods=['POST'])
 def delete_student(id):
     student = StudentRecord.query.get_or_404(id)
-    try:
-        db.session.delete(student)
-        db.session.commit()
-        flash('Student deleted successfully', 'success')
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error deleting student: {str(e)}', 'danger')
+    db.session.delete(student)
+    db.session.commit()
+    flash('Student deleted successfully', 'success')
     return redirect(url_for('main.manage_students'))
 
 @main.route('/add_student', methods=['GET', 'POST'])
 def add_student():
     if request.method == 'POST':
-        lrn = request.form['lrn']
-        name = request.form['name']
-        grade_section = request.form['grade_section']
-        birthdate = datetime.strptime(request.form['birthdate'], '%Y-%m-%d')
-        age = request.form['age']
-        gender = request.form['gender']
-        mother_tongue = request.form['mother_tongue']
-        ethnic_group = request.form['ethnic_group']
-        religion = request.form['religion']
-        address_house_no = request.form['address_house_no']
-        address_barangay = request.form['address_barangay']
-        address_city = request.form['address_city']
-        address_province = request.form['address_province']
-        mother_name = request.form['mother_name']
-        mother_contact = request.form['mother_contact']  # Add this line
-        father_name = request.form['father_name']
-        father_contact = request.form['father_contact']  # Add this line
-        guardian_name = request.form['guardian_name']
-        guardian_contact = request.form['guardian_contact']  # Add this line
-
         new_record = StudentRecord(
-            lrn=lrn,
-            name=name,
-            grade_section=grade_section,
-            birthdate=birthdate,
-            age=age,
-            gender=gender,
-            mother_tongue=mother_tongue,
-            ethnic_group=ethnic_group,
-            religion=religion,
-            address_house_no=address_house_no,
-            address_barangay=address_barangay,
-            address_city=address_city,
-            address_province=address_province,
-            mother_name=mother_name,
-            mother_contact=mother_contact,  # Add this line
-            father_name=father_name,
-            father_contact=father_contact,  # Add this line
-            guardian_name=guardian_name,
-            guardian_contact=guardian_contact  # Add this line
+            lrn=request.form['lrn'],
+            name=request.form['name'],
+            grade_section=request.form['grade_section'],
+            birthdate=datetime.strptime(request.form['birthdate'], '%Y-%m-%d'),
+            age=request.form['age'],
+            gender=request.form['gender'],
+            mother_tongue=request.form['mother_tongue'],
+            ethnic_group=request.form['ethnic_group'],
+            religion=request.form['religion'],
+            address_house_no=request.form['address_house_no'],
+            address_barangay=request.form['address_barangay'],
+            address_city=request.form['address_city'],
+            address_province=request.form['address_province'],
+            mother_name=request.form['mother_name'],
+            mother_contact=request.form['mother_contact'],
+            father_name=request.form['father_name'],
+            father_contact=request.form['father_contact'],
+            guardian_name=request.form['guardian_name'],
+            guardian_contact=request.form['guardian_contact']
         )
         db.session.add(new_record)
         db.session.commit()
-
         flash('New student added successfully', 'success')
         return redirect(url_for('main.manage_students'))
-
     return render_template('add_new_student.html')
 
 @main.route('/manage_records')
@@ -244,7 +219,6 @@ def add_report():
 
 @main.route('/logout')
 def logout():
-    # Placeholder for logout functionality
     return redirect(url_for('main.index'))
 
 @main.route('/registration', methods=['GET', 'POST'])
@@ -256,18 +230,17 @@ def registration():
         confirm_password = request.form['confirm_password']
 
         if password != confirm_password:
-            flash('Passwords do not match!')
+            flash('Passwords do not match!', 'danger')
             return redirect(url_for('main.registration'))
 
         user = User(name=name, email=email)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-
-        flash('Account created successfully!')
+        flash('Account created successfully!', 'success')
         return redirect(url_for('main.dashboard'))
-
     return render_template('registration.html')
+
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
@@ -277,35 +250,40 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user is None or not user.check_password(password):
-            flash('Invalid email or password')
+            flash('Invalid email or password', 'danger')
             return redirect(url_for('main.login'))
 
-        flash('Logged in successfully!')
+        flash('Logged in successfully!', 'success')
         return redirect(url_for('main.dashboard'))
     return render_template('login.html')
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@main.route('/upload', methods=['GET', 'POST'])
-def upload_file():
+@main.route('/upload_excel', methods=['GET', 'POST'])
+def upload_excel():
     if request.method == 'POST':
-        # Check if the POST request has the file part
         if 'file' not in request.files:
-            return "No file part in the request", 400
+            flash('No file part in the request', 'danger')
+            return redirect(request.url)
         file = request.files['file']
-        # If the user does not select a file, the browser submits an empty part
         if file.filename == '':
-            return "No selected file", 400
-        if file:
-            # Secure the filename and save the file
+            flash('No selected file', 'danger')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            upload_directory = app.config['UPLOAD_FOLDER']
-            os.makedirs(upload_directory, exist_ok=True)  # Ensure the directory exists
+            upload_directory = current_app.config['UPLOAD_FOLDER']
+            os.makedirs(upload_directory, exist_ok=True)
             file_path = os.path.join(upload_directory, filename)
             file.save(file_path)
-            return f"File {filename} uploaded successfully!", 200
+
+            try:
+                populate_database_from_excel(file_path)
+                flash(f'Database populated successfully from {filename}!', 'success')
+            except Exception as e:
+                flash(f'Error populating database: {str(e)}', 'danger')
+            return redirect(url_for('main.manage_students'))
     return render_template('upload.html')
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @main.route('/analytics')
 def analytics():
@@ -335,3 +313,4 @@ def analytics():
         students_with_offenses=students_with_offenses,
         students_with_offenses_counts=students_with_offenses_counts
     )
+
