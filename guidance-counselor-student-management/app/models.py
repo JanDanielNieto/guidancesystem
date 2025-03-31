@@ -59,79 +59,107 @@ def calculate_age(birthdate):
 
 
 def populate_database_from_excel(file_path):
-    # Read the Excel file
-    excel_data = pd.ExcelFile(file_path)
+    try:
+        # Read the Excel file
+        excel_data = pd.ExcelFile(file_path)
+        print(f"Excel file loaded: {file_path}")  # Debug print
 
-    # Iterate over each sheet in the Excel file
-    for sheet_name in excel_data.sheet_names:
-        data = pd.read_excel(file_path, sheet_name=sheet_name)
+        # Iterate over each sheet in the Excel file
+        for sheet_name in excel_data.sheet_names:
+            print(f"Processing sheet: {sheet_name}")  # Debug print
+            data = pd.read_excel(file_path, sheet_name=sheet_name)
 
-        # Iterate over each row in the sheet
-        for index, row in data.iterrows():
-            lrn = row.get('LRN', None)
-            if pd.notna(lrn):
-                lrn = str(int(lrn)).zfill(12)  # Ensure LRN is 12 digits
-            else:
-                lrn = None
+            # Iterate over each row in the sheet
+            for index, row in data.iterrows():
+                print(f"Processing row {index}: {row}")  # Debug print
 
-            name = row.get('NAME', None)
-            section = row.get('Section', None)
-            birthdate = row.get('BIRTH DATE (mm/dd/yyyy)', None)
-            age = row.get('Age as of October 31', None)
-            gender = row.get('SEX', None)
-            mother_tongue = row.get('MOTHER TONGUE', None)
-            ethnic_group = row.get('IP', None)
-            religion = row.get('RELIGION', None)
-            address_house_no = row.get('House No', None)
-            address_barangay = row.get('Barangay', None)
-            address_city = row.get('Municipality/City', None)
-            address_province = row.get('Province', None)
-            mother_name = row.get("Mother's Maiden Name(Last Name, First Name, Middle Name)", None)
-            mother_contact = row.get('Mother Contact', None)
-            father_name = row.get("Father's Name(Last Name, First Name, Middle Name)", None)
-            father_contact = row.get('Father Contact', None)
-            guardian_name = row.get('Guardian Name', None)
-            guardian_contact = row.get('Contact Number of Parent or Guardian', None)
+                # Validate and clean LRN
+                lrn = row.get('LRN', None)
+                if pd.notna(lrn):
+                    try:
+                        lrn = str(int(lrn)).zfill(12)  # Ensure LRN is 12 digits
+                    except ValueError:
+                        print(f"Invalid LRN at row {index}: {lrn}")  # Debug print
+                        continue  # Skip this row
+                else:
+                    lrn = None
 
-            # Convert birthdate to date object
-            if isinstance(birthdate, str):
-                try:
-                    birthdate = datetime.strptime(birthdate, '%m/%d/%Y').date()
-                except ValueError:
-                    birthdate = datetime.strptime(birthdate, '%m-%d-%Y').date()
-            elif isinstance(birthdate, datetime):
-                birthdate = birthdate.date()
-            elif isinstance(birthdate, date):
-                birthdate = birthdate
-            else:
-                birthdate = None
+                # Validate and clean Name
+                name = row.get('NAME', None)
+                if not isinstance(name, str) or not name.strip():
+                    print(f"Invalid Name at row {index}: {name}")  # Debug print
+                    continue  # Skip this row
 
-            # Calculate age if birthdate is available
-            if birthdate:
-                age = calculate_age(birthdate)
+                # Validate and clean Section
+                section = row.get('Section', None)
 
-            # Create a new StudentRecord object
-            student = StudentRecord(
-                lrn=lrn,
-                name=name,
-                grade=sheet_name.split()[1],  # Extract the grade from the sheet name
-                section=section,
-                birthdate=birthdate,
-                age=age,
-                gender=gender,
-                mother_tongue=mother_tongue,
-                ethnic_group=ethnic_group,
-                religion=religion,
-                address_house_no=address_house_no,
-                address_barangay=address_barangay,
-                address_city=address_city,
-                address_province=address_province,
-                mother_name=mother_name,
-                mother_contact=mother_contact,
-                father_name=father_name,
-                father_contact=father_contact,
-                guardian_name=guardian_name,
-                guardian_contact=guardian_contact
-            )
-            db.session.add(student)
-    db.session.commit()
+                # Validate and clean Birthdate
+                birthdate = row.get('BIRTH DATE (mm/dd/yyyy)', None)
+                if isinstance(birthdate, str):
+                    try:
+                        birthdate = datetime.strptime(birthdate, '%m/%d/%Y').date()
+                    except ValueError:
+                        try:
+                            birthdate = datetime.strptime(birthdate, '%m-%d-%Y').date()
+                        except ValueError:
+                            print(f"Invalid Birthdate at row {index}: {birthdate}")  # Debug print
+                            birthdate = None
+                elif isinstance(birthdate, datetime):
+                    birthdate = birthdate.date()
+                elif not isinstance(birthdate, date):
+                    birthdate = None
+
+                # Calculate age if birthdate is available
+                age = None
+                if birthdate:
+                    age = (date.today().year - birthdate.year) - (
+                        (date.today().month, date.today().day) < (birthdate.month, birthdate.day)
+                    )
+
+                # Validate and clean Gender
+                gender = row.get('SEX', None)
+
+                # Validate and clean other fields
+                mother_tongue = row.get('MOTHER TONGUE', None)
+                ethnic_group = row.get('IP', None)
+                religion = row.get('RELIGION', None)
+                address_house_no = row.get('House No', None)
+                address_barangay = row.get('Barangay', None)
+                address_city = row.get('Municipality/City', None)
+                address_province = row.get('Province', None)
+                mother_name = row.get("Mother's Maiden Name(Last Name, First Name, Middle Name)", None)
+                mother_contact = row.get('Mother Contact', None)
+                father_name = row.get("Father's Name(Last Name, First Name, Middle Name)", None)
+                father_contact = row.get('Father Contact', None)
+                guardian_name = row.get('Guardian Name', None)
+                guardian_contact = row.get('Contact Number of Parent or Guardian', None)
+
+                # Create a new StudentRecord object
+                student = StudentRecord(
+                    lrn=lrn,
+                    name=name,
+                    grade=sheet_name.split()[1] if len(sheet_name.split()) > 1 else None,  # Extract the grade from the sheet name
+                    section=section,
+                    birthdate=birthdate,
+                    age=age,
+                    gender=gender,
+                    mother_tongue=mother_tongue,
+                    ethnic_group=ethnic_group,
+                    religion=religion,
+                    address_house_no=address_house_no,
+                    address_barangay=address_barangay,
+                    address_city=address_city,
+                    address_province=address_province,
+                    mother_name=mother_name,
+                    mother_contact=mother_contact,
+                    father_name=father_name,
+                    father_contact=father_contact,
+                    guardian_name=guardian_name,
+                    guardian_contact=guardian_contact
+                )
+                db.session.add(student)
+        db.session.commit()
+        print("Database populated successfully!")  # Debug print
+    except Exception as e:
+        print(f"Error in populate_database_from_excel: {e}")  # Debug print
+        raise
