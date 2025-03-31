@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify, session
 from bson.objectid import ObjectId
 from datetime import datetime, date
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
+from werkzeug.security import generate_password_hash, check_password_hash
 
 ALLOWED_EXTENSIONS = {'xlsx'}
 
@@ -11,7 +12,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return redirect(url_for('main.registration'))
+    return redirect(url_for('main.register'))
 
 @main.route('/dashboard')
 def dashboard():
