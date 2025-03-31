@@ -1,20 +1,13 @@
 from flask import Flask
-from app.extensions import db, migrate
-import os
+from pymongo import MongoClient
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://guidance_user:pupdit31@localhost/guidance_system'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'your-secret-key'
+    app.config['UPLOAD_FOLDER'] = 'uploads'
 
-    # Configure upload folder
-    UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-    # Initialize extensions
-    db.init_app(app)
-    migrate.init_app(app, db)
+    # Initialize MongoDB
+    client = MongoClient('mongodb://localhost:27017')  # Replace with your MongoDB URI
+    app.db = client['guidance_system']  # Replace with your database name
 
     # Register blueprints
     from app.routes import main
