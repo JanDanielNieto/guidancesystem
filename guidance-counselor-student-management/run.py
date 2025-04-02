@@ -1,12 +1,24 @@
 from app import create_app
-from pymongo import MongoClient
+import mysql.connector
 
 # Initialize the Flask app
 app = create_app()
 
-# Configure MongoDB connection
-client = MongoClient('mongodb://localhost:27017')  # Replace with your MongoDB URI
-app.db = client['guidance_system']  # Replace with your database name
+# Configure MySQL connection
+db_config = {
+    'host': 'localhost',
+    'user': 'your_username',
+    'password': 'your_password',
+    'database': 'guidance_system'
+}
+
+try:
+    connection = mysql.connector.connect(**db_config)
+    app.db = connection
+    print("Connected to MySQL database.")
+except mysql.connector.Error as err:
+    print(f"Error: {err}")
+    app.db = None
 
 if __name__ == '__main__':
     app.run()

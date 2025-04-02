@@ -17,10 +17,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var offenseLabels = {{ offense_labels|tojson|safe }};
-    var offenseTypeCounts = {{ offense_type_counts|tojson|safe }};
-    var studentsWithOffenses = {{ students_with_offenses|tojson|safe }};
-    var studentsWithOffensesCounts = {{ students_with_offenses_counts|tojson|safe }};
+    var offenseLabels = JSON.parse('{{ offense_labels|tojson|escapejs }}');
+    var offenseTypeCounts = JSON.parse('{{ offense_type_counts|tojson|escapejs }}');
+    var studentsWithOffenses = JSON.parse('{{ students_with_offenses|tojson|escapejs }}');
+    var studentsWithOffensesCounts = JSON.parse('{{ students_with_offenses_counts|tojson|escapejs }}');
 
     // Pie chart for types of offenses
     var ctx = document.getElementById('offenseChart').getContext('2d');

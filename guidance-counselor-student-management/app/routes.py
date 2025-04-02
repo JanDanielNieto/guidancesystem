@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 import os
 import pandas as pd
 from werkzeug.security import generate_password_hash, check_password_hash
+from app.models import User
 
 ALLOWED_EXTENSIONS = {'xlsx'}
 
@@ -49,24 +50,18 @@ def register():
     return render_template('register.html')
 
 
-@main.route('/login', methods=['GET', 'POST'])
+@main.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        user_collection = current_app.db['users']
-        email = request.form['email']
-        password = request.form['password']
+    email = request.form['email']
+    password = request.form['password']
 
-        # Find the user by email
-        user = user_collection.find_one({'email': email})
-        if user and check_password_hash(user['password'], password):
-            session['user_id'] = str(user['_id'])
-            session['user_name'] = user['name']
-            flash('Logged in successfully!', 'success')
-            return redirect(url_for('main.dashboard'))
-        else:
-            flash('Invalid email or password', 'danger')
-            return redirect(url_for('main.login'))
-    return render_template('login.html')
+    user = User.query.filter_by(email=email).first()
+    if user and user.check_password(password):
+        session['user_id'] = user.id
+        session['user_name'] = user.name
+        return jsonify({"message": "Login successful"}), 200
+    else:
+        return jsonify({"message": "Invalid credentials"}), 401
 
 
 @main.route('/logout')
