@@ -6,6 +6,11 @@ body {
     background-color: #f9f9f9;
     color: #333;
   }
+
+  body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+  }
   
   h1, h2, h3 {
     color: #2c3e50;
@@ -38,17 +43,26 @@ body {
     background-color: #3498db;
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 20px 25px;
     cursor: pointer;
     border-radius: 5px;
+    margin: 10px;
   }
   
   button:hover {
     background-color: #2980b9;
   }
   
-  /* Navbar Styles */
   .navbar {
+    background-color: #3498db;
+    padding: 10px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  body.dark-mode .navbar {
     background-color: #2c3e50;
     padding: 10px 20px;
     display: flex;
@@ -65,3 +79,19 @@ body {
   .navbar a:hover {
     text-decoration: underline;
   }
+
+  .button-container {
+    display: flex;
+    flex-direction: column; 
+    gap: 10px; 
+    align-items: flex-start; 
+    align-items: center;
+  }
+
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
