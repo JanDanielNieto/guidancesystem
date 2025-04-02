@@ -1,3 +1,4 @@
+from flask import Flask
 from app import create_app
 import mysql.connector
 
@@ -7,9 +8,9 @@ app = create_app()
 # Configure MySQL connection
 db_config = {
     'host': 'localhost',
-    'user': 'your_username',
-    'password': 'your_password',
-    'database': 'guidance_system'
+    'user': 'root',
+    'password': '',
+    'database': 'guidancesystem'
 }
 
 try:
