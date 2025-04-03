@@ -10,6 +10,7 @@ const StudentList = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false); // State to manage popup visibility
+  const [showTutorial, setShowTutorial] = useState(false); // State to manage tutorial visibility
   const navigate = useNavigate(); // Initialize useNavigate for navigation
 
   // Mock data for demonstration
@@ -71,13 +72,79 @@ const StudentList = () => {
   const openPopup = () => setIsPopupOpen(true); // Open the popup
   const closePopup = () => setIsPopupOpen(false); // Close the popup
 
+  const toggleTutorial = () => {
+    setShowTutorial(!showTutorial); // Toggle the tutorial visibility
+  };
+
   const filteredStudents = students.filter(student =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div>
+    <div style={{ position: 'relative', padding: '20px' }}>
       <h1>Student List</h1>
+
+      {/* Tutorial Button */}
+      <button
+        onClick={toggleTutorial}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          backgroundColor: '#3498db',
+          color: 'white',
+          border: 'none',
+          borderRadius: '50%',
+          width: '40px',
+          height: '40px',
+          fontSize: '20px',
+          cursor: 'pointer',
+        }}
+      >
+        ?
+      </button>
+
+      {/* Tutorial Popups */}
+      {showTutorial && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '80px',
+            right: '20px',
+            backgroundColor: 'white',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+            padding: '10px',
+            width: '300px',
+            zIndex: 1000,
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+          }}
+        >
+          <h3>Tutorial</h3>
+          <ul>
+            <li><strong>Search:</strong> Use the search bar to filter students by name.</li>
+            <li><strong>Edit:</strong> Select a student and click "Edit" to modify their details.</li>
+            <li><strong>Delete:</strong> Select a student and click "Delete" to remove them.</li>
+            <li><strong>Profile:</strong> Double-click a student or click "Profile" to view their profile.</li>
+            <li><strong>Upload:</strong> Click "Upload" to open the file upload popup.</li>
+          </ul>
+          <button
+            onClick={toggleTutorial}
+            style={{
+              marginTop: '10px',
+              padding: '5px 10px',
+              backgroundColor: '#e74c3c',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+            }}
+          >
+            Close
+          </button>
+        </div>
+      )}
+
       <div style={{ marginBottom: '20px', position: 'relative' }}>
         <input
           type="text"
