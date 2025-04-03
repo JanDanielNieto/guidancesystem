@@ -1,34 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { Pie, Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 import axios from 'axios';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Analytics = () => {
   const [studentData, setStudentData] = useState([]);
   const [offenseData, setOffenseData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch student data
-    axios.get('http://localhost:5000/api/students')
-      .then(response => {
-        setStudentData(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching student data:', error);
-      });
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // Fetch student data
+        const studentResponse = await axios.get('http://localhost:5000/api/students');
+        setStudentData(studentResponse.data);
 
-    // Fetch offense data
-    axios.get('http://localhost:5000/api/offenses')
-      .then(response => {
-        setOffenseData(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching offense data:', error);
-      });
+        // Fetch offense data
+        const offenseResponse = await axios.get('http://localhost:5000/api/offenses');
+        setOffenseData(offenseResponse.data);
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to fetch data. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   // Prepare data for the pie chart (student offenses)
   const offensesByType = offenseData.reduce((acc, offense) => {
-    acc[offense.type] = (acc[offense.type] || 0) + 1;
+    acc[offense.offense_type] = (acc[offense.offense_type] || 0) + 1;
     return acc;
   }, {});
 
