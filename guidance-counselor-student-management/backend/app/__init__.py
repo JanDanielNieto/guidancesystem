@@ -6,15 +6,20 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/guidancesystem'
+    CORS(app)  # Enable CORS for the app
+
+    # Database configuration
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:pupdit31@localhost/guidancesystem'    
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    # Initialize extensions
     db.init_app(app)
-    CORS(app)  # Enable Cross-Origin Resource Sharing for React
 
+    # Register blueprints
     from app.routes import main
     app.register_blueprint(main)
 
+    # Import models to register them with SQLAlchemy
     with app.app_context():
         from app import models
 

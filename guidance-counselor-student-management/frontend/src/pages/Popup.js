@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../css/styles.css';
+import axios from 'axios';
 
 const Popup = ({ isOpen, onClose }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -8,38 +8,40 @@ const Popup = ({ isOpen, onClose }) => {
     setSelectedFile(e.target.files[0]);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!selectedFile) {
       alert('Please select a file to upload.');
       return;
     }
 
-    // Simulate file upload
-    alert(`File "${selectedFile.name}" uploaded successfully!`);
-    setSelectedFile(null);
-    onClose(); // Close the popup after upload
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      alert(response.data.message);
+      setSelectedFile(null);
+      onClose();
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert(error.response?.data?.error || 'An error occurred while uploading the file.');
+    }
   };
 
-  if (!isOpen) return null; // Don't render the popup if it's not open
+  if (!isOpen) return null;
 
   return (
     <div style={styles.overlay}>
       <div style={styles.popup}>
-        <h2>Upload File</h2>
-        <input
-          type="file"
-          onChange={handleFileChange}
-          style={styles.fileInput}
-        />
+        <h2>Upload Excel File</h2>
+        <input type="file" onChange={handleFileChange} />
         {selectedFile && <p>Selected File: {selectedFile.name}</p>}
-        <div style={styles.buttonContainer}>
-          <button onClick={handleUpload} style={styles.uploadButton}>
-            Upload
-          </button>
-          <button onClick={onClose} style={styles.closeButton}>
-            Close
-          </button>
-        </div>
+        <button onClick={handleUpload}>Upload</button>
+        <button onClick={onClose}>Close</button>
       </div>
     </div>
   );
@@ -64,31 +66,6 @@ const styles = {
     borderRadius: '10px',
     width: '400px',
     textAlign: 'center',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-  },
-  fileInput: {
-    margin: '10px 0',
-  },
-  buttonContainer: {
-    marginTop: '20px',
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  uploadButton: {
-    padding: '10px 20px',
-    backgroundColor: '#3498db',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-  closeButton: {
-    padding: '10px 20px',
-    backgroundColor: '#e74c3c',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
   },
 };
 

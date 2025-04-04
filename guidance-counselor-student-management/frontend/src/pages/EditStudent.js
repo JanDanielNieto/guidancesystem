@@ -38,6 +38,7 @@ const EditStudent = () => {
       });
   };
 
+  
   return (
     <div style={{ padding: '20px' }}>
       <h1>Edit Student Profiles</h1>

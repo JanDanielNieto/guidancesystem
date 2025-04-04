@@ -11,27 +11,31 @@ const StudentList = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false); // State to manage popup visibility
   const [showTutorial, setShowTutorial] = useState(false); // State to manage tutorial visibility
+  const [showDeleteAllButton, setShowDeleteAllButton] = useState(false); // State to toggle visibility of the delete all button
   const navigate = useNavigate(); // Initialize useNavigate for navigation
 
-  // Mock data for demonstration
-  const mockData = {
-    "John Doe": { lrn: "123456789", grade: "10", section: "A", gender: "Male", birth: "2005-01-01" },
-    "Jane Smith": { lrn: "987654321", grade: "11", section: "B", gender: "Female", birth: "2004-05-15" },
-    "Jack Johnson": { lrn: "456789123", grade: "12", section: "C", gender: "Male", birth: "2003-09-20" },
-    "Jill Brown": { lrn: "789123456", grade: "9", section: "D", gender: "Female", birth: "2006-03-10" },
-  };
-
   useEffect(() => {
-    // Simulate fetching students from an API
+    // Fetch students from the backend API
     axios.get('http://localhost:5000/api/students')
       .then(response => {
         setStudents(response.data);
       })
       .catch(error => {
         console.error('Error fetching students:', error);
-        // Use mock data if API fails
-        setStudents(Object.keys(mockData).map(name => ({ name, ...mockData[name] })));
       });
+
+    // Add event listener for shortcut keys
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        setShowDeleteAllButton(true); // Show the delete all button
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const handleInputChange = (e) => {
@@ -40,8 +44,8 @@ const StudentList = () => {
 
     // Filter suggestions based on the input
     if (value) {
-      const filteredSuggestions = Object.keys(mockData).filter((name) =>
-        name.toLowerCase().includes(value.toLowerCase())
+      const filteredSuggestions = students.filter((student) =>
+        student.name.toLowerCase().includes(value.toLowerCase())
       );
       setSuggestions(filteredSuggestions);
     } else {
@@ -60,12 +64,12 @@ const StudentList = () => {
 
   const handleRowDoubleClick = (student) => {
     // Navigate to the StudentProfile page for the double-clicked student
-    navigate(`/students/:id${student.lrn}`);
+    navigate(`/students/${student.lrn}`);
   };
 
   const handleProfileClick = () => {
     if (selectedStudent) {
-      navigate(`/students/:id${selectedStudent.lrn}`);
+      navigate(`/students/${selectedStudent.lrn}`);
     }
   };
 
@@ -74,6 +78,51 @@ const StudentList = () => {
 
   const toggleTutorial = () => {
     setShowTutorial(!showTutorial); // Toggle the tutorial visibility
+  };
+
+  const handleEdit = () => {
+    if (!selectedStudent) {
+      alert('Please select a student to edit.');
+      return;
+    }
+
+    // Navigate to the EditStudent page with the selected student's ID
+    navigate(`/edit-student/${selectedStudent.lrn}`);
+  };
+
+  const handleDelete = () => {
+    if (!selectedStudent) {
+      alert('Please select a student to delete.');
+      return;
+    }
+
+    if (window.confirm(`Are you sure you want to delete ${selectedStudent.name}?`)) {
+      axios.delete(`http://localhost:5000/api/students/${selectedStudent.lrn}`)
+        .then(response => {
+          alert('Student deleted successfully!');
+          // Remove the deleted student from the list
+          setStudents(prevStudents => prevStudents.filter(student => student.lrn !== selectedStudent.lrn));
+          setSelectedStudent(null); // Clear the selected student
+        })
+        .catch(error => {
+          console.error('Error deleting student:', error);
+          alert('Failed to delete student.');
+        });
+    }
+  };
+
+  const handleDeleteAll = () => {
+    if (window.confirm('Are you sure you want to delete all student records? This action cannot be undone.')) {
+      axios.delete('http://localhost:5000/api/delete_all_students')
+        .then(response => {
+          alert('All student records deleted successfully!');
+          setStudents([]); // Clear the student list
+        })
+        .catch(error => {
+          console.error('Error deleting all students:', error);
+          alert('Failed to delete all student records.');
+        });
+    }
   };
 
   const filteredStudents = students.filter(student =>
@@ -176,16 +225,16 @@ const StudentList = () => {
               zIndex: 1000,
             }}
           >
-            {suggestions.map((name) => (
+            {suggestions.map((student) => (
               <li
-                key={name}
-                onClick={() => handleSuggestionClick(name)}
+                key={student.lrn}
+                onClick={() => handleSuggestionClick(student.name)}
                 style={{
                   padding: '5px',
                   cursor: 'pointer',
                 }}
               >
-                {name}
+                {student.name}
               </li>
             ))}
           </ul>
@@ -228,7 +277,7 @@ const StudentList = () => {
       <div style={{ marginTop: '20px' }}>
         <h3>Actions</h3>
         <button
-          onClick={() => alert(`Edit ${selectedStudent?.name}`)}
+          onClick={handleEdit}
           disabled={!selectedStudent}
           style={{
             padding: '10px 20px',
@@ -243,7 +292,7 @@ const StudentList = () => {
           Edit
         </button>
         <button
-          onClick={() => alert(`Delete ${selectedStudent?.name}`)}
+          onClick={handleDelete}
           disabled={!selectedStudent}
           style={{
             padding: '10px 20px',
@@ -286,6 +335,24 @@ const StudentList = () => {
           Upload
         </button>
       </div>
+
+      {/* Hidden Delete All Data Button */}
+      {showDeleteAllButton && (
+        <button
+          onClick={handleDeleteAll}
+          style={{
+            padding: '10px 20px',
+            marginTop: '20px',
+            borderRadius: '5px',
+            border: 'none',
+            backgroundColor: '#e74c3c',
+            color: 'white',
+            cursor: 'pointer',
+          }}
+        >
+          Delete All Data
+        </button>
+      )}
 
       {/* Popup Component */}
       <Popup isOpen={isPopupOpen} onClose={closePopup} />
