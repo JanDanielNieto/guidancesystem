@@ -2,7 +2,7 @@ from app import db
 from datetime import datetime
 
 class StudentRecord(db.Model):
-    __tablename__ = 'student_information'  # Match the table name in the database
+    __tablename__ = 'student_information'
 
     id = db.Column(db.Integer, primary_key=True)
     lrn = db.Column(db.String(12), unique=True, nullable=False)

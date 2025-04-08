@@ -26,16 +26,16 @@ COLUMN_MAPPING = {
     'Name': 'name',
     'Grade': 'grade',
     'Section': 'section',
-    'Sex': 'sex',
-    'Birthdate': 'birthdate',
+    'SEX': 'sex',  # Map 'SEX' to 'sex'
+    'BIRTH DATE (mm/dd/yyyy)': 'birthdate',  # Map 'BIRTH DATE (mm/dd/yyyy)' to 'birthdate'
     'Mother Tongue': 'mother_tongue',
-    'Religion': 'religion',
+    'RELIGION': 'religion',
     'Barangay': 'barangay',
     'Municipality/City': 'municipality_city',
-    "Father's Name": 'father_name',
-    "Mother's Name": 'mother_name',
-    "Guardian's Name": 'guardian_name',
-    'Contact Number': 'contact_number',
+    "Father's Name(Last Name, First Name, Middle Name)": 'father_name',  # Map Father's Name
+    "Mother's Maiden Name(Last Name, First Name, Middle Name)": 'mother_name',  # Map Mother's Maiden Name
+    'Guardian Name': 'guardian_name',  # Map Guardian Name
+    'Contact Number of Parent or Guardian': 'contact_number',  # Map Contact Number
 }
 
 @main.route('/api/upload', methods=['POST'])
