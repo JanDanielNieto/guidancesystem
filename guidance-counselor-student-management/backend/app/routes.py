@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, send_from_directory
 from app.models import StudentRecord
+from datetime import datetime
 from app import db
 import pandas as pd
 import os
@@ -39,31 +40,30 @@ COLUMN_MAPPING = {
 }
 
 @main.route('/api/upload', methods=['POST'])
-def upload_excel():
+def upload_csv():
     if 'file' not in request.files:
         return jsonify({'error': 'No file uploaded'}), 400
 
     file = request.files['file']
-    if not file.filename.endswith('.xlsx'):
-        return jsonify({'error': 'Invalid file format. Please upload an Excel file.'}), 400
+    if not file.filename.endswith('.csv'):
+        return jsonify({'error': 'Invalid file format. Please upload a CSV file.'}), 400
 
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(file_path)
 
     try:
-        # Read the Excel file and get the sheet name
-        excel_file = pd.ExcelFile(file_path)
-        sheet_name = excel_file.sheet_names[0]  # Assume the first sheet contains the data
-        df = excel_file.parse(sheet_name)
+        # Read the CSV file with the correct encoding
+        df = pd.read_csv(file_path, encoding='ISO-8859-1')  # Use 'ISO-8859-1' or 'latin1' for non-UTF-8 files
 
-        # Extract grade from the sheet name
-        grade_from_sheet = sheet_name.strip()  # Use the sheet name as the grade
-
-        # Normalize column names in the Excel file
+        # Normalize column names in the CSV file
         df.columns = [col.strip().lower() for col in df.columns]
 
         # Replace NaN values with None
         df = df.where(pd.notnull(df), None)
+
+        # Map normalized column names to database fields
+        column_mapping = {key.lower(): value for key, value in COLUMN_MAPPING.items()}
+        df.rename(columns=column_mapping, inplace=True)
 
         # Check if required columns are present
         required_columns = ['lrn', 'name', 'section']
@@ -71,39 +71,76 @@ def upload_excel():
         if missing_columns:
             return jsonify({'error': f'Missing required columns: {", ".join(missing_columns)}'}), 400
 
-        # Iterate through the rows and insert data into the database
-        for _, row in df.iterrows():
-            student_data = {
-                'lrn': row['lrn'],
-                'name': row['name'],
-                'grade': row.get('grade', grade_from_sheet),  # Use grade column if it exists, otherwise sheet name
-                'section': row['section'],
-                'sex': row.get('sex'),  # Populate if the column exists
-                'birthdate': row.get('birthdate'),  # Populate if the column exists
-                'mother_tongue': row.get('mother_tongue'),  # Populate if the column exists
-                'religion': row.get('religion'),  # Populate if the column exists
-                'barangay': row.get('barangay'),  # Populate if the column exists
-                'municipality_city': row.get('municipality_city'),  # Populate if the column exists
-                'father_name': row.get('father_name'),  # Populate if the column exists
-                'mother_name': row.get('mother_name'),  # Populate if the column exists
-                'guardian_name': row.get('guardian_name'),  # Populate if the column exists
-                'contact_number': row.get('contact_number'),  # Populate if the column exists
-            }
+        skipped_rows = []  # Track skipped rows for logging
+        chunk_size = 500  # Process 500 rows at a time
 
-            # Ensure grade is not null
-            if not student_data['grade']:
-                return jsonify({'error': 'Grade cannot be null. Ensure the sheet name or column provides a grade.'}), 400
+        # Process the data in chunks
+        for i in range(0, len(df), chunk_size):
+            chunk = df.iloc[i:i + chunk_size]
+            for index, row in chunk.iterrows():
+                # Validate required fields
+                if not row.get('lrn') or not row.get('name') or not row.get('section'):
+                    # Log skipped rows with missing required fields
+                    skipped_rows.append(index)
+                    continue
 
-            # Create a new StudentRecord instance
-            student = StudentRecord(**student_data)
-            db.session.add(student)
+                # Convert birthdate to YYYY-MM-DD format if it exists
+                birthdate = row.get('birthdate')
+                if birthdate:
+                    try:
+                        # Try parsing the date with MM/DD/YYYY format
+                        birthdate = datetime.strptime(birthdate, '%m/%d/%Y').strftime('%Y-%m-%d')
+                    except ValueError:
+                        try:
+                            # Try parsing the date with MM-DD-YYYY format
+                            birthdate = datetime.strptime(birthdate, '%m-%d-%Y').strftime('%Y-%m-%d')
+                        except ValueError:
+                            skipped_rows.append(index)
+                            continue
 
-        db.session.commit()
-        return jsonify({'message': 'File uploaded and data inserted successfully!'}), 200
+                student_data = {
+                    'lrn': row['lrn'],
+                    'name': row['name'],
+                    'grade': row.get('grade', 'Unknown'),  # Default to 'Unknown' if grade is missing
+                    'section': row['section'],
+                    'sex': row.get('sex'),
+                    'birthdate': birthdate,  # Use the converted birthdate
+                    'mother_tongue': row.get('mother_tongue'),
+                    'religion': row.get('religion'),
+                    'barangay': row.get('barangay'),
+                    'municipality_city': row.get('municipality_city'),
+                    'father_name': row.get('father_name'),
+                    'mother_name': row.get('mother_name'),
+                    'guardian_name': row.get('guardian_name'),
+                    'contact_number': row.get('contact_number'),
+                }
+
+                # Ensure all fields are properly converted to None if missing
+                student_data = {key: (None if pd.isna(value) else value) for key, value in student_data.items()}
+
+                # Check if the LRN already exists in the database
+                existing_student = StudentRecord.query.filter_by(lrn=student_data['lrn']).first()
+                if existing_student:
+                    # Skip this record if it already exists
+                    continue
+
+                # Create a new StudentRecord instance
+                student = StudentRecord(**student_data)
+                db.session.add(student)
+
+            # Commit the chunk to the database
+            db.session.commit()
+
+        # Return success message with skipped rows info
+        return jsonify({
+            'message': 'File uploaded and data inserted successfully!',
+            'skipped_rows': skipped_rows,
+            'total_inserted': len(df) - len(skipped_rows)
+        }), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
 @main.route('/api/students', methods=['GET'])
 def get_students():
     students = StudentRecord.query.all()
@@ -154,4 +191,4 @@ def delete_all_students():
         return jsonify({'message': 'All student records deleted successfully!'}), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500  
