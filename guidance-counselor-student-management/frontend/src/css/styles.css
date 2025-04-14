@@ -94,4 +94,24 @@ body {
   margin: 20px 0;
 }
   
+.background {
+    background-image: url('../css/images/schoolbg.jpeg');
+    background-size: cover;
+    background-color: #f2f2f277;
+  }
   
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input, .form-group select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
