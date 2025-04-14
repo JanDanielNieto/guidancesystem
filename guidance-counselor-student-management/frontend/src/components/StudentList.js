@@ -242,37 +242,37 @@ const StudentList = () => {
       </div>
 
       <table>
-        <thead>
-          <tr>
-            <th>LRN</th>
-            <th>Name</th>
-            <th>Grade</th>
-            <th>Section</th>
-            <th>Gender</th>
-            <th>Birthdate</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredStudents.map(student => (
-            <tr
-              key={student.lrn}
-              onClick={() => handleRowClick(student)}
-              onDoubleClick={() => handleRowDoubleClick(student)} // Handle double-click
-              style={{
-                backgroundColor: selectedStudent?.lrn === student.lrn ? '#f0f8ff' : 'transparent',
-                cursor: 'pointer',
-              }}
-            >
-              <td>{student.lrn}</td>
-              <td>{student.name}</td>
-              <td>{student.grade}</td>
-              <td>{student.section}</td>
-              <td>{student.gender}</td>
-              <td>{student.birth}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  <thead>
+    <tr>
+      <th>LRN</th>
+      <th>Name</th>
+      <th>Grade</th>
+      <th>Section</th>
+      <th>Gender</th> {/* Add Gender column */}
+      <th>Birthdate</th> {/* Add Birthdate column */}
+    </tr>
+  </thead>
+  <tbody>
+    {filteredStudents.map(student => (
+      <tr
+        key={student.lrn}
+        onClick={() => handleRowClick(student)}
+        onDoubleClick={() => handleRowDoubleClick(student)} // Handle double-click
+        style={{
+          backgroundColor: selectedStudent?.lrn === student.lrn ? '#f0f8ff' : 'transparent',
+          cursor: 'pointer',
+        }}
+      >
+        <td>{student.lrn}</td>
+        <td>{student.name}</td>
+        <td>{student.grade}</td>
+        <td>{student.section}</td>
+        <td>{student.sex}</td> {/* Display Gender */}
+        <td>{student.birthdate}</td> {/* Display Birthdate */}
+      </tr>
+    ))}
+  </tbody>
+</table>
 
       <div style={{ marginTop: '20px' }}>
         <h3>Actions</h3>
