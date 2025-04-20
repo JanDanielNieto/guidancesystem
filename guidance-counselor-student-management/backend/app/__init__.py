@@ -9,7 +9,7 @@ def create_app():
     CORS(app)  # Enable CORS for the app
 
     # Database configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:pupdit31@localhost/guidancesystem'    
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/guidancesystem'  # No password for root
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Initialize extensions
