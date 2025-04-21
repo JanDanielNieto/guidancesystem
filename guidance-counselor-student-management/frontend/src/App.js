@@ -8,6 +8,7 @@ import Records from './pages/Records';
 import AddReport from './pages/AddReport';
 import EditStudent from './pages/EditStudent';
 import Analytics from './pages/Analytics';
+import ManageStudentsByGrade from './pages/ManageStudentsByGrade';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/addreport" element={<AddReport />} />
           <Route path="/editstudent" element={<EditStudent />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/manage-students-by-grade" element={<ManageStudentsByGrade />} />
         </Routes>
       </div>
     </Router>
