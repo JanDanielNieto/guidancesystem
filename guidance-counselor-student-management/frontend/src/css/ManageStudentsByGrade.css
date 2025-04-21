@@ -36,17 +36,21 @@
   .students-table {
     width: 100%;
     border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
   
   .students-table th,
   .students-table td {
+    padding: 12px;
+    text-align: left;
     border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
   }
   
   .students-table th {
-    background-color: #f4f4f4;
+    background-color: #3498db;
+    color: #fff;
   }
   
   .edit-button {
