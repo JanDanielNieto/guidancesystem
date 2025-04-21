@@ -6,59 +6,35 @@ import {
   LinearScale,
   BarElement,
   ArcElement,
-  Title,
   Tooltip,
   Legend,
 } from 'chart.js';
-import axios from 'axios';
+import '../css/Analytics.css'; // Ensure the CSS file exists
 
 // Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 const Analytics = () => {
   const [studentData, setStudentData] = useState([]);
   const [offenseData, setOffenseData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+  // Fetch data from the backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        // Fetch student data
-        const studentResponse = await axios.get('http://localhost:5000/api/students');
-        setStudentData(studentResponse.data);
-
-        // Fetch offense data
-        const offenseResponse = await axios.get('http://localhost:5000/api/offenses');
-        setOffenseData(offenseResponse.data);
-
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Failed to fetch data. Please try again later.');
-        setLoading(false);
+        const studentResponse = await fetch('/api/students'); // Replace with your actual API endpoint
+        const offenseResponse = await fetch('/api/offenses'); // Replace with your actual API endpoint
+        const students = await studentResponse.json();
+        const offenses = await offenseResponse.json();
+        setStudentData(students);
+        setOffenseData(offenses);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
   }, []);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
 
   // Prepare data for the pie chart (student offenses)
   const offensesByType = offenseData.reduce((acc, offense) => {
@@ -97,25 +73,60 @@ const Analytics = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Analytics</h1>
-      <div style={{ marginBottom: '40px' }}>
-        <h2>Student Offenses</h2>
-        <Pie data={pieChartData} />
-      </div>
-      <div>
-        <h2>Students by Section</h2>
-        <Bar
-          data={barChartData}
-          options={{
-            scales: {
-              y: {
-                beginAtZero: true,
+    <div className="analytics-container">
+      <header className="analytics-header">
+        <h1>Guidance System Analytics</h1>
+      </header>
+      <section className="analytics-section">
+        <div className="chart-container">
+          <h2 className="chart-title">Student Offenses</h2>
+          <Pie
+            data={pieChartData}
+            options={{
+              plugins: {
+                legend: {
+                  position: 'top',
+                  labels: {
+                    boxWidth: 10,
+                  },
+                },
               },
-            },
-          }}
-        />
-      </div>
+              maintainAspectRatio: false,
+            }}
+          />
+        </div>
+        <div className="chart-container">
+          <h2 className="chart-title">Students by Section</h2>
+          <Bar
+            data={barChartData}
+            options={{
+              plugins: {
+                legend: {
+                  position: 'top',
+                  labels: {
+                    boxWidth: 10,
+                  },
+                },
+              },
+              maintainAspectRatio: false,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            }}
+          />
+        </div>
+      </section>
+      <section className="analytics-summary">
+        <h2>Summary</h2>
+        <p>Total Students: {studentData.length}</p>
+        <p>Total Offenses Recorded: {offenseData.length}</p>
+        <p>
+          Most Common Offense:{' '}
+          {Object.keys(offensesByType).reduce((a, b) => (offensesByType[a] > offensesByType[b] ? a : b), 'N/A')}
+        </p>
+      </section>
     </div>
   );
 };
