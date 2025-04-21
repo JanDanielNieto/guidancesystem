@@ -81,12 +81,12 @@ const ManageStudentsByGrade = () => {
           </button>
         ))}
       </div>
-      <div className="action-buttons">
-        <Link to="/add-student" className="add-button">Add Student</Link>
-        <button className="edit-button" onClick={() => alert('Edit functionality not implemented yet.')}>Edit Student</button>
+      <div className="">
+        <Link to="/add-student" className="button">Add Student</Link>
+        <button className="button" onClick={() => alert('Edit functionality not implemented yet.')}>Edit Student</button>
         {selectedStudent && (
           <button
-            className="delete-button"
+            className="button"
             onClick={() => alert('Delete functionality not implemented yet.')}
           >
             Delete Student
@@ -94,15 +94,16 @@ const ManageStudentsByGrade = () => {
         )}
         {showDeleteAll && (
           <button
-            className="delete-all-button"
-            onClick={() => alert('Delete All Data functionality not implemented yet.')}
+            className="button"
+            onClick={handleDeleteAll}
+            title="Shortcut: Ctrl + Shift + D"
           >
             Delete All Data
           </button>
         )}
         <div className="upload-container">
           <input type="file" accept=".csv, .xlsx" onChange={handleFileChange} />
-          <button className="upload-button" onClick={handleUpload}>
+          <button className="button" onClick={handleUpload}>
             Upload Data
           </button>
         </div>
