@@ -7,12 +7,13 @@ const ManageStudentsByGrade = () => {
   const [selectedGrade, setSelectedGrade] = useState('Grade 10');
   const [showDeleteAll, setShowDeleteAll] = useState(false); // State to toggle "Delete All Data" button visibility
   const [selectedStudent, setSelectedStudent] = useState(null); // State to track the selected student
+  const [file, setFile] = useState(null); // State to store the uploaded file
 
   useEffect(() => {
     // Fetch all students from the backend
     const fetchStudents = async () => {
       try {
-        const response = await fetch('/api/students'); // Replace with your actual API endpoint
+        const response = await fetch('http://localhost:5000/api/students'); // Use the correct backend URL
         const data = await response.json();
         setStudents(data);
       } catch (error) {
@@ -26,104 +27,86 @@ const ManageStudentsByGrade = () => {
   // Filter students by the selected grade
   const filteredStudents = students.filter(student => student.grade === selectedGrade);
 
-  // Handle delete all data
-  const handleDeleteAll = async () => {
-    if (window.confirm('Are you sure you want to delete all student data?')) {
-      try {
-        const response = await fetch('/api/delete_all_students', { method: 'DELETE' });
-        if (response.ok) {
-          setStudents([]);
-          alert('All student data has been deleted.');
-        } else {
-          alert('Failed to delete all data.');
-        }
-      } catch (error) {
-        console.error('Error deleting all data:', error);
-      }
-    }
+  // Handle file selection
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
   };
 
-  // Handle delete individual student
-  const handleDeleteStudent = async (id) => {
-    if (window.confirm('Are you sure you want to delete this student?')) {
-      try {
-        const response = await fetch(`/api/students/${id}`, { method: 'DELETE' });
-        if (response.ok) {
-          setStudents(students.filter(student => student.id !== id));
-          alert('Student deleted successfully.');
-        } else {
-          alert('Failed to delete student.');
-        }
-      } catch (error) {
-        console.error('Error deleting student:', error);
+  // Handle file upload
+  const handleUpload = async () => {
+    if (!file) {
+      alert('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(result.message);
+        setFile(null); // Clear the file input
+        // Optionally, refresh the student list
+        const updatedStudents = await fetch('http://localhost:5000/api/students');
+        setStudents(await updatedStudents.json());
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
       }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('An error occurred while uploading the file.');
     }
   };
-
-  // Handle edit student
-  const handleEditStudent = () => {
-    if (selectedStudent) {
-      alert(`Editing student: ${selectedStudent.name}`);
-      // Navigate to the edit page or open a modal for editing
-    } else {
-      alert('Please select a student to edit.');
-    }
-  };
-
-  // Add shortcut key for "Delete All Data"
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
-        setShowDeleteAll(true); // Show the "Delete All Data" button
-      }
-    };
-  
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
 
   return (
     <div className="manage-students-container">
-    <header className="manage-students-header">
-      <h1>Manage Students by Grade</h1>
-    </header>
-    <div className="grade-buttons">
-      {['Grade 10', 'Grade 9', 'Grade 8', 'Grade 7'].map(grade => (
-        <button
-          key={grade}
-          className={`grade-button ${selectedGrade === grade ? 'active' : ''}`}
-          onClick={() => setSelectedGrade(grade)}
-        >
-          {grade}
-        </button>
-      ))}
-    </div>
-    <div className="">
-  <Link to="/add-student" className="button">Add Student</Link>
-  <button className="button" onClick={handleEditStudent}>Edit Student</button>
-  {selectedStudent && (
-    <button
-      className="button delete-button"
-      onClick={() => handleDeleteStudent(selectedStudent.id)}
-    >
-      Delete Student
-    </button>
-  )}
-  {showDeleteAll && (
-    <button
-      className="button delete-all-button"
-      onClick={handleDeleteAll}
-      title="Shortcut: Ctrl + Shift + D"
-    >
-      Delete All Data
-    </button>
-    )}
-    <button className="button upload-button">
-      Upload Data
-    </button>
-</div>
+      <header className="manage-students-header">
+        <h1>Manage Students by Grade</h1>
+      </header>
+      <div className="grade-buttons">
+        {['Grade 10', 'Grade 9', 'Grade 8', 'Grade 7'].map(grade => (
+          <button
+            key={grade}
+            className={`grade-button ${selectedGrade === grade ? 'active' : ''}`}
+            onClick={() => setSelectedGrade(grade)}
+          >
+            {grade}
+          </button>
+        ))}
+      </div>
+      <div className="action-buttons">
+        <Link to="/add-student" className="add-button">Add Student</Link>
+        <button className="edit-button" onClick={() => alert('Edit functionality not implemented yet.')}>Edit Student</button>
+        {selectedStudent && (
+          <button
+            className="delete-button"
+            onClick={() => alert('Delete functionality not implemented yet.')}
+          >
+            Delete Student
+          </button>
+        )}
+        {showDeleteAll && (
+          <button
+            className="delete-all-button"
+            onClick={() => alert('Delete All Data functionality not implemented yet.')}
+          >
+            Delete All Data
+          </button>
+        )}
+        <div className="upload-container">
+          <input type="file" accept=".csv, .xlsx" onChange={handleFileChange} />
+          <button className="upload-button" onClick={handleUpload}>
+            Upload Data
+          </button>
+        </div>
+      </div>
       <div className="students-table-container">
         <h2>{selectedGrade}</h2>
         <table className="students-table">
@@ -137,11 +120,7 @@ const ManageStudentsByGrade = () => {
           </thead>
           <tbody>
             {filteredStudents.map(student => (
-              <tr
-                key={student.id}
-                className={selectedStudent?.id === student.id ? 'selected-row' : ''}
-                onClick={() => setSelectedStudent(student)} // Highlight the row on click
-              >
+              <tr key={student.id}>
                 <td>{student.lrn}</td>
                 <td>{student.name}</td>
                 <td>{student.grade}</td>

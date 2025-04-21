@@ -45,14 +45,18 @@ def upload_csv():
         return jsonify({'error': 'No file uploaded'}), 400
 
     file = request.files['file']
-    if not file.filename.endswith('.csv'):
-        return jsonify({'error': 'Invalid file format. Please upload a CSV file.'}), 400
+    if not (file.filename.endswith('.csv') or file.filename.endswith('.xlsx')):
+        return jsonify({'error': 'Invalid file format. Please upload a CSV or Excel file.'}), 400
 
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(file_path)
 
     try:
-        df = pd.read_csv(file_path, encoding='ISO-8859-1')
+        if file.filename.endswith('.csv'):
+            df = pd.read_csv(file_path, encoding='ISO-8859-1')
+        elif file.filename.endswith('.xlsx'):
+            df = pd.read_excel(file_path)
+
         df.columns = [col.strip().lower() for col in df.columns]
         df = df.where(pd.notnull(df), None)
         column_mapping = {key.lower(): value for key, value in COLUMN_MAPPING.items()}
