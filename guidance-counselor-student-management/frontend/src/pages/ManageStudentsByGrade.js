@@ -73,11 +73,11 @@ const ManageStudentsByGrade = () => {
   // Add shortcut key for "Delete All Data"
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.ctrlKey && event.key === 'd') {
+      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
         setShowDeleteAll(true); // Show the "Delete All Data" button
       }
     };
-
+  
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -100,27 +100,30 @@ const ManageStudentsByGrade = () => {
         </button>
       ))}
     </div>
-      <div className="action-buttons">
-        <Link to="/add-student" className="add-button">Add Student</Link>
-        <button className="edit-button" onClick={handleEditStudent}>Edit Student</button>
-        {selectedStudent && (
-          <button
-            className="delete-button"
-            onClick={() => handleDeleteStudent(selectedStudent.id)}
-          >
-            Delete Student
-          </button>
-        )}
-        {showDeleteAll && (
-          <button
-            className="delete-all-button"
-            onClick={handleDeleteAll}
-            title="Shortcut: Ctrl + D"
-          >
-            Delete All Data
-          </button>
-        )}
-      </div>
+    <div className="">
+  <Link to="/add-student" className="button">Add Student</Link>
+  <button className="button" onClick={handleEditStudent}>Edit Student</button>
+  {selectedStudent && (
+    <button
+      className="button delete-button"
+      onClick={() => handleDeleteStudent(selectedStudent.id)}
+    >
+      Delete Student
+    </button>
+  )}
+  {showDeleteAll && (
+    <button
+      className="button delete-all-button"
+      onClick={handleDeleteAll}
+      title="Shortcut: Ctrl + Shift + D"
+    >
+      Delete All Data
+    </button>
+    )}
+    <button className="button upload-button">
+      Upload Data
+    </button>
+</div>
       <div className="students-table-container">
         <h2>{selectedGrade}</h2>
         <table className="students-table">
