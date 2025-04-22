@@ -26,7 +26,7 @@
   }
   
   .grade-button.active {
-    background-color: #0056b3;
+    background-color: #004ea1;
   }
   
   .students-table-container {
@@ -66,6 +66,20 @@
     text-align: center;
 }
 
+.uploadbutton {
+  padding: 5px 15px;
+  border: none;
+  background-color: #96fb9e;
+  color: rgb(29, 41, 29);
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  text-decoration: none;
+  text-align: center;
+  position: relative;
+  right: 6%;
+}
+
 /* Specific styles for hover effects */
 .button:hover {
     background-color: #0056b3;
@@ -85,4 +99,28 @@
 
 .delete-all-button:hover {
   background-color: #5a6268;
+}
+
+.search-container {
+  display: flex; /* Align input and button horizontally */
+  display: block; /* Ensure it takes up the full width */
+  margin: 10px 0; /* Add some spacing above and below */
+}
+
+.search-container input {
+  flex: 1; /* Allow the input to take up available space */
+  width: 50%; /* Make the search bar as wide as the container */
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+.search-container .button {
+  margin-left: 10px; /* Add spacing between the input and button */
+}
+
+.students-table tr.selected {
+  background-color: #bbdffe;
 }

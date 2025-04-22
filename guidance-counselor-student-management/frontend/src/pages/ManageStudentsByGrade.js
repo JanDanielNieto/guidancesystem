@@ -9,6 +9,7 @@ const ManageStudentsByGrade = () => {
   const [selectedStudent, setSelectedStudent] = useState(null); // State to track the selected student
   const [file, setFile] = useState(null); // State to store the uploaded file
   const [gradeCounts, setGradeCounts] = useState({}); // State to store the count of students per grade
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
 
   useEffect(() => {
     // Fetch all students from the backend
@@ -32,8 +33,26 @@ const ManageStudentsByGrade = () => {
     fetchStudents();
   }, []);
 
-  // Filter students by the selected grade
-  const filteredStudents = students.filter(student => student.grade === selectedGrade);
+  // Add keybind logic for Ctrl + Shift + D
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+        setShowDeleteAll((prev) => !prev); // Toggle the visibility of the "Delete All Data" button
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  // Filter students by the selected grade and search query
+  const filteredStudents = students.filter(
+    (student) =>
+      student.grade === selectedGrade &&
+      student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Handle file selection
   const handleFileChange = (event) => {
@@ -81,13 +100,55 @@ const ManageStudentsByGrade = () => {
     }
   };
 
+  // Handle delete student
+  const handleDeleteStudent = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/students/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('Student deleted successfully.');
+        setStudents(students.filter((student) => student.id !== id));
+        setSelectedStudent(null);
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error deleting student:', error);
+      alert('An error occurred while deleting the student.');
+    }
+  };
+
+  // Handle delete all students
+  const handleDeleteAll = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/students', {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('All students deleted successfully.');
+        setStudents([]);
+        setGradeCounts({});
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error deleting all students:', error);
+      alert('An error occurred while deleting all students.');
+    }
+  };
+
   return (
     <div className="manage-students-container">
       <header className="manage-students-header">
         <h1>Manage Students by Grade</h1>
       </header>
       <div className="grade-buttons">
-        {['Grade 10', 'Grade 9', 'Grade 8', 'Grade 7'].map(grade => (
+        {['Grade 10', 'Grade 9', 'Grade 8', 'Grade 7'].map((grade) => (
           <button
             key={grade}
             className={`grade-button ${selectedGrade === grade ? 'active' : ''}`}
@@ -97,32 +158,44 @@ const ManageStudentsByGrade = () => {
           </button>
         ))}
       </div>
-      <div className="action-buttons">
-        <Link to="/add-student" className="add-button">Add Student</Link>
-        <button className="edit-button" onClick={() => alert('Edit functionality not implemented yet.')}>Edit Student</button>
-        {selectedStudent && (
-          <button
-            className="delete-button"
-            onClick={() => alert('Delete functionality not implemented yet.')}
-          >
-            Delete Student
-          </button>
-        )}
+      <div className="buttons">
+        <Link to="/add-student" className="button">
+          Add Student
+        </Link>
+        <button
+          className="button"
+          onClick={() =>
+            selectedStudent
+              ? handleDeleteStudent(selectedStudent.id)
+              : alert('Please select a student to delete.')
+          }
+        >
+          Delete Student
+        </button>
         {showDeleteAll && (
-          <button
-            className="delete-all-button"
-            onClick={() => alert('Delete All Data functionality not implemented yet.')}
-          >
+          <button className="button delete-all-button" onClick={handleDeleteAll}>
             Delete All Data
           </button>
         )}
         <div className="upload-container">
           <input type="file" accept=".csv, .xlsx" onChange={handleFileChange} />
-          <button className="upload-button" onClick={handleUpload}>
+          <button className="uploadbutton" onClick={handleUpload}>
             Upload Data
           </button>
         </div>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search students..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button className="button" onClick={() => alert(`Searching for: ${searchQuery}`)}>
+            Search
+          </button>
+        </div>
       </div>
+      
       <div className="students-table-container">
         <h2>{selectedGrade}</h2>
         <table className="students-table">
@@ -135,8 +208,12 @@ const ManageStudentsByGrade = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredStudents.map(student => (
-              <tr key={student.id}>
+            {filteredStudents.map((student) => (
+              <tr
+                key={student.id}
+                onClick={() => setSelectedStudent(student)}
+                className={selectedStudent?.id === student.id ? 'selected' : ''}
+              >
                 <td>{student.lrn}</td>
                 <td>{student.name}</td>
                 <td>{student.grade}</td>
