@@ -166,6 +166,16 @@ const ManageStudentsByGrade = () => {
           className="button"
           onClick={() =>
             selectedStudent
+              ? alert(`Editing student: ${selectedStudent.name}`)
+              : alert('Please select a student to edit.')
+          }
+        >
+          Edit Student
+        </button>
+        <button
+          className="button"
+          onClick={() =>
+            selectedStudent
               ? handleDeleteStudent(selectedStudent.id)
               : alert('Please select a student to delete.')
           }
