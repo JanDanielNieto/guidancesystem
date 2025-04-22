@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/styles.css';
+import { useLocation } from 'react-router-dom';
+
 
 const AddReport = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -7,64 +9,87 @@ const AddReport = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [offenseType, setOffenseType] = useState('');
   const [reason, setReason] = useState('');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const studentId = queryParams.get('studentId');
 
-  // Mock data for demonstration
-  const mockData = {
-    "John Doe": { age: 25, occupation: "Software Engineer" },
-    "Jane Smith": { age: 30, occupation: "Data Scientist" },
-    "Jack Johnson": { age: 22, occupation: "Graphic Designer" },
-    "Jill Brown": { age: 28, occupation: "Marketing Specialist" },
-  };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (mockData[searchTerm]) {
-      setDetails(mockData[searchTerm]);
-    } else {
-      setDetails({ error: "No details found for this name." });
+  useEffect(() => {
+    if (studentId) {
+      fetch(`http://localhost:5000/api/students/${studentId}`)
+        .then((response) => response.json())
+        .then((data) => setDetails(data))
+        .catch((error) => console.error('Error fetching student details:', error));
     }
-  };
+  }, [studentId]);
+
+    const handleSearch = async (e) => {
+      e.preventDefault();
+      try {
+        const response = await fetch(`http://localhost:5000/api/students/search?query=${searchTerm}`);
+        const data = await response.json();
+        setSuggestions(data); // Populate suggestions with the search results
+        if (data.length === 1) {
+          setDetails(data[0]); // Automatically select the student if only one result
+        } else {
+          setDetails(null); // Clear details if multiple results
+        }
+      } catch (error) {
+        console.error('Error searching for student:', error);
+        setDetails({ error: "An error occurred while searching." });
+      }
+    };
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
+  const value = e.target.value;
+  setSearchTerm(value);
 
-    // Filter suggestions based on the input
-    if (value) {
-      const filteredSuggestions = Object.keys(mockData).filter((name) =>
-        name.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions([]);
-    }
-  };
+  // Filter suggestions based on the input
+  if (value) {
+    const filteredSuggestions = suggestions.filter((student) =>
+      student.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setSuggestions(filteredSuggestions);
+  } else {
+    setSuggestions([]);
+  }
+};
 
-  const handleSuggestionClick = (name) => {
-    setSearchTerm(name); // Set the selected name in the search bar
+  const handleSuggestionClick = (student) => {
+    setSearchTerm(student.name); // Set the selected student's name in the search bar
+    setDetails(student); // Set the selected student's details
     setSuggestions([]); // Clear the suggestions
   };
 
-  const handleAddOffense = () => {
-    if (!offenseType || !reason) {
-      alert('Please fill out all fields before submitting.');
+  const handleAddOffense = async () => {
+    if (!offenseType) {
+      alert('Please select an offense type before submitting.');
       return;
     }
-
-    // Simulate adding the offense to the database
-    console.log('Adding offense:', {
-      name: searchTerm,
-      offenseType,
-      reason,
-    });
-
-    alert(`Offense added for ${searchTerm}: ${offenseType} - ${reason}`);
-
-    // Clear the form fields
-    setOffenseType('');
-    setReason('');
-    setDetails(null);
-    setSearchTerm('');
+  
+    try {
+      const response = await fetch(`http://localhost:5000/api/students/${details.id}/offenses`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ offense_type: offenseType, reason }), // Reason can be empty
+      });
+  
+      if (response.ok) {
+        alert(`Offense added for ${details.name}: ${offenseType}${reason ? ` - ${reason}` : ''}`);
+        setOffenseType('');
+        setReason('');
+        setDetails(null);
+        setSearchTerm('');
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error adding offense:', error);
+      alert('An error occurred while adding the offense.');
+    }
   };
 
   return (
@@ -99,36 +124,36 @@ const AddReport = () => {
         </button>
 
         {/* Dropdown for suggestions */}
-        {suggestions.length > 0 && (
-          <ul
-            style={{
-              position: 'absolute',
-              top: '50px',
-              left: '0',
-              width: '300px',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              backgroundColor: 'white',
-              listStyleType: 'none',
-              padding: '10px',
-              margin: '0',
-              zIndex: 1000,
-            }}
-          >
-            {suggestions.map((name) => (
-              <li
-                key={name}
-                onClick={() => handleSuggestionClick(name)}
-                style={{
-                  padding: '5px',
-                  cursor: 'pointer',
-                }}
-              >
-                {name}
-              </li>
-            ))}
-          </ul>
-        )}
+          {suggestions.length > 0 && (
+            <ul
+              style={{
+                position: 'absolute',
+                top: '50px',
+                left: '0',
+                width: '300px',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                backgroundColor: 'white',
+                listStyleType: 'none',
+                padding: '10px',
+                margin: '0',
+                zIndex: 1000,
+              }}
+            >
+              {suggestions.map((student) => (
+                <li
+                  key={student.id}
+                  onClick={() => handleSuggestionClick(student)}
+                  style={{
+                    padding: '5px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {student.name} ({student.lrn})
+                </li>
+              ))}
+            </ul>
+          )}
       </form>
 
       {details && (
@@ -137,7 +162,9 @@ const AddReport = () => {
             <p style={{ color: 'red' }}>{details.error}</p>
           ) : (
             <div>
-              <h2>{searchTerm}</h2>
+              <h2>{details.name}</h2>
+              <p>Grade: {details.grade}</p>
+              <p>Section: {details.section}</p>
               <div style={{ marginBottom: '10px' }}>
                 <label>
                   <strong>Offense Type:</strong>
@@ -162,8 +189,7 @@ const AddReport = () => {
               <div style={{ marginBottom: '10px' }}>
                 <label>
                   <strong>Reason:</strong>
-                  <input
-                    type="text"
+                  <textarea
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Enter a reason"
@@ -171,6 +197,7 @@ const AddReport = () => {
                       marginLeft: '10px',
                       padding: '5px',
                       width: '300px',
+                      height: '100px',
                       borderRadius: '5px',
                       border: '1px solid #ccc',
                     }}

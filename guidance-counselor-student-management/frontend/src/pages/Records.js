@@ -50,25 +50,24 @@ const Records = () => {
   ];
 
   useEffect(() => {
-    // Simulate fetching students from an API
     axios.get('http://localhost:5000/api/students')
       .then(response => {
-        setStudents(response.data);
+        // Filter students with at least one offense
+        const studentsWithOffenses = response.data.filter(student => student.offenses.length > 0);
+        setStudents(studentsWithOffenses);
       })
       .catch(error => {
         console.error('Error fetching students:', error);
-        // Use mock data if API fails
-        setStudents(mockData);
       });
   }, []);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-
+  
     // Filter suggestions based on the input
     if (value) {
-      const filteredSuggestions = mockData.filter((student) =>
+      const filteredSuggestions = students.filter((student) =>
         student.name.toLowerCase().includes(value.toLowerCase())
       );
       setSuggestions(filteredSuggestions);

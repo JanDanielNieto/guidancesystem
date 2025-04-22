@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, send_from_directory
-from app.models import StudentRecord
+from app.models import StudentRecord, OffenseRecord
 from dateutil.parser import parse
 from datetime import datetime
 from app import db
@@ -156,7 +156,14 @@ def upload_csv():
 @main.route('/api/students', methods=['GET'])
 def get_students():
     students = StudentRecord.query.all()
-    return jsonify([student.to_dict() for student in students])
+    result = []
+    for student in students:
+        offenses = OffenseRecord.query.filter_by(student_id=student.id).all()
+        result.append({
+            **student.to_dict(),
+            'offenses': [offense.to_dict() for offense in offenses]
+        })
+    return jsonify(result)
 
 @main.route('/api/students/<int:id>', methods=['PUT'])
 def edit_student(id):
@@ -209,3 +216,93 @@ def delete_all_students():
 def get_students_by_grade(grade):
     students = StudentRecord.query.filter_by(grade=grade).all()
     return jsonify([student.to_dict() for student in students])
+
+@main.route('/api/students', methods=['POST'])
+def add_student():
+    data = request.json
+
+    # Validate required fields
+    required_fields = ['lrn', 'name', 'grade', 'section']
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({'error': f'{field} is required'}), 400
+
+    # Check if LRN is unique
+    if StudentRecord.query.filter_by(lrn=data['lrn']).first():
+        return jsonify({'error': 'LRN must be unique'}), 400
+
+    try:
+        # Parse birthdate safely
+        birthdate = None
+        if data.get('birthdate'):
+            birthdate = datetime.strptime(data['birthdate'], '%Y-%m-%d').date()
+
+        # Create a new student record
+        new_student = StudentRecord(
+            lrn=data['lrn'],
+            name=data['name'],
+            grade=data['grade'],
+            section=data['section'],
+            sex=data.get('sex'),
+            birthdate=birthdate,
+            mother_tongue=data.get('mother_tongue'),
+            religion=data.get('religion'),
+            barangay=data.get('barangay'),
+            municipality_city=data.get('municipality_city'),
+            father_name=data.get('father_name'),
+            mother_name=data.get('mother_name'),
+            guardian_name=data.get('guardian_name'),
+            contact_number=data.get('contact_number')
+        )
+
+        db.session.add(new_student)
+        db.session.commit()
+
+        return jsonify({'message': 'Student added successfully!'}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
+@main.route('/api/students/search', methods=['GET'])
+def search_students():
+    query = request.args.get('query', '').lower()
+    students = StudentRecord.query.filter(
+        (StudentRecord.name.ilike(f"%{query}%")) | (StudentRecord.lrn.ilike(f"%{query}%"))
+    ).all()
+    return jsonify([student.to_dict() for student in students])
+    
+
+@main.route('/api/students/<int:student_id>/offenses', methods=['POST'])
+def add_offense(student_id):
+        data = request.json
+        student = StudentRecord.query.get(student_id)
+    
+        if not student:
+            return jsonify({'error': 'Student not found'}), 404
+    
+        try:
+            new_offense = OffenseRecord(
+                student_id=student_id,
+                offense_type=data['offense_type'],
+                reason=data['reason'],
+                additional_info=data.get('additional_info', ''),
+            )
+            db.session.add(new_offense)
+            db.session.commit()
+            return jsonify({'message': 'Offense added successfully'}), 201
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+        
+@main.route('/api/offenses', methods=['GET'])
+def get_offenses():
+    offenses = OffenseRecord.query.all()
+    return jsonify([offense.to_dict() for offense in offenses])
+
+@main.route('/api/students/<string:lrn>', methods=['GET'])
+def get_student_by_lrn(lrn):
+    student = StudentRecord.query.filter_by(lrn=lrn).first()
+    if not student:
+        return jsonify({'error': 'Student not found'}), 404
+    return jsonify(student.to_dict())

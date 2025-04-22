@@ -18,12 +18,11 @@ const Analytics = () => {
   const [studentData, setStudentData] = useState([]);
   const [offenseData, setOffenseData] = useState([]);
 
-  // Fetch data from the backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const studentResponse = await fetch('/api/students'); // Replace with your actual API endpoint
-        const offenseResponse = await fetch('/api/offenses'); // Replace with your actual API endpoint
+        const studentResponse = await fetch('http://localhost:5000/api/students');
+        const offenseResponse = await fetch('http://localhost:5000/api/offenses');
         const students = await studentResponse.json();
         const offenses = await offenseResponse.json();
         setStudentData(students);
@@ -36,9 +35,8 @@ const Analytics = () => {
     fetchData();
   }, []);
 
-  // Prepare data for the pie chart (student offenses)
   const offensesByType = offenseData.reduce((acc, offense) => {
-    acc[offense.offense_type] = (acc[offense.offense_type] || 0) + 1;
+    acc[offense.type] = (acc[offense.type] || 0) + 1;
     return acc;
   }, {});
 
@@ -53,18 +51,19 @@ const Analytics = () => {
     ],
   };
 
-  // Prepare data for the bar chart (students by section)
-  const studentsBySection = studentData.reduce((acc, student) => {
-    acc[student.section] = (acc[student.section] || 0) + 1;
+  const studentsWithOffensesByGrade = studentData.reduce((acc, student) => {
+    if (student.offenses.length > 0) {
+      acc[student.grade] = (acc[student.grade] || 0) + 1;
+    }
     return acc;
   }, {});
 
   const barChartData = {
-    labels: Object.keys(studentsBySection),
+    labels: Object.keys(studentsWithOffensesByGrade),
     datasets: [
       {
-        label: 'Number of Students',
-        data: Object.values(studentsBySection),
+        label: 'Number of Students with Offenses',
+        data: Object.values(studentsWithOffensesByGrade),
         backgroundColor: '#36A2EB',
         borderColor: '#36A2EB',
         borderWidth: 1,
@@ -96,7 +95,7 @@ const Analytics = () => {
           />
         </div>
         <div className="chart-container">
-          <h2 className="chart-title">Students by Section</h2>
+          <h2 className="chart-title">Students with Offenses by Grade</h2>
           <Bar
             data={barChartData}
             options={{

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../css/ManageStudentsByGrade.css'; // Add styles for this page
 
 const ManageStudentsByGrade = () => {
@@ -10,6 +10,7 @@ const ManageStudentsByGrade = () => {
   const [file, setFile] = useState(null); // State to store the uploaded file
   const [gradeCounts, setGradeCounts] = useState({}); // State to store the count of students per grade
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const navigate = useNavigate(); // For navigation to the profile page
 
   useEffect(() => {
     // Fetch all students from the backend
@@ -127,7 +128,7 @@ const ManageStudentsByGrade = () => {
       const response = await fetch('http://localhost:5000/api/delete_all_students', {
         method: 'DELETE',
       });
-  
+
       if (response.ok) {
         alert('All students deleted successfully.');
         setStudents([]);
@@ -141,7 +142,21 @@ const ManageStudentsByGrade = () => {
       alert('An error occurred while deleting all students.');
     }
   };
-  
+
+  // Navigate to the profile page
+  const handleViewProfile = () => {
+    if (selectedStudent) {
+      navigate(`/students/${selectedStudent.lrn}`);
+    } else {
+      alert('Please select a student to view their profile.');
+    }
+  };
+
+  // Handle double-click on a student row
+  const handleRowDoubleClick = (student) => {
+    navigate(`/students/${student.lrn}`);
+  };
+
   return (
     <div className="manage-students-container">
       <header className="manage-students-header">
@@ -182,6 +197,13 @@ const ManageStudentsByGrade = () => {
         >
           Delete Student
         </button>
+        <button
+          className="button"
+          onClick={handleViewProfile}
+          disabled={!selectedStudent}
+        >
+          View Profile
+        </button>
         {showDeleteAll && (
           <button className="button delete-all-button" onClick={handleDeleteAll}>
             Delete All Data
@@ -205,7 +227,7 @@ const ManageStudentsByGrade = () => {
           </button>
         </div>
       </div>
-      
+
       <div className="students-table-container">
         <h2>{selectedGrade}</h2>
         <table className="students-table">
@@ -222,6 +244,7 @@ const ManageStudentsByGrade = () => {
               <tr
                 key={student.id}
                 onClick={() => setSelectedStudent(student)}
+                onDoubleClick={() => handleRowDoubleClick(student)} // Double-click event
                 className={selectedStudent?.id === student.id ? 'selected' : ''}
               >
                 <td>{student.lrn}</td>

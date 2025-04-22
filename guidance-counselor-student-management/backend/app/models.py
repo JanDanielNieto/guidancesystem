@@ -45,8 +45,15 @@ class OffenseRecord(db.Model):
     __tablename__ = 'offense_records'
 
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student_records.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('student_information.id'), nullable=False)
     offense_type = db.Column(db.String(100), nullable=False)
-    reason = db.Column(db.String(200), nullable=False)
+    reason = db.Column(db.String(200), nullable=True)
     additional_info = db.Column(db.String(500))
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'type': self.offense_type,
+            'reason': self.reason,
+            'date': self.date_time.strftime('%Y-%m-%d %H:%M:%S') if self.date_time else None
+        }

@@ -6,7 +6,7 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    CORS(app) 
+    CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/guidancesystem'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
