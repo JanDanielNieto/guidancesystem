@@ -54,8 +54,8 @@ def upload_csv():
 
     try:
         if file.filename.endswith('.csv'):
-            df = pd.read_csv(file_path, encoding='ISO-8859-1')
-        elif file.filename.endswith('.xlsx'):
+            df = pd.read_csv(file_path, encoding='utf-8')
+        else:
             df = pd.read_excel(file_path)
 
         # Normalize column names
@@ -65,59 +65,79 @@ def upload_csv():
         column_mapping = {key.lower(): value for key, value in COLUMN_MAPPING.items()}
         df.rename(columns=column_mapping, inplace=True)
 
-        required_columns = ['lrn', 'name', 'section']
+        required_columns = ['lrn', 'name', 'section', 'grade']
         for col in required_columns:
             if col not in df.columns:
                 return jsonify({'error': f'Missing required column: {col}'}), 400
 
         total_rows = len(df)
-        updated_count = 0
         inserted_count = 0
+        updated_count = 0
+        skipped_rows = []  # To track skipped rows
 
-        for _, row in df.iterrows():
-            # Set defaults for required fields
-            lrn = row.get('lrn') or 'Unknown'
-            name = row.get('name') or 'Unknown'
-            section = row.get('section') or 'Unknown'
-            grade = row.get('grade') or 'Unknown'
+        for index, row in df.iterrows():
+            try:
+                raw_lrn = str(row.get('lrn')).strip() if row.get('lrn') else None
+                lrn = raw_lrn.split('.')[0] if raw_lrn and '.' in raw_lrn else raw_lrn
+                name = row.get('name')
+                section = row.get('section')
+                grade = row.get('grade')
 
-            # Parse birthdate safely
-            birthdate = None
-            if row.get('birthdate'):
-                try:
-                    birthdate = parse(str(row.get('birthdate'))).strftime('%Y-%m-%d')
-                except Exception:
-                    birthdate = None
+                # Skip incomplete rows and log the reason
+                if not lrn:
+                    skipped_rows.append({'index': index + 1, 'reason': 'Missing LRN', 'row': row.to_dict()})
+                    continue
+                if not name:
+                    skipped_rows.append({'index': index + 1, 'reason': 'Missing Name', 'row': row.to_dict()})
+                    continue
+                if not section:
+                    skipped_rows.append({'index': index + 1, 'reason': 'Missing Section', 'row': row.to_dict()})
+                    continue
+                if not grade:
+                    skipped_rows.append({'index': index + 1, 'reason': 'Missing Grade', 'row': row.to_dict()})
+                    continue
 
-            student_data = {
-                'lrn': lrn,
-                'name': name,
-                'grade': grade,
-                'section': section,
-                'sex': row.get('sex'),
-                'birthdate': birthdate,
-                'mother_tongue': row.get('mother_tongue'),
-                'religion': row.get('religion'),
-                'barangay': row.get('barangay'),
-                'municipality_city': row.get('municipality_city'),
-                'father_name': row.get('father_name'),
-                'mother_name': row.get('mother_name'),
-                'guardian_name': row.get('guardian_name'),
-                'contact_number': row.get('contact_number'),
-            }
+                # Parse birthdate safely
+                birthdate = None
+                raw_birthdate = row.get('birthdate')
+                if raw_birthdate:
+                    try:
+                        birthdate = parse(str(raw_birthdate)).date()
+                    except Exception:
+                        birthdate = None
 
-            # Clean NaNs
-            student_data = {k: (None if pd.isna(v) else v) for k, v in student_data.items()}
+                student_data = {
+                    'lrn': lrn,
+                    'name': name.strip() if name else None,
+                    'grade': grade.strip() if grade else None,
+                    'section': section.strip() if section else None,
+                    'sex': row.get('sex'),
+                    'birthdate': birthdate,
+                    'mother_tongue': row.get('mother_tongue'),
+                    'religion': row.get('religion'),
+                    'barangay': row.get('barangay'),
+                    'municipality_city': row.get('municipality_city'),
+                    'father_name': row.get('father_name'),
+                    'mother_name': row.get('mother_name'),
+                    'guardian_name': row.get('guardian_name'),
+                    'contact_number': row.get('contact_number')
+                }
 
-            existing = StudentRecord.query.filter_by(lrn=lrn).first()
-            if existing:
-                for key, value in student_data.items():
-                    setattr(existing, key, value)
-                updated_count += 1
-            else:
-                new_student = StudentRecord(**student_data)
-                db.session.add(new_student)
-                inserted_count += 1
+                # Clean possible NaN/None
+                student_data = {k: (None if pd.isna(v) else v) for k, v in student_data.items()}
+                existing = StudentRecord.query.filter_by(lrn=lrn).first()
+                if existing:
+                    for key, value in student_data.items():
+                        setattr(existing, key, value)
+                    updated_count += 1
+                else:
+                    db.session.add(StudentRecord(**student_data))
+                    inserted_count += 1
+
+            except Exception as e:
+                # Log the error for the problematic row
+                skipped_rows.append({'index': index + 1, 'reason': str(e), 'row': row.to_dict()})
+                continue
 
         db.session.commit()
 
@@ -125,7 +145,8 @@ def upload_csv():
             'message': 'File uploaded and all rows processed!',
             'total_rows': total_rows,
             'inserted': inserted_count,
-            'updated': updated_count
+            'updated': updated_count,
+            'skipped_rows': skipped_rows  # Include skipped rows in the response
         }), 200
 
     except Exception as e:

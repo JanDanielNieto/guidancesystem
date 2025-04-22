@@ -8,6 +8,7 @@ const ManageStudentsByGrade = () => {
   const [showDeleteAll, setShowDeleteAll] = useState(false); // State to toggle "Delete All Data" button visibility
   const [selectedStudent, setSelectedStudent] = useState(null); // State to track the selected student
   const [file, setFile] = useState(null); // State to store the uploaded file
+  const [gradeCounts, setGradeCounts] = useState({}); // State to store the count of students per grade
 
   useEffect(() => {
     // Fetch all students from the backend
@@ -16,6 +17,13 @@ const ManageStudentsByGrade = () => {
         const response = await fetch('http://localhost:5000/api/students'); // Use the correct backend URL
         const data = await response.json();
         setStudents(data);
+
+        // Calculate the count of students for each grade
+        const counts = data.reduce((acc, student) => {
+          acc[student.grade] = (acc[student.grade] || 0) + 1;
+          return acc;
+        }, {});
+        setGradeCounts(counts);
       } catch (error) {
         console.error('Error fetching students:', error);
       }
@@ -54,7 +62,15 @@ const ManageStudentsByGrade = () => {
         setFile(null); // Clear the file input
         // Optionally, refresh the student list
         const updatedStudents = await fetch('http://localhost:5000/api/students');
-        setStudents(await updatedStudents.json());
+        const updatedData = await updatedStudents.json();
+        setStudents(updatedData);
+
+        // Recalculate the count of students for each grade
+        const counts = updatedData.reduce((acc, student) => {
+          acc[student.grade] = (acc[student.grade] || 0) + 1;
+          return acc;
+        }, {});
+        setGradeCounts(counts);
       } else {
         const error = await response.json();
         alert(`Error: ${error.error}`);
@@ -77,16 +93,16 @@ const ManageStudentsByGrade = () => {
             className={`grade-button ${selectedGrade === grade ? 'active' : ''}`}
             onClick={() => setSelectedGrade(grade)}
           >
-            {grade}
+            {grade} ({gradeCounts[grade] || 0}) {/* Display the count */}
           </button>
         ))}
       </div>
-      <div className="">
-        <Link to="/add-student" className="button">Add Student</Link>
-        <button className="button" onClick={() => alert('Edit functionality not implemented yet.')}>Edit Student</button>
+      <div className="action-buttons">
+        <Link to="/add-student" className="add-button">Add Student</Link>
+        <button className="edit-button" onClick={() => alert('Edit functionality not implemented yet.')}>Edit Student</button>
         {selectedStudent && (
           <button
-            className="button"
+            className="delete-button"
             onClick={() => alert('Delete functionality not implemented yet.')}
           >
             Delete Student
@@ -94,16 +110,15 @@ const ManageStudentsByGrade = () => {
         )}
         {showDeleteAll && (
           <button
-            className="button"
-            onClick={handleDeleteAll}
-            title="Shortcut: Ctrl + Shift + D"
+            className="delete-all-button"
+            onClick={() => alert('Delete All Data functionality not implemented yet.')}
           >
             Delete All Data
           </button>
         )}
         <div className="upload-container">
           <input type="file" accept=".csv, .xlsx" onChange={handleFileChange} />
-          <button className="button" onClick={handleUpload}>
+          <button className="upload-button" onClick={handleUpload}>
             Upload Data
           </button>
         </div>

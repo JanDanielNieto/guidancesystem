@@ -23,23 +23,23 @@ class StudentRecord(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'lrn': self.lrn,
-            'name': self.name,
-            'grade': self.grade,
-            'section': self.section,
-            'sex': self.sex,
-            'birthdate': self.birthdate.strftime('%Y-%m-%d') if self.birthdate else None,
-            'mother_tongue': self.mother_tongue,
-            'religion': self.religion,
-            'barangay': self.barangay,
-            'municipality_city': self.municipality_city,
-            'father_name': self.father_name,
-            'mother_name': self.mother_name,
-            'guardian_name': self.guardian_name,
-            'contact_number': self.contact_number,
-            'date_time': self.date_time.strftime('%Y-%m-%d %H:%M:%S')
-        }
+        'id': self.id,
+        'lrn': self.lrn,
+        'name': self.name,
+        'grade': self.grade,
+        'section': self.section,
+        'sex': self.sex,
+        'birthdate': self.birthdate.strftime('%Y-%m-%d') if self.birthdate else None,
+        'mother_tongue': self.mother_tongue,
+        'religion': self.religion,
+        'barangay': self.barangay,
+        'municipality_city': self.municipality_city,
+        'father_name': self.father_name,
+        'mother_name': self.mother_name,
+        'guardian_name': self.guardian_name,
+        'contact_number': self.contact_number,
+        'date_time': self.date_time.strftime('%Y-%m-%d %H:%M:%S') if self.date_time else None
+    }
 
 class OffenseRecord(db.Model):
     __tablename__ = 'offense_records'
