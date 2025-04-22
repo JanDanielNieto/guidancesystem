@@ -124,10 +124,10 @@ const ManageStudentsByGrade = () => {
   // Handle delete all students
   const handleDeleteAll = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/students', {
+      const response = await fetch('http://localhost:5000/api/delete_all_students', {
         method: 'DELETE',
       });
-
+  
       if (response.ok) {
         alert('All students deleted successfully.');
         setStudents([]);
@@ -141,7 +141,7 @@ const ManageStudentsByGrade = () => {
       alert('An error occurred while deleting all students.');
     }
   };
-
+  
   return (
     <div className="manage-students-container">
       <header className="manage-students-header">
