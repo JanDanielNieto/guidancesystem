@@ -124,3 +124,112 @@
 .students-table tr.selected {
   background-color: #bbdffe;
 }
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.popup h2 {
+  margin-top: 0;
+}
+
+.popup form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.popup form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.popup-buttons .button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup-buttons .button:first-child {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.popup-buttons .button:last-child {
+  background-color: #e74c3c;
+  color: white;
+}
+.popup-large {
+  width: 1000px; /* Increase the width for a wider layout */
+  max-height: 80%; /* Allow more vertical space if needed */
+  overflow-y: auto; /* Enable scrolling if content overflows vertically */
+  padding: 20px; /* Add padding for better spacing */
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  border-radius: 10px; /* Add rounded corners */
+  display: flex; /* Use flexbox for horizontal alignment */
+  flex-direction: column; /* Ensure the title and form stack vertically */
+  background-color: #f9f9f9; /* Light gray background for better contrast */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow for depth */
+  border: 1px solid #ddd; /* Add a border for better definition */
+}
+
+.popup-large form {
+  display: grid; /* Use grid layout for better control */
+  grid-template-columns: repeat(3, 1fr); /* Create three equal-width columns */
+  gap: 15px; /* Add spacing between fields */
+  width: 100%; /* Ensure the form takes up the full width of the popup */
+}
+
+.popup-large form label {
+  display: flex;
+  flex-direction: column; /* Stack label and input vertically */
+  font-size: 14px; /* Make the label text smaller */
+}
+
+.popup-large form input {
+  width: 100%; /* Ensure inputs take up full width of their container */
+  padding: 6px; /* Reduce padding for smaller fields */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 12px; /* Adjust font size for smaller fields */
+}
+
+.popup-large h2 {
+  text-align: center; /* Center the title */
+  margin-bottom: 20px; /* Add spacing below the title */
+  grid-column: span 3; /* Make the title span across all columns */
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px; /* Add spacing above the buttons */
+  grid-column: span 3; /* Make the buttons span across all columns */
+}

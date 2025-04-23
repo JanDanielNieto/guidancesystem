@@ -6,6 +6,8 @@ const StudentProfile = () => {
   const [student, setStudent] = useState(null); // State to store student details
   const [loading, setLoading] = useState(true); // State to track loading status
   const [error, setError] = useState(null); // State to track errors
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State to toggle the edit popup
+  const [editedStudent, setEditedStudent] = useState(null); // State to store the edited student
 
   useEffect(() => {
     // Fetch student details from the backend
@@ -26,6 +28,44 @@ const StudentProfile = () => {
 
     fetchStudent();
   }, [lrn]);
+
+  const handleEditClick = () => {
+    setEditedStudent({ ...student }); // Populate the form with the current student's data
+    setIsEditPopupOpen(true);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditedStudent((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/students/${editedStudent.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedStudent),
+      });
+
+      if (response.ok) {
+        alert('Student updated successfully.');
+        setStudent(editedStudent); // Update the student state with the edited data
+        setIsEditPopupOpen(false);
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error updating student:', error);
+      alert('An error occurred while updating the student.');
+    }
+  };
+
+  const handleCloseEditPopup = () => {
+    setIsEditPopupOpen(false);
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -66,8 +106,183 @@ const StudentProfile = () => {
           <p><strong>Guardian's Name:</strong> {student.guardian_name}</p>
           <p><strong>Contact Number:</strong> {student.contact_number}</p>
           <p><strong>Date Registered:</strong> {student.date_time}</p>
+          <button onClick={handleEditClick} style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+            Edit
+          </button>
         </div>
       </div>
+
+      {/* Offense Record History */}
+      <h2>Offense Record History</h2>
+      {student.offenses && student.offenses.length > 0 ? (
+  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+    <thead>
+      <tr>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Type of Offense</th>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Reason</th>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {student.offenses.map((offense, index) => (
+        <tr key={index}>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{offense.type}</td>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{offense.reason}</td>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{offense.date}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+) : (
+  <p>No offenses recorded for this student.</p>
+)}
+
+      {/* Edit Student Popup */}
+      {isEditPopupOpen && (
+        <div className="popup-overlay">
+          <div className="popup-large">
+            <h2>Edit Student</h2>
+            <form>
+              <label>
+                LRN (Read-Only):
+                <input
+                  type="text"
+                  name="lrn"
+                  value={editedStudent.lrn}
+                  readOnly
+                />
+              </label>
+              <label>
+                Name:
+                <input
+                  type="text"
+                  name="name"
+                  value={editedStudent.name}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Grade:
+                <input
+                  type="text"
+                  name="grade"
+                  value={editedStudent.grade}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Section:
+                <input
+                  type="text"
+                  name="section"
+                  value={editedStudent.section}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Sex:
+                <select
+                  name="sex"
+                  value={editedStudent.sex}
+                  onChange={handleEditChange}
+                >
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                </select>
+              </label>
+              <label>
+                Birthdate:
+                <input
+                  type="date"
+                  name="birthdate"
+                  value={editedStudent.birthdate}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Mother Tongue:
+                <input
+                  type="text"
+                  name="mother_tongue"
+                  value={editedStudent.mother_tongue}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Religion:
+                <input
+                  type="text"
+                  name="religion"
+                  value={editedStudent.religion}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Barangay:
+                <input
+                  type="text"
+                  name="barangay"
+                  value={editedStudent.barangay}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Municipality/City:
+                <input
+                  type="text"
+                  name="municipality_city"
+                  value={editedStudent.municipality_city}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Father's Name:
+                <input
+                  type="text"
+                  name="father_name"
+                  value={editedStudent.father_name}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Mother's Name:
+                <input
+                  type="text"
+                  name="mother_name"
+                  value={editedStudent.mother_name}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Guardian's Name:
+                <input
+                  type="text"
+                  name="guardian_name"
+                  value={editedStudent.guardian_name}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Contact Number:
+                <input
+                  type="text"
+                  name="contact_number"
+                  value={editedStudent.contact_number}
+                  onChange={handleEditChange}
+                />
+              </label>
+            </form>
+            <div className="popup-buttons">
+              <button className="button" onClick={handleSaveEdit}>
+                Save
+              </button>
+              <button className="button" onClick={handleCloseEditPopup}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

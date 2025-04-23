@@ -192,14 +192,28 @@ def edit_student(id):
 
 @main.route('/api/students/<int:id>', methods=['DELETE'])
 def delete_student(id):
-    student = StudentRecord.query.get(id)
+    try:
+        # Fetch the student record by ID
+        student = StudentRecord.query.get(id)
 
-    if not student:
-        return jsonify({'error': 'Student not found'}), 404
+        # Check if the student exists
+        if not student:
+            return jsonify({'error': 'Student not found'}), 404
 
-    db.session.delete(student)
-    db.session.commit()
-    return jsonify({'message': 'Student deleted successfully!'}), 200
+        # Delete all offenses associated with the student
+        OffenseRecord.query.filter_by(student_id=student.id).delete()
+
+        # Delete the student record
+        db.session.delete(student)
+        db.session.commit()
+
+        return jsonify({'message': 'Student and associated offenses deleted successfully!'}), 200
+
+    except Exception as e:
+        # Rollback the transaction in case of an error
+        db.session.rollback()
+        # Log the error and return a meaningful message
+        return jsonify({'error': f'An error occurred while deleting the student: {str(e)}'}), 500
 
 @main.route('/api/delete_all_students', methods=['DELETE'])
 def delete_all_students():
@@ -305,4 +319,52 @@ def get_student_by_lrn(lrn):
     student = StudentRecord.query.filter_by(lrn=lrn).first()
     if not student:
         return jsonify({'error': 'Student not found'}), 404
-    return jsonify(student.to_dict())
+
+    offenses = OffenseRecord.query.filter_by(student_id=student.id).all()
+    student_data = student.to_dict()
+    student_data['offenses'] = [offense.to_dict() for offense in offenses]
+
+    return jsonify(student_data)
+
+@main.route('/api/offenses/<int:id>', methods=['DELETE'])
+def delete_offense(id):
+    offense = OffenseRecord.query.get(id)
+
+    if not offense:
+        return jsonify({'error': 'Offense not found'}), 404
+
+    try:
+        db.session.delete(offense)
+        db.session.commit()
+        return jsonify({'message': 'Offense deleted successfully!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500
+
+@main.route('/api/offenses/<int:id>', methods=['PUT'])
+def edit_offense(id):
+    data = request.json
+    offense = OffenseRecord.query.get(id)
+
+    if not offense:
+        return jsonify({'error': 'Offense not found'}), 404
+
+    try:
+        # Validate required fields
+        if not data.get('type'):
+            return jsonify({'error': 'Offense type is required'}), 400
+        if not data.get('reason'):
+            return jsonify({'error': 'Reason is required'}), 400
+        if not data.get('date'):
+            return jsonify({'error': 'Date is required'}), 400
+
+        # Update offense fields
+        offense.offense_type = data.get('type', offense.offense_type)
+        offense.reason = data.get('reason', offense.reason)
+        offense.date_time = parse(data.get('date')) if data.get('date') else offense.date_time
+
+        db.session.commit()
+        return jsonify({'message': 'Offense updated successfully!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500  

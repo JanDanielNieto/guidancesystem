@@ -5,18 +5,20 @@ import '../css/ManageStudentsByGrade.css'; // Add styles for this page
 const ManageStudentsByGrade = () => {
   const [students, setStudents] = useState([]);
   const [selectedGrade, setSelectedGrade] = useState('Grade 10');
-  const [showDeleteAll, setShowDeleteAll] = useState(false); // State to toggle "Delete All Data" button visibility
-  const [selectedStudent, setSelectedStudent] = useState(null); // State to track the selected student
-  const [file, setFile] = useState(null); // State to store the uploaded file
-  const [gradeCounts, setGradeCounts] = useState({}); // State to store the count of students per grade
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
-  const navigate = useNavigate(); // For navigation to the profile page
+  const [showDeleteAll, setShowDeleteAll] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [file, setFile] = useState(null);
+  const [gradeCounts, setGradeCounts] = useState({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State to toggle the edit popup
+  const [editedStudent, setEditedStudent] = useState(null); // State to store the edited student
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch all students from the backend
     const fetchStudents = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/students'); // Use the correct backend URL
+        const response = await fetch('http://localhost:5000/api/students');
         const data = await response.json();
         setStudents(data);
 
@@ -38,7 +40,7 @@ const ManageStudentsByGrade = () => {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.ctrlKey && event.shiftKey && event.key === 'D') {
-        setShowDeleteAll((prev) => !prev); // Toggle the visibility of the "Delete All Data" button
+        setShowDeleteAll((prev) => !prev);
       }
     };
 
@@ -157,6 +159,57 @@ const ManageStudentsByGrade = () => {
     navigate(`/students/${student.lrn}`);
   };
 
+  // Open the edit popup
+  const handleEditStudent = () => {
+    if (selectedStudent) {
+      setEditedStudent({ ...selectedStudent }); // Populate the form with the selected student's data
+      setIsEditPopupOpen(true);
+    } else {
+      alert('Please select a student to edit.');
+    }
+  };
+
+  // Handle changes in the edit form
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditedStudent((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Save the edited student
+  const handleSaveEdit = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/students/${editedStudent.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedStudent),
+      });
+
+      if (response.ok) {
+        alert('Student updated successfully.');
+        setStudents((prevStudents) =>
+          prevStudents.map((student) =>
+            student.id === editedStudent.id ? editedStudent : student
+          )
+        );
+        setIsEditPopupOpen(false);
+        setSelectedStudent(editedStudent); // Update the selected student
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error updating student:', error);
+      alert('An error occurred while updating the student.');
+    }
+  };
+
+  // Close the edit popup
+  const handleCloseEditPopup = () => {
+    setIsEditPopupOpen(false);
+  };
+
   return (
     <div className="manage-students-container">
       <header className="manage-students-header">
@@ -169,7 +222,7 @@ const ManageStudentsByGrade = () => {
             className={`grade-button ${selectedGrade === grade ? 'active' : ''}`}
             onClick={() => setSelectedGrade(grade)}
           >
-            {grade} ({gradeCounts[grade] || 0}) {/* Display the count */}
+            {grade} ({gradeCounts[grade] || 0})
           </button>
         ))}
       </div>
@@ -177,14 +230,7 @@ const ManageStudentsByGrade = () => {
         <Link to="/add-student" className="button">
           Add Student
         </Link>
-        <button
-          className="button"
-          onClick={() =>
-            selectedStudent
-              ? alert(`Editing student: ${selectedStudent.name}`)
-              : alert('Please select a student to edit.')
-          }
-        >
+        <button className="button" onClick={handleEditStudent}>
           Edit Student
         </button>
         <button
@@ -244,7 +290,7 @@ const ManageStudentsByGrade = () => {
               <tr
                 key={student.id}
                 onClick={() => setSelectedStudent(student)}
-                onDoubleClick={() => handleRowDoubleClick(student)} // Double-click event
+                onDoubleClick={() => handleRowDoubleClick(student)}
                 className={selectedStudent?.id === student.id ? 'selected' : ''}
               >
                 <td>{student.lrn}</td>
@@ -256,6 +302,153 @@ const ManageStudentsByGrade = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Edit Student Popup */}
+      {isEditPopupOpen && (
+        <div className="popup-overlay">
+          <div className="popup-large">
+            <h2>Edit Student</h2>
+            <form>
+              <label>
+                LRN (Read-Only):
+                <input
+                  type="text"
+                  name="lrn"
+                  value={editedStudent.lrn}
+                  readOnly
+                />
+              </label>
+              <label>
+                Name:
+                <input
+                  type="text"
+                  name="name"
+                  value={editedStudent.name}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Grade:
+                <input
+                  type="text"
+                  name="grade"
+                  value={editedStudent.grade}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Section:
+                <input
+                  type="text"
+                  name="section"
+                  value={editedStudent.section}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Sex:
+                <select
+                  name="sex"
+                  value={editedStudent.sex}
+                  onChange={handleEditChange}
+                >
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                </select>
+              </label>
+              <label>
+                Birthdate:
+                <input
+                  type="date"
+                  name="birthdate"
+                  value={editedStudent.birthdate}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Mother Tongue:
+                <input
+                  type="text"
+                  name="mother_tongue"
+                  value={editedStudent.mother_tongue}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Religion:
+                <input
+                  type="text"
+                  name="religion"
+                  value={editedStudent.religion}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Barangay:
+                <input
+                  type="text"
+                  name="barangay"
+                  value={editedStudent.barangay}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Municipality/City:
+                <input
+                  type="text"
+                  name="municipality_city"
+                  value={editedStudent.municipality_city}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Father's Name:
+                <input
+                  type="text"
+                  name="father_name"
+                  value={editedStudent.father_name}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Mother's Name:
+                <input
+                  type="text"
+                  name="mother_name"
+                  value={editedStudent.mother_name}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Guardian's Name:
+                <input
+                  type="text"
+                  name="guardian_name"
+                  value={editedStudent.guardian_name}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Contact Number:
+                <input
+                  type="text"
+                  name="contact_number"
+                  value={editedStudent.contact_number}
+                  onChange={handleEditChange}
+                />
+              </label>
+            </form>
+            <div className="popup-buttons">
+              <button className="button" onClick={handleSaveEdit}>
+                Save
+              </button>
+              <button className="button" onClick={handleCloseEditPopup}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

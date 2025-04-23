@@ -5,182 +5,140 @@ import '../css/styles.css';
 const Records = () => {
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [editingCell, setEditingCell] = useState(null); // Track the currently edited cell
-  const [showTutorial, setShowTutorial] = useState(false); // Track whether the tutorial is visible
-
-  // Mock data for demonstration
-  const mockData = [
-    {
-      id: 1,
-      name: "John Doe",
-      grade: "10",
-      section: "A",
-      offenses: [
-        { type: "Bullying", reason: "Pushed a classmate", date: "2023-09-15 10:00 AM" },
-      ],
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      grade: "11",
-      section: "B",
-      offenses: [
-        { type: "Cheating", reason: "Copied during an exam", date: "2023-09-16 11:30 AM" },
-      ],
-    },
-    {
-      id: 3,
-      name: "Jack Johnson",
-      grade: "12",
-      section: "C",
-      offenses: [
-        { type: "Vandalism", reason: "Drew on the wall", date: "2023-09-17 01:00 PM" },
-      ],
-    },
-    {
-      id: 4,
-      name: "Jill Brown",
-      grade: "9",
-      section: "D",
-      offenses: [
-        { type: "Disrespect", reason: "Talked back to a teacher", date: "2023-09-18 02:15 PM" },
-      ],
-    },
-  ];
+  const [selectedOffense, setSelectedOffense] = useState(null);
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+  const [editedOffense, setEditedOffense] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/students')
-      .then(response => {
-        // Filter students with at least one offense
-        const studentsWithOffenses = response.data.filter(student => student.offenses.length > 0);
-        setStudents(studentsWithOffenses);
-      })
-      .catch(error => {
-        console.error('Error fetching students:', error);
-      });
-  }, []);
-
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
+    const fetchStudent = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/students/${lrn}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch student details');
+        }
+        const data = await response.json();
+        console.log('Fetched student data:', data); // Debug log
+        setStudent(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
   
-    // Filter suggestions based on the input
-    if (value) {
-      const filteredSuggestions = students.filter((student) =>
-        student.name.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions([]);
+    fetchStudent();
+  }, [lrn]);
+
+  const fetchStudents = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/students');
+      setStudents(response.data);
+    } catch (error) {
+      console.error('Error fetching students:', error);
     }
   };
 
-  const handleSuggestionClick = (name) => {
-    setSearchTerm(name); // Set the selected name in the search bar
-    setSuggestions([]); // Clear the suggestions
+  // Handle edit button click
+  const handleEditOffense = (offense) => {
+    setSelectedOffense(offense);
+    setEditedOffense({ ...offense });
+    setIsEditPopupOpen(true);
   };
 
-  const handleOffenseChange = (studentId, offenseIndex, field, value) => {
-    // Update the specific offense field of the student being edited
-    setStudents(prevStudents =>
-      prevStudents.map(student =>
-        student.id === studentId
-          ? {
-              ...student,
-              offenses: student.offenses.map((offense, index) =>
-                index === offenseIndex ? { ...offense, [field]: value } : offense
-              ),
-            }
-          : student
-      )
-    );
+  // Handle delete button click
+  const handleDeleteOffense = async (offense) => {
+    if (!window.confirm('Are you sure you want to delete this offense?')) {
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/offenses/${offense.id}`
+      );
+
+      if (response.status === 200) {
+        alert('Offense deleted successfully.');
+        // Update the state to remove the deleted offense
+        setStudents((prevStudents) =>
+          prevStudents.map((student) =>
+            student.id === offense.student_id
+              ? {
+                  ...student,
+                  offenses: student.offenses.filter(
+                    (o) => o.id !== offense.id
+                  ),
+                }
+              : student
+          )
+        );
+      } else {
+        alert(`Failed to delete offense: ${response.data.error}`);
+      }
+    } catch (error) {
+      console.error('Error deleting offense:', error);
+      alert('An error occurred while deleting the offense.');
+    }
   };
 
-  const filteredStudents = students.filter(student =>
+  // Handle changes in the edit popup fields
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditedOffense((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Save the edited offense
+  const handleSaveEdit = async () => {
+    if (!editedOffense || !editedOffense.id) {
+      alert('No offense selected for editing.');
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/offenses/${editedOffense.id}`,
+        editedOffense
+      );
+
+      if (response.status === 200) {
+        alert('Offense updated successfully.');
+        // Update the state to reflect the edited offense
+        setStudents((prevStudents) =>
+          prevStudents.map((student) =>
+            student.id === selectedOffense.student_id
+              ? {
+                  ...student,
+                  offenses: student.offenses.map((offense) =>
+                    offense.id === editedOffense.id ? editedOffense : offense
+                  ),
+                }
+              : student
+          )
+        );
+        setIsEditPopupOpen(false);
+      } else {
+        alert('Failed to update offense.');
+      }
+    } catch (error) {
+      console.error('Error updating offense:', error);
+      alert('An error occurred while updating the offense.');
+    }
+  };
+
+  // Filter students by search term
+  const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleCellClick = (studentId, offenseIndex, field) => {
-    setEditingCell({ studentId, offenseIndex, field }); // Set the cell being edited
-  };
-
-  const handleBlur = () => {
-    setEditingCell(null); // Exit editing mode when the cell loses focus
-  };
-
-  const toggleTutorial = () => {
-    setShowTutorial(!showTutorial); // Toggle the tutorial visibility
-  };
 
   return (
     <div style={{ padding: '20px', position: 'relative' }}>
       <h1>Student Offenses</h1>
 
-      {/* Tutorial Button */}
-      <button
-        onClick={toggleTutorial}
-        style={{
-          position: 'absolute',
-          top: '20px',
-          right: '20px',
-          backgroundColor: '#3498db',
-          color: 'white',
-          border: 'none',
-          borderRadius: '20%',
-          fontSize: '20px',
-          textAlign: 'center',
-          cursor: 'pointer',
-        }}
-      >
-        Help
-      </button>
-
-      {/* Tutorial Popups */}
-      {showTutorial && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '80px',
-            right: '20px',
-            backgroundColor: 'white',
-            border: '1px solid #ccc',
-            borderRadius: '5px',
-            padding: '10px',
-            width: '300px',
-            zIndex: 1000,
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-          }}
-        >
-          <h3>Tutorial</h3>
-          <ul>
-            <li><strong>Search:</strong> Use the search bar to filter students by name.</li>
-            <li><strong>Edit:</strong> Click on a cell to edit the offense type or reason.</li>
-            <li><strong>Save:</strong> Click outside the cell to save your changes.</li>
-          </ul>
-          <button
-            onClick={toggleTutorial}
-            style={{
-              marginTop: '10px',
-              padding: '5px 10px',
-              backgroundColor: '#e74c3c',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-            }}
-          >
-            Close
-          </button>
-        </div>
-      )}
-
-      <div style={{ marginBottom: '20px', position: 'relative' }}>
+      <div style={{ marginBottom: '20px' }}>
         <input
           type="text"
           placeholder="Search by name"
           value={searchTerm}
-          onChange={handleInputChange}
+          onChange={(e) => setSearchTerm(e.target.value)}
           style={{
             padding: '10px',
             width: '300px',
@@ -188,38 +146,6 @@ const Records = () => {
             border: '1px solid #ccc',
           }}
         />
-
-        {/* Dropdown for suggestions */}
-        {suggestions.length > 0 && (
-          <ul
-            style={{
-              position: 'absolute',
-              top: '40px',
-              left: '0',
-              width: '300px',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              backgroundColor: 'white',
-              listStyleType: 'none',
-              padding: '10px',
-              margin: '0',
-              zIndex: 1000,
-            }}
-          >
-            {suggestions.map((student) => (
-              <li
-                key={student.id}
-                onClick={() => handleSuggestionClick(student.name)}
-                style={{
-                  padding: '5px',
-                  cursor: 'pointer',
-                }}
-              >
-                {student.name}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
 
       <table>
@@ -231,75 +157,119 @@ const Records = () => {
             <th>Type of Offense</th>
             <th>Reason</th>
             <th>Date and Time</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {filteredStudents.map(student =>
-            student.offenses.map((offense, index) => (
-              <tr key={`${student.id}-${index}`}>
+          {filteredStudents.map((student) =>
+            student.offenses.map((offense) => (
+              <tr key={`${student.id}-${offense.id}`}>
                 <td>{student.name}</td>
                 <td>{student.grade}</td>
                 <td>{student.section}</td>
-                <td
-                  onClick={() => handleCellClick(student.id, index, "type")}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {editingCell &&
-                  editingCell.studentId === student.id &&
-                  editingCell.offenseIndex === index &&
-                  editingCell.field === "type" ? (
-                    <input
-                      type="text"
-                      value={offense.type}
-                      onChange={(e) =>
-                        handleOffenseChange(student.id, index, "type", e.target.value)
-                      }
-                      onBlur={handleBlur}
-                      style={{
-                        padding: '5px',
-                        border: '1px solid #ccc',
-                        borderRadius: '3px',
-                        width: '150px',
-                      }}
-                      autoFocus
-                    />
-                  ) : (
-                    offense.type
-                  )}
-                </td>
-                <td
-                  onClick={() => handleCellClick(student.id, index, "reason")}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {editingCell &&
-                  editingCell.studentId === student.id &&
-                  editingCell.offenseIndex === index &&
-                  editingCell.field === "reason" ? (
-                    <input
-                      type="text"
-                      value={offense.reason}
-                      onChange={(e) =>
-                        handleOffenseChange(student.id, index, "reason", e.target.value)
-                      }
-                      onBlur={handleBlur}
-                      style={{
-                        padding: '5px',
-                        border: '1px solid #ccc',
-                        borderRadius: '3px',
-                        width: '300px',
-                      }}
-                      autoFocus
-                    />
-                  ) : (
-                    offense.reason
-                  )}
-                </td>
+                <td>{offense.type}</td>
+                <td>{offense.reason}</td>
                 <td>{offense.date}</td>
+                <td>
+                  <button
+                    onClick={() => handleEditOffense(offense)}
+                    style={{
+                      marginRight: '5px',
+                      padding: '5px 10px',
+                      backgroundColor: '#3498db',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteOffense(offense)}
+                    style={{
+                      padding: '5px 10px',
+                      backgroundColor: '#e74c3c',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))
           )}
         </tbody>
       </table>
+
+      {/* Edit Offense Popup */}
+      {isEditPopupOpen && (
+        <div className="popup-overlay">
+          <div className="popup-large">
+            <h2>Edit Offense</h2>
+            <form>
+              <label>
+                Type of Offense:
+                <input
+                  type="text"
+                  name="type"
+                  value={editedOffense?.type || ''}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Reason:
+                <input
+                  type="text"
+                  name="reason"
+                  value={editedOffense?.reason || ''}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Date and Time:
+                <input
+                  type="datetime-local"
+                  name="date"
+                  value={editedOffense?.date || ''}
+                  onChange={handleEditChange}
+                />
+              </label>
+            </form>
+            <div className="popup-buttons">
+              <button
+                onClick={handleSaveEdit}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#2ecc71',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                }}
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setIsEditPopupOpen(false)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#e74c3c',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

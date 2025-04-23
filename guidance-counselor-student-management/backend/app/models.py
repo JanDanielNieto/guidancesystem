@@ -53,6 +53,7 @@ class OffenseRecord(db.Model):
 
     def to_dict(self):
         return {
+            'id': self.id,  # Include the offense ID
             'type': self.offense_type,
             'reason': self.reason,
             'date': self.date_time.strftime('%Y-%m-%d %H:%M:%S') if self.date_time else None
