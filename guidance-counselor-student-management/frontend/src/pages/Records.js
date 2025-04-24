@@ -9,34 +9,19 @@ const Records = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
   const [editedOffense, setEditedOffense] = useState(null);
 
+  // Fetch all students and their offenses
   useEffect(() => {
-    const fetchStudent = async () => {
+    const fetchStudents = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/students/${lrn}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch student details');
-        }
-        const data = await response.json();
-        console.log('Fetched student data:', data); // Debug log
-        setStudent(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        const response = await axios.get('http://localhost:5000/api/students');
+        setStudents(response.data);
+      } catch (error) {
+        console.error('Error fetching students:', error);
       }
     };
-  
-    fetchStudent();
-  }, [lrn]);
 
-  const fetchStudents = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/students');
-      setStudents(response.data);
-    } catch (error) {
-      console.error('Error fetching students:', error);
-    }
-  };
+    fetchStudents();
+  }, []);
 
   // Handle edit button click
   const handleEditOffense = (offense) => {

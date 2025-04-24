@@ -11,7 +11,6 @@ import Analytics from './pages/Analytics';
 import ManageStudentsByGrade from './pages/ManageStudentsByGrade';
 import AddStudent from './pages/AddStudent';
 
-
 function App() {
   return (
     <Router>
@@ -19,7 +18,7 @@ function App() {
       <div className="container">
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/students" element={<StudentList />} />
+          <Route path="/students" element={<ManageStudentsByGrade />} /> {/* Updated route */}
           <Route path="/students/:lrn" element={<StudentProfile />} />
           <Route path="/records" element={<Records />} />
           <Route path="/addreport" element={<AddReport />} />
