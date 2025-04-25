@@ -1,0 +1,158 @@
+/* General container styling */
+.student-profile-container {
+  padding: 20px;
+}
+
+/* Header styling */
+.student-profile-header {
+  margin-bottom: 20px;
+}
+
+/* Profile section styling */
+.profile-section {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping to the next line */
+  justify-content: space-between; /* Spread items evenly across the row */
+  gap: 20px; /* Add spacing between items */
+  margin-bottom: 20px;
+}
+
+.profile-image {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  margin-right: 20px;
+  flex: 0 0 auto; /* Prevent the image from shrinking */
+}
+
+.profile-details {
+  display: flex;
+  flex-wrap: wrap; /* Allow profile details to wrap */
+  gap: 10px; /* Add spacing between profile details */
+  flex: 1; /* Allow the details to take up remaining space */
+}
+
+.profile-details p {
+  margin: 5px 0;
+  flex: 1 1 calc(50% - 20px); /* Each detail takes up 50% of the row, minus spacing */
+  box-sizing: border-box; /* Include padding and borders in width calculation */
+}
+
+/* Button styling */
+.edit-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: flex-start; /* Align the button to the top of the section */
+}
+
+.upload-profile-button {
+  margin-top: 10px;
+  display: block;
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.upload-profile-button:hover {
+  background-color: #0056b3;
+}
+
+.upload-button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.upload-button:hover {
+  background-color: #218838;
+}
+
+/* Table styling */
+.offense-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.offense-table th,
+.offense-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+/* Popup styling */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-large {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+}
+
+.popup-large h2 {
+  margin-bottom: 20px;
+}
+
+.popup-large form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.popup-large form input,
+.popup-large form select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.popup-buttons .button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup-buttons .button:first-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.popup-buttons .button:last-child {
+  background-color: #e74c3c;
+  color: white;
+}
