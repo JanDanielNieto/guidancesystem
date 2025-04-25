@@ -121,6 +121,18 @@
   margin-left: 10px; /* Add spacing between the input and button */
 }
 
+.sort {
+    padding: 10px 20px;
+    border: 1px solid #313131;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    position: relative;
+    left: 25%;
+}
+
 .students-table tr.selected {
   background-color: #bbdffe;
 }
