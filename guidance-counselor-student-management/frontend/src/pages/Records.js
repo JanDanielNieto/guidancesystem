@@ -131,6 +131,9 @@ const Records = () => {
             border: '1px solid #ccc',
           }}
         />
+        <button className="button" onClick={() => alert(`Searching for: ${searchQuery}`)}>
+            Search
+        </button>
       </div>
 
       <table>
