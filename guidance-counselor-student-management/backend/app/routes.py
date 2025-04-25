@@ -288,7 +288,7 @@ def search_students():
     
 
 @main.route('/api/students/<int:student_id>/offenses', methods=['POST'])
-def add_offense(student_id):
+def add_student_offense(student_id):
         data = request.json
         student = StudentRecord.query.get(student_id)
     
@@ -368,3 +368,31 @@ def edit_offense(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500  
+    
+@main.route('/api/offenses', methods=['POST'])
+def add_offense():
+    data = request.json
+    student_id = data.get('studentId')
+    offense_type = data.get('type')
+    reason = data.get('reason', '')  # Optional field
+
+    if not student_id or not offense_type:
+        return jsonify({'error': 'Student ID and offense type are required'}), 400
+
+    student = StudentRecord.query.get(student_id)
+    if not student:
+        return jsonify({'error': 'Student not found'}), 404
+
+    try:
+        new_offense = OffenseRecord(
+            student_id=student_id,
+            offense_type=offense_type,
+            reason=reason,
+            date_time=datetime.now()
+        )
+        db.session.add(new_offense)
+        db.session.commit()
+        return jsonify({'message': 'Offense added successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

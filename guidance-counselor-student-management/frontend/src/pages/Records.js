@@ -5,9 +5,19 @@ import '../css/styles.css';
 const Records = () => {
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filteredStudents, setFilteredStudents] = useState([]);
   const [selectedOffense, setSelectedOffense] = useState(null);
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
   const [editedOffense, setEditedOffense] = useState(null);
+  const [isAddPopupOpen, setIsAddPopupOpen] = useState(false); // State to toggle the add popup
+  const [newOffense, setNewOffense] = useState({
+    studentId: '',
+    type: '',
+    reason: '',
+  });
+  const [searchStudentTerm, setSearchStudentTerm] = useState(''); // For searching students
+  const [searchedStudents, setSearchedStudents] = useState([]); // Filtered students for the search
+  const [selectedStudentName, setSelectedStudentName] = useState(''); // To display the selected student's name
 
   // Fetch all students and their offenses
   useEffect(() => {
@@ -15,6 +25,7 @@ const Records = () => {
       try {
         const response = await axios.get('http://localhost:5000/api/students');
         setStudents(response.data);
+        setFilteredStudents(response.data); // Initialize filteredStudents with all students
       } catch (error) {
         console.error('Error fetching students:', error);
       }
@@ -22,6 +33,14 @@ const Records = () => {
 
     fetchStudents();
   }, []);
+
+  // Handle search button click
+  const handleSearch = () => {
+    const filtered = students.filter((student) =>
+      student.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredStudents(filtered);
+  };
 
   // Handle edit button click
   const handleEditOffense = (offense) => {
@@ -46,6 +65,7 @@ const Records = () => {
         // Refetch the updated list of students
         const updatedStudents = await axios.get('http://localhost:5000/api/students');
         setStudents(updatedStudents.data);
+        setFilteredStudents(updatedStudents.data); // Update filteredStudents as well
       } else {
         alert(`Failed to delete offense: ${response.data.error}`);
       }
@@ -53,6 +73,54 @@ const Records = () => {
       console.error('Error deleting offense:', error);
       alert('An error occurred while deleting the offense.');
     }
+  };
+
+  const handleAddChange = (e) => {
+    const { name, value } = e.target;
+    setNewOffense((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSearchStudent = () => {
+    const filtered = students.filter((student) =>
+      student.name.toLowerCase().includes(searchStudentTerm.toLowerCase())
+    );
+    setSearchedStudents(filtered);
+  };
+
+  const handleSelectStudent = (student) => {
+    setNewOffense((prev) => ({ ...prev, studentId: student.id }));
+    setSelectedStudentName(`${student.name} - ${student.grade} ${student.section}`);
+    setSearchedStudents([]); // Hide the suggestions
+  };
+
+  const handleSaveAdd = async () => {
+    if (!newOffense.studentId || !newOffense.type) {
+      alert('Please select a student and specify the type of offense.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/offenses', newOffense);
+
+      if (response.status === 201) {
+        alert('Offense added successfully.');
+        const updatedStudents = await axios.get('http://localhost:5000/api/students');
+        setStudents(updatedStudents.data);
+        setFilteredStudents(updatedStudents.data);
+        setIsAddPopupOpen(false); // Close the popup
+        setNewOffense({ studentId: '', type: '', reason: '' }); // Reset the form
+        setSelectedStudentName(''); // Reset the selected student name
+      } else {
+        alert('Failed to add offense.');
+      }
+    } catch (error) {
+      console.error('Error adding offense:', error);
+      alert('An error occurred while adding the offense.');
+    }
+  };
+
+  const handleCloseAddPopup = () => {
+    setIsAddPopupOpen(false);
   };
 
   // Handle changes in the edit popup fields
@@ -79,6 +147,7 @@ const Records = () => {
         // Refetch the updated list of students
         const updatedStudents = await axios.get('http://localhost:5000/api/students');
         setStudents(updatedStudents.data);
+        setFilteredStudents(updatedStudents.data); // Update filteredStudents as well
         setIsEditPopupOpen(false); // Close the popup
       } else {
         alert('Failed to update offense.');
@@ -89,16 +158,11 @@ const Records = () => {
     }
   };
 
-  // Filter students by search term
-  const filteredStudents = students.filter((student) =>
-    student.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div style={{ padding: '20px', position: 'relative' }}>
       <h1>Student Offenses</h1>
 
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
         <input
           type="text"
           placeholder="Search by name"
@@ -111,10 +175,89 @@ const Records = () => {
             border: '1px solid #ccc',
           }}
         />
-        <button className="button" onClick={() => alert(`Searching for: ${searchQuery}`)}>
-            Search
+        <button className="button" onClick={handleSearch}>
+          Search
+        </button>
+        <button className="button" onClick={() => setIsAddPopupOpen(true)}>
+          Add Record
         </button>
       </div>
+
+     {/* Add Record Popup */}
+{isAddPopupOpen && (
+  <div className="popup-overlay">
+    <div className="popup-large">
+      <h2>Add Record</h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault(); // Prevent the default form submission behavior
+          handleSearchStudent(); // Trigger the search action
+        }}
+      >
+        <label>
+          Search Student:
+          <input
+            type="text"
+            placeholder="Search by name"
+            value={searchStudentTerm}
+            onChange={(e) => setSearchStudentTerm(e.target.value)}
+          />
+          <button type="button" onClick={handleSearchStudent}>
+            Search
+          </button>
+        </label>
+        <div>
+          {selectedStudentName ? (
+            <p><strong>Selected Student:</strong> {selectedStudentName}</p>
+          ) : (
+            <ul>
+              {searchedStudents.map((student) => (
+                <li
+                  key={student.id}
+                  onClick={() => handleSelectStudent(student)}
+                  style={{
+                    cursor: 'pointer',
+                    backgroundColor: newOffense.studentId === student.id ? '#ddd' : 'transparent',
+                  }}
+                >
+                  {student.name} - {student.grade} {student.section}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <label>
+          Type of Offense:
+          <select
+            name="type"
+            value={newOffense.type}
+            onChange={handleAddChange}
+          >
+            <option value="">Select Offense Type</option>
+            <option value="Bullying">Bullying</option>
+            <option value="Cheating">Cheating</option>
+            <option value="Vandalism">Vandalism</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label>
+          Reason (Optional):
+          <textarea
+            name="reason"
+            value={newOffense.reason}
+            onChange={handleAddChange}
+            rows="4"
+            placeholder="Enter the reason for the offense (optional)"
+          />
+        </label>
+        <div className="popup-buttons">
+          <button type="button" onClick={handleSaveAdd}>Save</button>
+          <button type="button" onClick={handleCloseAddPopup}>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
 
       <table>
         <thead>
@@ -180,7 +323,7 @@ const Records = () => {
                   value={editedOffense?.date || ''}
                   onChange={handleEditChange}
                 />
-              </label>  
+              </label>
             </form>
             <div className="popup-buttons">
               <button onClick={handleSaveEdit}>Save</button>
