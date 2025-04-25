@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import '../css/StudentProfile.css';
 
 const StudentProfile = () => {
-  const { lrn } = useParams(); // Get the LRN from the URL
-  const [student, setStudent] = useState(null); // State to store student details
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const [error, setError] = useState(null); // State to track errors
-  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State to toggle the edit popup
-  const [editedStudent, setEditedStudent] = useState(null); // State to store the edited student
+  const { lrn } = useParams();
+  const [student, setStudent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+  const [editedStudent, setEditedStudent] = useState(null);
+  const [profileImage, setProfileImage] = useState('https://via.placeholder.com/150'); // Default profile image
+  const [selectedFile, setSelectedFile] = useState(null); // State to store the selected file
 
   useEffect(() => {
-    // Fetch student details from the backend
     const fetchStudent = async () => {
       try {
         const response = await fetch(`http://localhost:5000/api/students/${lrn}`);
@@ -19,6 +21,9 @@ const StudentProfile = () => {
         }
         const data = await response.json();
         setStudent(data);
+        if (data.profile_image) {
+          setProfileImage(data.profile_image); // Load profile image if available
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -30,7 +35,7 @@ const StudentProfile = () => {
   }, [lrn]);
 
   const handleEditClick = () => {
-    setEditedStudent({ ...student }); // Populate the form with the current student's data
+    setEditedStudent({ ...student });
     setIsEditPopupOpen(true);
   };
 
@@ -51,7 +56,7 @@ const StudentProfile = () => {
 
       if (response.ok) {
         alert('Student updated successfully.');
-        setStudent(editedStudent); // Update the student state with the edited data
+        setStudent(editedStudent);
         setIsEditPopupOpen(false);
       } else {
         const error = await response.json();
@@ -67,6 +72,40 @@ const StudentProfile = () => {
     setIsEditPopupOpen(false);
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file); // Store the selected file in state
+  };
+
+  const handleProfilePictureUpload = async () => {
+    if (!selectedFile) {
+      alert('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('profile_image', selectedFile);
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/students/${lrn}/upload-profile-picture`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfileImage(data.profile_image); // Update the profile image
+        alert('Profile picture updated successfully.');
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      alert('An error occurred while uploading the profile picture.');
+    }
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -80,17 +119,29 @@ const StudentProfile = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Student Profile</h1>
-      <div classstyle={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-        <div style={{ marginRight: '20px' }}>
-          <img
-            src="https://via.placeholder.com/150"
-            alt="Profile"
-            style={{ borderRadius: '50%', width: '150px', height: '150px' }}
-          />
-        </div>
+    <div className="student-profile-container">
+      <h1 className="student-profile-header">Student Profile</h1>
+      <div className="profile-section">
         <div>
+          <img
+            src={profileImage}
+            alt="Profile"
+            className="profile-image"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="upload-profile-button"
+          />
+          <button
+            onClick={handleProfilePictureUpload}
+            className="upload-button"
+          >
+            Upload
+          </button>
+        </div>
+        <div className="profile-details">
           <p><strong>LRN:</strong> {student.lrn}</p>
           <p><strong>Name:</strong> {student.name}</p>
           <p><strong>Grade:</strong> {student.grade}</p>
@@ -106,38 +157,36 @@ const StudentProfile = () => {
           <p><strong>Guardian's Name:</strong> {student.guardian_name}</p>
           <p><strong>Contact Number:</strong> {student.contact_number}</p>
           <p><strong>Date Registered:</strong> {student.date_time}</p>
-          <button onClick={handleEditClick} style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+          <button onClick={handleEditClick} className="edit-button">
             Edit
           </button>
         </div>
       </div>
 
-      {/* Offense Record History */}
       <h2>Offense Record History</h2>
       {student.offenses && student.offenses.length > 0 ? (
-  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-    <thead>
-      <tr>
-        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Type of Offense</th>
-        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Reason</th>
-        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      {student.offenses.map((offense, index) => (
-        <tr key={index}>
-          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{offense.type}</td>
-          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{offense.reason}</td>
-          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{offense.date}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-) : (
-  <p>No offenses recorded for this student.</p>
-)}
+        <table className="offense-table">
+          <thead>
+            <tr>
+              <th>Type of Offense</th>
+              <th>Reason</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {student.offenses.map((offense, index) => (
+              <tr key={index}>
+                <td>{offense.type}</td>
+                <td>{offense.reason}</td>
+                <td>{offense.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>No offenses recorded for this student.</p>
+      )}
 
-      {/* Edit Student Popup */}
       {isEditPopupOpen && (
         <div className="popup-overlay">
           <div className="popup-large">
