@@ -111,8 +111,21 @@ const Records = () => {
             border: '1px solid #ccc',
           }}
         />
-        <button className="button" onClick={() => alert(`Searching for: ${searchQuery}`)}>
-            Search
+        <button
+          className="button"
+          onClick={() => {
+            const filtered = students.filter((student) =>
+              student.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            if (filtered.length === 0) {
+              alert('No students found.');
+            } else {
+              alert(`Found ${filtered.length} student(s).`);
+            }
+          }}
+          style={{ marginLeft: '10px' }}
+        >
+          Search
         </button>
       </div>
 

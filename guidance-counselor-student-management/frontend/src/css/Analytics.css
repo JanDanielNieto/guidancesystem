@@ -1,4 +1,7 @@
 .analytics-container {
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   font-family: Arial, sans-serif;
   background-color: #f4f6f9; /* Light background for better contrast */
@@ -7,38 +10,28 @@
 
 .analytics-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   background-color: #eaf2f8; /* Light blue background for the header */
   padding: 20px;
   border-radius: 8px;
 }
 
-.analytics-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-  color: #2c3e50; /* Darker header color */
-}
-
-.analytics-header .analytics-subtitle {
-  font-size: 1.2rem;
-  color: #7f8c8d; /* Subtle subtitle color */
-}
-
 .analytics-section {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
+  flex-wrap: nowrap; /* Prevent wrapping */
+  justify-content: space-between; /* Add space between the two sections */
+  align-items: flex-start; /* Align items at the top */
+  gap: 20px; /* Add spacing between the sections */
   margin-bottom: 30px;
 }
 
 .chart-container {
-  flex: 1 1 48%; /* Side-by-side layout for larger screens */
+  width: 50%; /* Ensure both sections take up equal width */
+  flex: 0 0 48%; /* Prevent shrinking and ensure equal width */
   background: #fff;
-  padding: 30px;
-  border-radius: 10px;
+  padding: 20px;
+  border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow for a modern look */
-  text-align: center;
 }
 
 .chart-title {
@@ -47,43 +40,24 @@
   color: #34495e; /* Slightly darker title color */
 }
 
-.chart-container canvas {
-  max-height: 400px; /* Larger chart size */
-}
-
 .analytics-summary {
   background: #fff;
-  padding: 30px;
-  border-radius: 10px;
+  padding: 20px;
+  border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   margin-top: 30px;
 }
 
-.analytics-summary .summary-title {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #2c3e50;
-}
-
-.analytics-summary .summary-content p {
-  font-size: 1.3rem;
-  margin: 15px 0;
-  color: #555; /* Softer text color for summary */
-}
-
-.analytics-summary .summary-content p strong {
-  color: #2c3e50; /* Highlighted strong text */
-}
 
 @media (max-width: 768px) {
   .chart-container {
-    flex: 1 1 100%; /* Stacks charts vertically on smaller screens */
-    max-width: 100%;
+    width: 100%; /* Full width for smaller screens */
+    flex: 1 1 100%;
   }
 
   .analytics-section {
-    flex-direction: column;
+    flex-direction: column; /* Stack sections vertically on smaller screens */
     gap: 20px;
   }
 }
