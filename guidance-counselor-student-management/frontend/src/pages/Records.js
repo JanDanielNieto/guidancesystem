@@ -43,19 +43,9 @@ const Records = () => {
 
       if (response.status === 200) {
         alert('Offense deleted successfully.');
-        // Update the state to remove the deleted offense
-        setStudents((prevStudents) =>
-          prevStudents.map((student) =>
-            student.id === offense.student_id
-              ? {
-                  ...student,
-                  offenses: student.offenses.filter(
-                    (o) => o.id !== offense.id
-                  ),
-                }
-              : student
-          )
-        );
+        // Refetch the updated list of students
+        const updatedStudents = await axios.get('http://localhost:5000/api/students');
+        setStudents(updatedStudents.data);
       } else {
         alert(`Failed to delete offense: ${response.data.error}`);
       }
@@ -86,20 +76,10 @@ const Records = () => {
 
       if (response.status === 200) {
         alert('Offense updated successfully.');
-        // Update the state to reflect the edited offense
-        setStudents((prevStudents) =>
-          prevStudents.map((student) =>
-            student.id === selectedOffense.student_id
-              ? {
-                  ...student,
-                  offenses: student.offenses.map((offense) =>
-                    offense.id === editedOffense.id ? editedOffense : offense
-                  ),
-                }
-              : student
-          )
-        );
-        setIsEditPopupOpen(false);
+        // Refetch the updated list of students
+        const updatedStudents = await axios.get('http://localhost:5000/api/students');
+        setStudents(updatedStudents.data);
+        setIsEditPopupOpen(false); // Close the popup
       } else {
         alert('Failed to update offense.');
       }
@@ -156,33 +136,8 @@ const Records = () => {
                 <td>{offense.reason}</td>
                 <td>{offense.date}</td>
                 <td>
-                  <button
-                    onClick={() => handleEditOffense(offense)}
-                    style={{
-                      marginRight: '5px',
-                      padding: '5px 10px',
-                      backgroundColor: '#3498db',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '5px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteOffense(offense)}
-                    style={{
-                      padding: '5px 10px',
-                      backgroundColor: '#e74c3c',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '5px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Delete
-                  </button>
+                  <button onClick={() => handleEditOffense(offense)}>Edit</button>
+                  <button onClick={() => handleDeleteOffense(offense)}>Delete</button>
                 </td>
               </tr>
             ))
@@ -225,32 +180,8 @@ const Records = () => {
               </label>
             </form>
             <div className="popup-buttons">
-              <button
-                onClick={handleSaveEdit}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#2ecc71',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                }}
-              >
-                Save
-              </button>
-              <button
-                onClick={() => setIsEditPopupOpen(false)}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#e74c3c',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                }}
-              >
-                Cancel
-              </button>
+              <button onClick={handleSaveEdit}>Save</button>
+              <button onClick={() => setIsEditPopupOpen(false)}>Cancel</button>
             </div>
           </div>
         </div>
