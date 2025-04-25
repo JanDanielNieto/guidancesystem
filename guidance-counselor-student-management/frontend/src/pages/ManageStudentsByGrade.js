@@ -4,12 +4,15 @@ import '../css/ManageStudentsByGrade.css'; // Add styles for this page
 
 const ManageStudentsByGrade = () => {
   const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]); // Filtered students for the table
   const [selectedGrade, setSelectedGrade] = useState('Grade 10');
   const [showDeleteAll, setShowDeleteAll] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [file, setFile] = useState(null);
   const [gradeCounts, setGradeCounts] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [sections, setSections] = useState([]); // State to store sections for the selected grade
+  const [selectedSection, setSelectedSection] = useState(''); // Currently selected section
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State to toggle the edit popup
   const [editedStudent, setEditedStudent] = useState(null); // State to store the edited student
   const [isAddPopupOpen, setIsAddPopupOpen] = useState(false); // State to toggle the add popup
@@ -45,6 +48,9 @@ const [newStudent, setNewStudent] = useState({
           return acc;
         }, {});
         setGradeCounts(counts);
+
+        // Update sections for the initially selected grade
+        updateSections(data, selectedGrade);
       } catch (error) {
         console.error('Error fetching students:', error);
       }
@@ -67,12 +73,44 @@ const [newStudent, setNewStudent] = useState({
     };
   }, []);
 
+  useEffect(() => {
+    // Update sections and filtered students whenever the selected grade changes
+    updateSectionsAndFilteredStudents(students, selectedGrade);
+  }, [selectedGrade, students]);
+
+    // Function to update sections and filtered students based on the selected grade
+  const updateSectionsAndFilteredStudents = (students, grade) => {
+    const gradeSections = [...new Set(students.filter(student => student.grade === grade).map(student => student.section))];
+    setSections(gradeSections);
+    setFilteredStudents(students.filter(student => student.grade === grade));
+    setSelectedSection(''); // Reset the selected section
+  };
+
+
+  const handleGradeSelection = (grade) => {
+    setSelectedGrade(grade);
+  };
+
+   // Handle sorting by section
+   const handleSortBySection = (section) => {
+    setSelectedSection(section);
+    if (section === '') {
+      // If no section is selected, show all students for the selected grade
+      setFilteredStudents(students.filter(student => student.grade === selectedGrade));
+    } else {
+      // Filter students by the selected section
+      setFilteredStudents(students.filter(student => student.grade === selectedGrade && student.section === section));
+    }
+  };
+
+
   // Filter students by the selected grade and search query
-  const filteredStudents = students.filter(
+  const searchedStudents = students.filter(
     (student) =>
       student.grade === selectedGrade &&
       student.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ); // Use this searchedStudents directly
+
 
   // Handle file selection
   const handleFileChange = (event) => {
@@ -296,7 +334,7 @@ const [newStudent, setNewStudent] = useState({
           <button
             key={grade}
             className={`grade-button ${selectedGrade === grade ? 'active' : ''}`}
-            onClick={() => setSelectedGrade(grade)}
+            onClick={() => handleGradeSelection(grade)}
           >
             {grade} ({gradeCounts[grade] || 0})
           </button>
@@ -313,8 +351,8 @@ const [newStudent, setNewStudent] = useState({
           className="button"
           onClick={() =>
             selectedStudent
-              ? handleDeleteStudent(selectedStudent.id)
-              : alert('Please select a student to delete.')
+            ? alert(`Delete Student: ${selectedStudent.name}`)
+            : alert('Please select a student to delete.')
           }
         >
           Delete Student
@@ -348,23 +386,18 @@ const [newStudent, setNewStudent] = useState({
             Search
           </button>
           <select
-          className="sort"
-          onChange={(e) => {
-            const sortedStudents = [...students].sort((a, b) =>
-              e.target.value === 'asc'
-                ? a.section.localeCompare(b.section)
-                : b.section.localeCompare(a.section)
-            );
-            setStudents(sortedStudents);
-          }}
-        >
-          <option value="asc">Sort by Section (A-Z)</option>
-          <option value="desc">Sort by Section (Z-A)</option>
-        </select>
-
+            className="sort"
+            onChange={(e) => handleSortBySection(e.target.value)}
+          >
+            <option value="">Sort by Section</option>
+            {sections.map((section) => (
+              <option key={section} value={section}>
+                {section}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
-
       <div className="students-table-container">
         <h2>{selectedGrade}</h2>
         <table className="students-table">
