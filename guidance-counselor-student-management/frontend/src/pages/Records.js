@@ -177,7 +177,7 @@ const Records = () => {
                   value={editedOffense?.date || ''}
                   onChange={handleEditChange}
                 />
-              </label>
+              </label>  
             </form>
             <div className="popup-buttons">
               <button onClick={handleSaveEdit}>Save</button>
