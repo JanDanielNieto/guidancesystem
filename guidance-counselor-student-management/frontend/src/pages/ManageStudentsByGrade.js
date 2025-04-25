@@ -12,6 +12,23 @@ const ManageStudentsByGrade = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State to toggle the edit popup
   const [editedStudent, setEditedStudent] = useState(null); // State to store the edited student
+  const [isAddPopupOpen, setIsAddPopupOpen] = useState(false); // State to toggle the add popup
+const [newStudent, setNewStudent] = useState({
+  lrn: '',
+  name: '',
+  grade: selectedGrade,
+  section: '',
+  sex: 'M',
+  birthdate: '',
+  mother_tongue: '',
+  religion: '',
+  barangay: '',
+  municipality_city: '',
+  father_name: '',
+  mother_name: '',
+  guardian_name: '',
+  contact_number: '',
+});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -101,6 +118,65 @@ const ManageStudentsByGrade = () => {
       console.error('Error uploading file:', error);
       alert('An error occurred while uploading the file.');
     }
+  };
+
+  const handleAddChange = (e) => {
+    const { name, value } = e.target;
+    setNewStudent((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveAdd = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/students', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newStudent),
+      });
+  
+      if (response.ok) {
+        alert('Student added successfully.');
+        const updatedStudents = await fetch('http://localhost:5000/api/students');
+        const updatedData = await updatedStudents.json();
+        setStudents(updatedData);
+  
+        // Recalculate the count of students for each grade
+        const counts = updatedData.reduce((acc, student) => {
+          acc[student.grade] = (acc[student.grade] || 0) + 1;
+          return acc;
+        }, {});
+        setGradeCounts(counts);
+  
+        setIsAddPopupOpen(false); // Close the popup
+        setNewStudent({
+          lrn: '',
+          name: '',
+          grade: selectedGrade,
+          section: '',
+          sex: 'M',
+          birthdate: '',
+          mother_tongue: '',
+          religion: '',
+          barangay: '',
+          municipality_city: '',
+          father_name: '',
+          mother_name: '',
+          guardian_name: '',
+          contact_number: '',
+        });
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error adding student:', error);
+      alert('An error occurred while adding the student.');
+    }
+  };
+
+  const handleCloseAddPopup = () => {
+    setIsAddPopupOpen(false);
   };
 
   // Handle delete student
@@ -227,9 +303,9 @@ const ManageStudentsByGrade = () => {
         ))}
       </div>
       <div className="buttons">
-        <Link to="/add-student" className="button">
+      <button className="button" onClick={() => setIsAddPopupOpen(true)}>
           Add Student
-        </Link>
+        </button>
         <button className="button" onClick={handleEditStudent}>
           Edit Student
         </button>
@@ -317,7 +393,151 @@ const ManageStudentsByGrade = () => {
           </tbody>
         </table>
       </div>
-
+      {isAddPopupOpen && (
+  <div className="popup-overlay">
+    <div className="popup-large">
+      <h2>Add Student</h2>
+      <form>
+        <label>
+          LRN:
+          <input
+            type="text"
+            name="lrn"
+            value={newStudent.lrn}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Name:
+          <input
+            type="text"
+            name="name"
+            value={newStudent.name}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Grade:
+          <input
+            type="text"
+            name="grade"
+            value={newStudent.grade}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Section:
+          <input
+            type="text"
+            name="section"
+            value={newStudent.section}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Sex:
+          <select
+            name="sex"
+            value={newStudent.sex}
+            onChange={handleAddChange}
+          >
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+          </select>
+        </label>
+        <label>
+          Birthdate:
+          <input
+            type="date"
+            name="birthdate"
+            value={newStudent.birthdate}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Mother Tongue:
+          <input
+            type="text"
+            name="mother_tongue"
+            value={newStudent.mother_tongue}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Religion:
+          <input
+            type="text"
+            name="religion"
+            value={newStudent.religion}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Barangay:
+          <input
+            type="text"
+            name="barangay"
+            value={newStudent.barangay}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Municipality/City:
+          <input
+            type="text"
+            name="municipality_city"
+            value={newStudent.municipality_city}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Father's Name:
+          <input
+            type="text"
+            name="father_name"
+            value={newStudent.father_name}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Mother's Name:
+          <input
+            type="text"
+            name="mother_name"
+            value={newStudent.mother_name}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Guardian's Name:
+          <input
+            type="text"
+            name="guardian_name"
+            value={newStudent.guardian_name}
+            onChange={handleAddChange}
+          />
+        </label>
+        <label>
+          Contact Number:
+          <input
+            type="text"
+            name="contact_number"
+            value={newStudent.contact_number}
+            onChange={handleAddChange}
+          />
+        </label>
+      </form>
+      <div className="popup-buttons">
+        <button className="button" onClick={handleSaveAdd}>
+          Save
+        </button>
+        <button className="button" onClick={handleCloseAddPopup}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       {/* Edit Student Popup */}
       {isEditPopupOpen && (
         <div className="popup-overlay">
