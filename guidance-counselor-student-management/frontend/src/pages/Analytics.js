@@ -77,67 +77,20 @@ const Analytics = () => {
         <h1>Guidance System Analytics</h1>
         <p className="analytics-subtitle">A comprehensive overview of student offenses and trends</p>
       </header>
-
       <section className="analytics-section">
         <div className="chart-container">
           <h2 className="chart-title">Student Offenses by Type</h2>
           <div className="chart-wrapper">
             <Pie
               data={pieChartData}
-              options={{
-                plugins: {
-                  legend: {
-                    position: 'top',
-                    labels: {
-                      boxWidth: 15,
-                      font: {
-                        size: 14,
-                      },
-                    },
-                  },
-                },
-                maintainAspectRatio: false,
-              }}
             />
           </div>
         </div>
-
         <div className="chart-container">
           <h2 className="chart-title">Students with Offenses by Grade</h2>
           <div className="chart-wrapper">
             <Bar
               data={barChartData}
-              options={{
-                plugins: {
-                  legend: {
-                    position: 'top',
-                    labels: {
-                      boxWidth: 15,
-                      font: {
-                        size: 14,
-                      },
-                    },
-                  },
-                },
-                maintainAspectRatio: false,
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      font: {
-                        size: 12,
-                      },
-                    },
-                  },
-                  x: {
-                    ticks: {
-                      font: {
-                        size: 12,
-                      },
-                    },
-                  },
-                },
-              }}
             />
           </div>
         </div>

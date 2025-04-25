@@ -82,7 +82,7 @@ const StudentProfile = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Student Profile</h1>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+      <div classstyle={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
         <div style={{ marginRight: '20px' }}>
           <img
             src="https://via.placeholder.com/150"

@@ -347,6 +347,21 @@ const [newStudent, setNewStudent] = useState({
           <button className="button" onClick={() => alert(`Searching for: ${searchQuery}`)}>
             Search
           </button>
+          <select
+          className="sort"
+          onChange={(e) => {
+            const sortedStudents = [...students].sort((a, b) =>
+              e.target.value === 'asc'
+                ? a.section.localeCompare(b.section)
+                : b.section.localeCompare(a.section)
+            );
+            setStudents(sortedStudents);
+          }}
+        >
+          <option value="asc">Sort by Section (A-Z)</option>
+          <option value="desc">Sort by Section (Z-A)</option>
+        </select>
+
         </div>
       </div>
 
