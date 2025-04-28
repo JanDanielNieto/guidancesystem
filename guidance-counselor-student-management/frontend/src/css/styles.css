@@ -7,6 +7,10 @@ body {
     color: #333;
   }
 
+  .white {
+    color: #f2f2f2;
+  }
+
   h1, h2, h3 {
     color: #2c3e50;
   }

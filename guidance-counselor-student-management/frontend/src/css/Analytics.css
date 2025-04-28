@@ -2,7 +2,7 @@
   display: block;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 15px;
   font-family: Arial, sans-serif;
   background-color: #ecf0f1; /* Light gray background */
   border-radius: 8px;
@@ -19,20 +19,25 @@
 
 .analytics-section {
   display: flex;
-  flex-wrap: nowrap; /* Prevent wrapping */
-  justify-content: space-between; /* Add space between the two sections */
-  align-items: flex-start; /* Align items at the top */
+  flex-wrap: wrap; /* Allow wrapping to the next line */
+  justify-content: space-between; /* Add space between the sections */
+  align-items: stretch; /* Stretch items to have the same height */
   gap: 20px; /* Add spacing between the sections */
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .chart-container {
-  width: 50%; /* Ensure both sections take up equal width */
-  flex: 0 0 48%; /* Prevent shrinking and ensure equal width */
+  width: 100%; /* Ensure the container takes up the full width of its parent */
+  max-width: 48%; /* Limit the maximum width to 48% for larger screens */
+  flex: 1 1 48%; /* Allow equal width for both boxes */
   background: #fff;
-  padding: 20px;
+  padding: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow for a modern look */
+  overflow-x: auto; /* Add horizontal scrolling if content overflows */
+  box-sizing: border-box; /* Include padding and borders in width calculation */
+  display: flex;
+  flex-direction: column; /* Ensure content inside the box is stacked vertically */
 }
 
 .chart-title {
@@ -48,10 +53,10 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-
 @media (max-width: 768px) {
   .chart-container {
     width: 100%; /* Full width for smaller screens */
+    max-width: 100%; /* Ensure no horizontal scrolling on small screens */
     flex: 1 1 100%;
   }
 
