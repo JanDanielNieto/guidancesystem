@@ -122,25 +122,6 @@ const StudentProfile = () => {
     <div className="student-profile-container">
       <h1 className="student-profile-header">Student Profile</h1>
       <div className="profile-section">
-        <div>
-          <img
-            src={profileImage}
-            alt="Profile"
-            className="profile-image"
-          />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="upload-profile-button"
-          />
-          <button
-            onClick={handleProfilePictureUpload}
-            className="upload-button"
-          >
-            Upload
-          </button>
-        </div>
         <div className="profile-details">
           <p><strong>LRN:</strong> {student.lrn}</p>
           <p><strong>Name:</strong> {student.name}</p>
