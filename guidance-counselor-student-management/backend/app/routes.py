@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request, send_from_directory
-from app.models import StudentRecord, OffenseRecord
+from app.models import StudentRecord, OffenseRecord, User
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.security import check_password_hash
 from dateutil.parser import parse
 from datetime import datetime
 from app import db
@@ -396,3 +398,48 @@ def add_offense():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+    
+@main.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    # Find the user by username
+    user = User.query.filter_by(username=username).first()
+
+    # Check if the user exists and the password matches (plain text comparison)
+    if user and user.password == password:  # Compare plain text passwords
+        login_user(user)  # Log the user in
+        return jsonify({'message': 'Login successful'}), 200
+
+    # If credentials are invalid
+    return jsonify({'error': 'Invalid username or password'}), 401
+
+@main.route('/api/logout', methods=['POST'])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({'message': 'Logout successful'}), 200
+
+# Protected route example
+@main.route('/api/protected', methods=['GET'])
+@login_required
+def protected():
+    return jsonify({'message': f'Hello, {current_user.username}! This is a protected route.'})
+
+# Other routes (e.g., for students, offenses, etc.) remain unchanged@main.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    # Find the user by username
+    user = User.query.filter_by(username=username).first()
+
+    # Check if the user exists and the password matches (plain text comparison)
+    if user and user.password == password:  # Compare plain text passwords
+        login_user(user)
+        return jsonify({'message': 'Login successful'}), 200
+
+    return jsonify({'error': 'Invalid username or password'}), 401
