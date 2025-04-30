@@ -24,7 +24,7 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "homepage": ".",  
+  "homepage": ".", 
   "browserslist": {
     "production": [
       ">0.2%",
