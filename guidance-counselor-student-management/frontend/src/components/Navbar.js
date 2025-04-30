@@ -16,9 +16,10 @@ const Navbar = () => {
     <div className="navbar">
       <h1 className="white">BSSAA Guidance Hub</h1>
       <div>
-        <a href="/">Dashboard</a>
-        <a href="/manage-students-by-grade">Students</a>
-        <a href="/records">Records</a>
+        <a href="/">Main Menu</a>
+        <a href="/manage-students-by-grade">Student Information</a>
+        <a href="/records">Offense Records</a>
+        <a href="/sort-and-manage">Update Records</a> {/* New link added */}
         <a href="/analytics">Analytics</a>
         <button onClick={handleLogout} style={{ marginLeft: '10px', cursor: 'pointer' }}>
           Logout

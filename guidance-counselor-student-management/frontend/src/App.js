@@ -9,6 +9,8 @@ import AddReport from './pages/AddReport';
 import EditStudent from './pages/EditStudent';
 import Analytics from './pages/Analytics';
 import ManageStudentsByGrade from './pages/ManageStudentsByGrade';
+import SortAndManageStudents from './pages/SortAndManageStudents'; // Import the component
+
 
 const isAuthenticated = () => {
   // Check if the user is authenticated (e.g., by checking a token in localStorage)
@@ -37,6 +39,7 @@ const AppContent = () => {
           <Route path="/editstudent" element={<ProtectedRoute element={<EditStudent />} />} />
           <Route path="/analytics" element={<ProtectedRoute element={<Analytics />} />} />
           <Route path="/manage-students-by-grade" element={<ProtectedRoute element={<ManageStudentsByGrade />} />} />
+          <Route path="/sort-and-manage" element={<ProtectedRoute element={<SortAndManageStudents />} />} /> {/* Add the route */}
         </Routes>
       </div>
     </>

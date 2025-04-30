@@ -443,3 +443,50 @@ def login():
         return jsonify({'message': 'Login successful'}), 200
 
     return jsonify({'error': 'Invalid username or password'}), 401
+
+@main.route('/api/sort-and-manage/students/<int:id>', methods=['PUT'])
+def edit_student_sort_and_manage(id):
+    data = request.json
+    print(f"Received data for student ID {id}: {data}")  # Debugging log
+
+    student = StudentRecord.query.get(id)
+
+    if not student:
+        return jsonify({'error': 'Student not found'}), 404
+
+    try:
+        # Update only the Grade and Section fields
+        student.grade = data.get('grade', student.grade)
+        student.section = data.get('section', student.section)
+
+        # Commit the changes to the database
+        db.session.commit()
+        return jsonify({'message': 'Student updated successfully for Sort and Manage!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error while updating student ID {id}: {str(e)}")  # Debugging log
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500
+    
+@main.route('/api/sort-and-manage/students/<int:id>', methods=['DELETE'])
+def delete_student_sort_and_manage(id):
+    try:
+        # Fetch the student record by ID
+        student = StudentRecord.query.get(id)
+
+        # Check if the student exists
+        if not student:
+            return jsonify({'error': 'Student not found'}), 404
+
+        # Delete all offenses associated with the student
+        OffenseRecord.query.filter_by(student_id=student.id).delete()
+
+        # Delete the student record
+        db.session.delete(student)
+        db.session.commit()
+
+        return jsonify({'message': 'Student deleted successfully for Sort and Manage!'}), 200
+
+    except Exception as e:
+        # Rollback the transaction in case of an error
+        db.session.rollback()
+        return jsonify({'error': f'An error occurred while deleting the student: {str(e)}'}), 500
