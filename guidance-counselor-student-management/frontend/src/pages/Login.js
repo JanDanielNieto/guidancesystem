@@ -35,7 +35,7 @@ const Login = () => {
   return (
     <div className="background">
       <div className="top-bar">
-        <h1>Guidance System</h1>
+        <h1>BSSAA Guidance Hub</h1>
       </div>
       <div className="login-container">
         <div className="login-box">

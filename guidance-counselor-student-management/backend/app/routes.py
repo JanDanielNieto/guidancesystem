@@ -1,14 +1,16 @@
 from flask import Blueprint, jsonify, request, send_from_directory
 from app.models import StudentRecord, OffenseRecord, User
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import check_password_hash
+# Removed unused import
 from dateutil.parser import parse
 from datetime import datetime
 from app import db
 import pandas as pd
+from flask_cors import CORS
 import os
 
 main = Blueprint('main', __name__)
+CORS(main, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
