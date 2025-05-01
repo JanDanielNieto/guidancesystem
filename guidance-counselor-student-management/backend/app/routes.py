@@ -259,7 +259,9 @@ def add_student():
             mother_name=data.get('mother_name'),
             guardian_name=data.get('guardian_name'),
             contact_number=data.get('contact_number')
+            
         )
+            
 
         db.session.add(new_student)
         db.session.commit()
