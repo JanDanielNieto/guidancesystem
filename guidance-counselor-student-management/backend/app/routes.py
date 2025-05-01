@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, send_from_directory
 from app.models import StudentRecord, OffenseRecord, User
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash  # Ensure this is imported
 from dateutil.parser import parse
 from datetime import datetime
 from app import db
@@ -55,6 +55,7 @@ def upload_csv():
     file.save(file_path)
 
     try:
+        # Read the file into a DataFrame
         if file.filename.endswith('.csv'):
             df = pd.read_csv(file_path, encoding='utf-8')
         else:
@@ -62,15 +63,11 @@ def upload_csv():
 
         # Normalize column names
         df.columns = [col.strip().lower() for col in df.columns]
-        df = df.where(pd.notnull(df), None)
+        df = df.where(pd.notnull(df), None)  # Replace NaN with None
 
+        # Map column names to database fields
         column_mapping = {key.lower(): value for key, value in COLUMN_MAPPING.items()}
         df.rename(columns=column_mapping, inplace=True)
-
-        required_columns = ['lrn', 'name', 'section', 'grade']
-        for col in required_columns:
-            if col not in df.columns:
-                return jsonify({'error': f'Missing required column: {col}'}), 400
 
         total_rows = len(df)
         inserted_count = 0
@@ -79,25 +76,14 @@ def upload_csv():
 
         for index, row in df.iterrows():
             try:
-                raw_lrn = str(row.get('lrn')).strip() if row.get('lrn') else None
-                lrn = raw_lrn.split('.')[0] if raw_lrn and '.' in raw_lrn else raw_lrn
-                name = row.get('name')
-                section = row.get('section')
-                grade = row.get('grade')
+                # Extract and clean data
+                lrn = str(row.get('lrn')).strip() if row.get('lrn') else None
+                if lrn and len(lrn) > 20:  # Truncate LRN if it exceeds the maximum length
+                    lrn = lrn[:20]
 
-                # Skip incomplete rows and log the reason
-                if not lrn:
-                    skipped_rows.append({'index': index + 1, 'reason': 'Missing LRN', 'row': row.to_dict()})
-                    continue
-                if not name:
-                    skipped_rows.append({'index': index + 1, 'reason': 'Missing Name', 'row': row.to_dict()})
-                    continue
-                if not section:
-                    skipped_rows.append({'index': index + 1, 'reason': 'Missing Section', 'row': row.to_dict()})
-                    continue
-                if not grade:
-                    skipped_rows.append({'index': index + 1, 'reason': 'Missing Grade', 'row': row.to_dict()})
-                    continue
+                name = row.get('name', '').strip()
+                grade = row.get('grade', '').strip()
+                section = row.get('section', '').strip()
 
                 # Parse birthdate safely
                 birthdate = None
@@ -108,11 +94,12 @@ def upload_csv():
                     except Exception:
                         birthdate = None
 
+                # Prepare student data
                 student_data = {
                     'lrn': lrn,
-                    'name': name.strip() if name else None,
-                    'grade': grade.strip() if grade else None,
-                    'section': section.strip() if section else None,
+                    'name': name,
+                    'grade': grade,
+                    'section': section,
                     'sex': row.get('sex'),
                     'birthdate': birthdate,
                     'mother_tongue': row.get('mother_tongue'),
@@ -127,6 +114,8 @@ def upload_csv():
 
                 # Clean possible NaN/None
                 student_data = {k: (None if pd.isna(v) else v) for k, v in student_data.items()}
+
+                # Check if the student already exists
                 existing = StudentRecord.query.filter_by(lrn=lrn).first()
                 if existing:
                     for key, value in student_data.items():
@@ -141,6 +130,7 @@ def upload_csv():
                 skipped_rows.append({'index': index + 1, 'reason': str(e), 'row': row.to_dict()})
                 continue
 
+        # Commit all changes to the database
         db.session.commit()
 
         return jsonify({
@@ -154,7 +144,7 @@ def upload_csv():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
+    
 @main.route('/api/students', methods=['GET'])
 def get_students():
     students = StudentRecord.query.all()
@@ -408,8 +398,8 @@ def login():
     # Find the user by username
     user = User.query.filter_by(username=username).first()
 
-    # Check if the user exists and the password matches (plain text comparison)
-    if user and user.password == password:  # Compare plain text passwords
+    # Check if the user exists and the password matches
+    if user and check_password_hash(user.password, password):  # Use check_password_hash
         login_user(user)  # Log the user in
         return jsonify({'message': 'Login successful'}), 200
 

@@ -7,7 +7,7 @@ class StudentRecord(db.Model):
     __tablename__ = 'student_information'
 
     id = db.Column(db.Integer, primary_key=True)
-    lrn = db.Column(db.String(12), unique=True, nullable=False)
+    lrn = db.Column(db.String(20), unique=True, nullable=False)  # Increased length
     name = db.Column(db.String(100), nullable=False)
     grade = db.Column(db.String(20), nullable=False)
     section = db.Column(db.String(50), nullable=False)
@@ -22,8 +22,8 @@ class StudentRecord(db.Model):
     guardian_name = db.Column(db.String(100))
     contact_number = db.Column(db.String(15))
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
-    profile_image = db.Column(db.String(255), nullable=True)  # New field for storing the profile image path
-
+    profile_image = db.Column(db.String(255), nullable=True)
+    
     def to_dict(self):
         return {
             'id': self.id,
