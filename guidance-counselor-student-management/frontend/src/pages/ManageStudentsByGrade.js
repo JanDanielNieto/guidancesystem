@@ -223,7 +223,7 @@ const [newStudent, setNewStudent] = useState({
       const response = await fetch(`http://localhost:5000/api/students/${id}`, {
         method: 'DELETE',
       });
-
+  
       if (response.ok) {
         alert('Student deleted successfully.');
         setStudents(students.filter((student) => student.id !== id));

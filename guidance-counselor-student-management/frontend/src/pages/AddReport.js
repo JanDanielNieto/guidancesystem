@@ -179,10 +179,9 @@ const AddReport = () => {
                     }}
                   >
                     <option value="">Select an offense</option>
-                    <option value="Bullying">Bullying</option>
-                    <option value="Cheating">Cheating</option>
-                    <option value="Vandalism">Vandalism</option>
-                    <option value="Disrespect">Disrespect</option>
+                    <option value="Bullying">Light Offense</option>
+                    <option value="Cheating">Less Serious or Less Grave Offense</option>
+                    <option value="Vandalism">Serious or Grave Offense</option>
                   </select>
                 </label>
               </div>

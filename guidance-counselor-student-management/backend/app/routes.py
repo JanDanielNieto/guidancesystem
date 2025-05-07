@@ -204,7 +204,6 @@ def delete_student(id):
     except Exception as e:
         # Rollback the transaction in case of an error
         db.session.rollback()
-        # Log the error and return a meaningful message
         return jsonify({'error': f'An error occurred while deleting the student: {str(e)}'}), 500
 
 @main.route('/api/delete_all_students', methods=['DELETE'])

@@ -22,6 +22,7 @@ class StudentRecord(db.Model):
     guardian_name = db.Column(db.String(100))
     contact_number = db.Column(db.String(15))
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
+    offenses = db.relationship('OffenseRecord', backref='student', cascade='all, delete-orphan')
     profile_image = db.Column(db.String(255), nullable=True)
     
     def to_dict(self):
@@ -49,10 +50,10 @@ class OffenseRecord(db.Model):
     __tablename__ = 'offense_records'
 
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student_information.id'), nullable=False)
-    offense_type = db.Column(db.String(100), nullable=False)
-    reason = db.Column(db.String(200), nullable=True)
-    additional_info = db.Column(db.String(500))
+    student_id = db.Column(db.Integer, db.ForeignKey('student_information.id', ondelete='CASCADE'), nullable=False)
+    offense_type = db.Column(db.String(50), nullable=False)
+    reason = db.Column(db.String(255))
+    additional_info = db.Column(db.String(255))
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
