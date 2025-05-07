@@ -24,7 +24,7 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "homepage": ".", 
+  "homepage": ".",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -39,5 +39,8 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=18.20.8"
   }
 }
