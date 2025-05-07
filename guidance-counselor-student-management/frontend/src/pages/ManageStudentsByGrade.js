@@ -37,10 +37,9 @@ const [newStudent, setNewStudent] = useState({
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch all students from the backend
     const fetchStudents = async () => {
       try {
-        const response = await fetch(`${config.apiBaseUrl}/students`);
+        const response = await fetch(`${config.API_BASE_URL}/students`);
         const data = await response.json();
         setStudents(data);
 
@@ -52,7 +51,7 @@ const [newStudent, setNewStudent] = useState({
         setGradeCounts(counts);
 
         // Update sections for the initially selected grade
-        updateSections(data, selectedGrade);
+        updateSectionsAndFilteredStudents(data, selectedGrade);
       } catch (error) {
         console.error('Error fetching students:', error);
       }
@@ -75,44 +74,45 @@ const [newStudent, setNewStudent] = useState({
     };
   }, []);
 
+  // Update sections and filtered students whenever the selected grade changes
   useEffect(() => {
-    // Update sections and filtered students whenever the selected grade changes
     updateSectionsAndFilteredStudents(students, selectedGrade);
   }, [selectedGrade, students]);
 
-    // Function to update sections and filtered students based on the selected grade
+  // Function to update sections and filtered students based on the selected grade
   const updateSectionsAndFilteredStudents = (students, grade) => {
-    const gradeSections = [...new Set(students.filter(student => student.grade === grade).map(student => student.section))];
+    const gradeSections = [
+      ...new Set(
+        students.filter((student) => student.grade === grade).map((student) => student.section)
+      ),
+    ];
     setSections(gradeSections);
-    setFilteredStudents(students.filter(student => student.grade === grade));
+    setFilteredStudents(students.filter((student) => student.grade === grade));
     setSelectedSection(''); // Reset the selected section
   };
-
 
   const handleGradeSelection = (grade) => {
     setSelectedGrade(grade);
   };
 
-   // Handle sorting by section
-   const handleSortBySection = (section) => {
+  // Handle sorting by section
+  const handleSortBySection = (section) => {
     setSelectedSection(section);
     if (section === '') {
       // If no section is selected, show all students for the selected grade
-      setFilteredStudents(students.filter(student => student.grade === selectedGrade));
+      setFilteredStudents(students.filter((student) => student.grade === selectedGrade));
     } else {
       // Filter students by the selected section
-      setFilteredStudents(students.filter(student => student.grade === selectedGrade && student.section === section));
+      setFilteredStudents(
+        students.filter((student) => student.grade === selectedGrade && student.section === section)
+      );
     }
   };
 
-
   // Filter students by the selected grade and search query
-  const searchedStudents = students.filter(
-    (student) =>
-      student.grade === selectedGrade &&
-      student.name.toLowerCase().includes(searchQuery.toLowerCase())
-  ); // Use this searchedStudents directly
-
+  const searchedStudents = filteredStudents.filter((student) =>
+    student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Handle file selection
   const handleFileChange = (event) => {
@@ -130,7 +130,7 @@ const [newStudent, setNewStudent] = useState({
     formData.append('file', file);
 
     try {
-      const response = await fetch(`${config.apiBaseUrl}/upload`, {
+      const response = await fetch(`${config.API_BASE_URL}/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -140,7 +140,7 @@ const [newStudent, setNewStudent] = useState({
         alert(result.message);
         setFile(null); // Clear the file input
         // Optionally, refresh the student list
-        const updatedStudentsResponse = await fetch(`${config.apiBaseUrl}/students`);
+        const updatedStudentsResponse = await fetch(`${config.API_BASE_URL}/students`);
         const updatedData = await updatedStudentsResponse.json();
         setStudents(updatedData);
 
