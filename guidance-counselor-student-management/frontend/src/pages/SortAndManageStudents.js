@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../css/SortAndManageStudents.css'; // Add styles for this page
+import config from '../config'; // Import the centralized config file
 
 const SortAndManageStudents = () => {
   const [students, setStudents] = useState([]);
@@ -14,7 +15,7 @@ const SortAndManageStudents = () => {
     // Fetch all students from the backend
     const fetchStudents = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/students');
+        const response = await fetch(`${config.apiBaseUrl}/students`);
         const data = await response.json();
         setStudents(data);
         setFilteredStudents(data);
@@ -63,7 +64,7 @@ const SortAndManageStudents = () => {
     try {
       for (const studentId of selectedStudents) {
         // Use the new route for deleting students
-        await fetch(`http://localhost:5000/api/sort-and-manage/students/${studentId}`, {
+        await fetch(`${config.apiBaseUrl}/sort-and-manage/students/${studentId}`, {
           method: 'DELETE',
         });
       }
@@ -97,7 +98,7 @@ const SortAndManageStudents = () => {
   
     try {
         for (const studentId of selectedStudents) {
-            const response = await fetch(`http://localhost:5000/api/sort-and-manage/students/${studentId}`, {
+            const response = await fetch(`${config.apiBaseUrl}/sort-and-manage/students/${studentId}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',

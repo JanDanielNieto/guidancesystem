@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../css/styles.css';
+import config from '../config'; // Import the centralized config file
 
 const EditStudent = () => {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
     // Fetch the list of students from the API
-    axios.get('http://localhost:5000/api/students')
+    axios.get(`${config.apiBaseUrl}/students`)
       .then(response => {
         setStudents(response.data);
       })
@@ -28,7 +29,7 @@ const EditStudent = () => {
   const handleSave = (id) => {
     // Save the updated student information to the server
     const updatedStudent = students.find(student => student.id === id);
-    axios.put(`http://localhost:5000/api/students/${id}`, updatedStudent)
+    axios.put(`${config.apiBaseUrl}/students/${id}`, updatedStudent)
       .then(response => {
         alert('Student information updated successfully!');
       })

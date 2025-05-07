@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../css/StudentProfile.css';
+import config from '../config';
 
 const StudentProfile = () => {
   const { lrn } = useParams();
@@ -15,7 +16,7 @@ const StudentProfile = () => {
   useEffect(() => {
     const fetchStudent = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/students/${lrn}`);
+        const response = await fetch(`${config.apiBaseUrl}/students/${lrn}`);
         if (!response.ok) {
           throw new Error('Failed to fetch student details');
         }
@@ -46,7 +47,7 @@ const StudentProfile = () => {
 
   const handleSaveEdit = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/students/${editedStudent.id}`, {
+      const response = await fetch(`${config.apiBaseUrl}/students/${editedStudent.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +88,7 @@ const StudentProfile = () => {
     formData.append('profile_image', selectedFile);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/students/${lrn}/upload-profile-picture`, {
+      const response = await fetch(`${config.apiBaseUrl}/students/${lrn}/upload-profile-picture`, {
         method: 'POST',
         body: formData,
       });

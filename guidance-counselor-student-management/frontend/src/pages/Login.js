@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import config from '../config'; // Import the centralized config file
 import '../css/styles.css'; // Ensure this path is correct
 
 const Login = () => {
@@ -12,7 +13,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/login', {
+      const response = await axios.post(`${config.API_BASE_URL}/api/login`, {
         username,
         password,
       });
@@ -24,7 +25,7 @@ const Login = () => {
       alert(response.data.message);
 
       // Navigate to the Dashboard page
-      navigate('/');
+      navigate('/dashboard'); // Redirect to the dashboard
     } catch (err) {
       // Show an error popup message
       setError(err.response?.data?.error || 'An error occurred');

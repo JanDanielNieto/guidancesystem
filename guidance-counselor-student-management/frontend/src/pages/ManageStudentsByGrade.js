@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/ManageStudentsByGrade.css'; // Add styles for this page
+import config from '../config'; // Import the centralized config file
+
 
 const ManageStudentsByGrade = () => {
   const [students, setStudents] = useState([]);
@@ -38,7 +40,7 @@ const [newStudent, setNewStudent] = useState({
     // Fetch all students from the backend
     const fetchStudents = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/students');
+        const response = await fetch(`${config.apiBaseUrl}/students`);
         const data = await response.json();
         setStudents(data);
 
@@ -128,7 +130,7 @@ const [newStudent, setNewStudent] = useState({
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/upload', {
+      const response = await fetch(`${config.apiBaseUrl}/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -138,8 +140,8 @@ const [newStudent, setNewStudent] = useState({
         alert(result.message);
         setFile(null); // Clear the file input
         // Optionally, refresh the student list
-        const updatedStudents = await fetch('http://localhost:5000/api/students');
-        const updatedData = await updatedStudents.json();
+        const updatedStudentsResponse = await fetch(`${config.apiBaseUrl}/students`);
+        const updatedData = await updatedStudentsResponse.json();
         setStudents(updatedData);
 
         // Recalculate the count of students for each grade
@@ -165,7 +167,7 @@ const [newStudent, setNewStudent] = useState({
 
   const handleSaveAdd = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/students', {
+      const response = await fetch(`${config.apiBaseUrl}/students`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -175,7 +177,7 @@ const [newStudent, setNewStudent] = useState({
   
       if (response.ok) {
         alert('Student added successfully.');
-        const updatedStudents = await fetch('http://localhost:5000/api/students');
+        const updatedStudents = await fetch(`${config.apiBaseUrl}/students`);
         const updatedData = await updatedStudents.json();
         setStudents(updatedData);
   
@@ -220,7 +222,7 @@ const [newStudent, setNewStudent] = useState({
   // Handle delete student
   const handleDeleteStudent = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/students/${id}`, {
+      const response = await fetch(`${config.apiBaseUrl}/students/${id}`, {
         method: 'DELETE',
       });
   
@@ -241,7 +243,7 @@ const [newStudent, setNewStudent] = useState({
   // Handle delete all students
   const handleDeleteAll = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/delete_all_students', {
+      const response = await fetch(`${config.apiBaseUrl}/delete_all_students`, {
         method: 'DELETE',
       });
 
@@ -292,7 +294,7 @@ const [newStudent, setNewStudent] = useState({
   // Save the edited student
   const handleSaveEdit = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/students/${editedStudent.id}`, {
+      const response = await fetch(`${config.apiBaseUrl}/students/${editedStudent.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

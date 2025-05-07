@@ -392,20 +392,26 @@ def add_offense():
     
 @main.route('/api/login', methods=['POST'])
 def login():
-    data = request.json
-    username = data.get('username')
-    password = data.get('password')
+    if request.method != 'POST':
+        return jsonify({'error': 'Method not allowed. Use POST instead.'}), 405
 
-    # Find the user by username
-    user = User.query.filter_by(username=username).first()
+    try:
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
 
-    # Check if the user exists and the password matches
-    if user and check_password_hash(user.password, password):  # Use check_password_hash
-        login_user(user)  # Log the user in
-        return jsonify({'message': 'Login successful'}), 200
+        # Find the user by username
+        user = User.query.filter_by(username=username).first()
 
-    # If credentials are invalid
-    return jsonify({'error': 'Invalid username or password'}), 401
+        # Check if the user exists and the password matches
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            return jsonify({'message': 'Login successful'}), 200
+
+        return jsonify({'error': 'Invalid username or password'}), 401
+
+    except Exception as e:
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500
 
 @main.route('/api/logout', methods=['POST'])
 @login_required

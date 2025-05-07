@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/styles.css';
 import { useLocation } from 'react-router-dom';
+import config from '../config';
 
 
 const AddReport = () => {
@@ -16,7 +17,7 @@ const AddReport = () => {
 
   useEffect(() => {
     if (studentId) {
-      fetch(`http://localhost:5000/api/students/${studentId}`)
+      fetch(`${config.API_URL}/students/${studentId}`)
         .then((response) => response.json())
         .then((data) => setDetails(data))
         .catch((error) => console.error('Error fetching student details:', error));
@@ -26,7 +27,7 @@ const AddReport = () => {
     const handleSearch = async (e) => {
       e.preventDefault();
       try {
-        const response = await fetch(`http://localhost:5000/api/students/search?query=${searchTerm}`);
+        const response = await fetch(`${config.API_URL}/students/search?query=${searchTerm}`);
         const data = await response.json();
         setSuggestions(data); // Populate suggestions with the search results
         if (data.length === 1) {
@@ -68,7 +69,7 @@ const AddReport = () => {
     }
   
     try {
-      const response = await fetch(`http://localhost:5000/api/students/${details.id}/offenses`, {
+      const response = await fetch(`${config.API_URL}/students/${details.id}/offenses`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
