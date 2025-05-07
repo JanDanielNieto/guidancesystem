@@ -2,7 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_login import LoginManager
-from flask_migrate import Migrate  # Import Flask-Migrate
+from flask_migrate import Migrate  # Import Flask-
+import os
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -14,7 +15,7 @@ def create_app():
     CORS(app, resources={r"/*": {"origins": "https://guidancesystem.vercel.app"}})
 
     # PostgreSQL database configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:sabando28@localhost/guidance_system'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')  # Use DATABASE_URL from .env
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'APEXGUIDANCE'  # Add a secret key for session management
 
