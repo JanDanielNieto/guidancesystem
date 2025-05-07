@@ -11,7 +11,7 @@ migrate = Migrate()  # Initialize Flask-Migrate
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
+    CORS(app, resources={r"/*": {"origins": "https://guidancesystem.vercel.app"}})
 
     # PostgreSQL database configuration
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:sabando28@localhost/guidance_system'
