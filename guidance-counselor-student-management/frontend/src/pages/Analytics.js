@@ -17,6 +17,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Le
 const Analytics = () => {
   const [studentData, setStudentData] = useState([]);
   const [offenseData, setOffenseData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,17 +30,29 @@ const Analytics = () => {
         setOffenseData(offenses);
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
+  // Calculate offenses by type
   const offensesByType = offenseData.reduce((acc, offense) => {
     acc[offense.type] = (acc[offense.type] || 0) + 1;
     return acc;
   }, {});
 
+  // Calculate students with offenses by grade
+  const studentsWithOffensesByGrade = studentData.reduce((acc, student) => {
+    if (student.offenses.length > 0) {
+      acc[student.grade] = (acc[student.grade] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
+  // Prepare data for the pie chart
   const pieChartData = {
     labels: Object.keys(offensesByType),
     datasets: [
@@ -51,13 +64,7 @@ const Analytics = () => {
     ],
   };
 
-  const studentsWithOffensesByGrade = studentData.reduce((acc, student) => {
-    if (student.offenses.length > 0) {
-      acc[student.grade] = (acc[student.grade] || 0) + 1;
-    }
-    return acc;
-  }, {});
-
+  // Prepare data for the bar chart
   const barChartData = {
     labels: Object.keys(studentsWithOffensesByGrade),
     datasets: [
@@ -71,6 +78,16 @@ const Analytics = () => {
     ],
   };
 
+  // Calculate summary data
+  const totalStudents = studentData.length;
+  const totalOffenses = offenseData.length;
+  const mostCommonOffense =
+    Object.keys(offensesByType).reduce((a, b) => (offensesByType[a] > offensesByType[b] ? a : b), 'N/A');
+
+  if (loading) {
+    return <p>Loading analytics...</p>;
+  }
+
   return (
     <div className="analytics-container">
       <header className="analytics-header">
@@ -81,17 +98,13 @@ const Analytics = () => {
         <div className="chart-container">
           <h2 className="chart-title">Student Offenses by Type</h2>
           <div className="chart-wrapper">
-            <Pie
-              data={pieChartData}
-            />
+            <Pie data={pieChartData} />
           </div>
         </div>
         <div className="chart-container">
           <h2 className="chart-title">Students with Offenses by Grade</h2>
           <div className="chart-wrapper">
-            <Bar
-              data={barChartData}
-            />
+            <Bar data={barChartData} />
           </div>
         </div>
       </section>
@@ -99,12 +112,9 @@ const Analytics = () => {
       <section className="analytics-summary">
         <h2 className="summary-title">Summary</h2>
         <div className="summary-content">
-          <p><strong>Total Students:</strong> {studentData.length}</p>
-          <p><strong>Total Offenses Recorded:</strong> {offenseData.length}</p>
-          <p>
-            <strong>Most Common Offense:</strong>{' '}
-            {Object.keys(offensesByType).reduce((a, b) => (offensesByType[a] > offensesByType[b] ? a : b), 'N/A')}
-          </p>
+          <p><strong>Total Students:</strong> {totalStudents}</p>
+          <p><strong>Total Offenses Recorded:</strong> {totalOffenses}</p>
+          <p><strong>Most Common Offense:</strong> {mostCommonOffense}</p>
         </div>
       </section>
     </div>
