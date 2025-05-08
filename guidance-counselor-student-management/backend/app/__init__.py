@@ -2,12 +2,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_login import LoginManager
-from flask_migrate import Migrate  # Import Flask-
+from flask_migrate import Migrate  
 import os
 
 db = SQLAlchemy()
 login_manager = LoginManager()
-migrate = Migrate()  # Initialize Flask-Migrate
+migrate = Migrate()  
 
 
 def create_app():
