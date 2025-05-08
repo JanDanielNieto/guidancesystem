@@ -157,7 +157,7 @@ def get_students():
         offenses = OffenseRecord.query.filter_by(student_id=student.id).all()
         result.append({
             **student.to_dict(),
-            'offenses': [offense.to_dict() for offense in offenses]  # Ensure offense_type is included
+            'offenses': [offense.to_dict() for offense in offenses]  # Include offenses
         })
     return jsonify(result)
 
