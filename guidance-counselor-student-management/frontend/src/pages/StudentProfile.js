@@ -78,6 +78,12 @@ const StudentProfile = () => {
     setSelectedFile(file); // Store the selected file in state
   };
 
+  const offenseTypeLabels = {
+    Bullying: "Light Offense",
+    Cheating: "Less Serious or Less Grave Offense",
+    Vandalism: "Serious or Grave Offense",
+  };
+
   const handleProfilePictureUpload = async () => {
     if (!selectedFile) {
       alert('Please select a file to upload.');
@@ -158,7 +164,7 @@ const StudentProfile = () => {
           <tbody>
             {student.offenses.map((offense, index) => (
               <tr key={index}>
-                <td>{offense.type}</td>
+                <td>{offenseTypeLabels[offense.type] || offense.type}</td> {/* Map raw value to label */}
                 <td>{offense.reason}</td>
                 <td>{offense.date}</td>
               </tr>

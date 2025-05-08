@@ -22,9 +22,13 @@ class StudentRecord(db.Model):
     guardian_name = db.Column(db.String(100))
     contact_number = db.Column(db.String(15))
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
-    offenses = db.relationship('OffenseRecord', backref='student', cascade='all, delete-orphan')
+    offenses = db.relationship(
+        'OffenseRecord',
+        backref='student',
+        cascade='all, delete-orphan'  # Add cascade behavior
+    )
     profile_image = db.Column(db.String(255), nullable=True)
-    
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -45,7 +49,6 @@ class StudentRecord(db.Model):
             'date_time': self.date_time.strftime('%Y-%m-%d %H:%M:%S') if self.date_time else None,
             'profile_image': self.profile_image  # Include the profile image path in the dictionary
         }
-
 
 class OffenseRecord(db.Model):
     __tablename__ = 'offense_record'  # Add table name for clarity

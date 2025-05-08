@@ -50,6 +50,13 @@ const Records = () => {
     setIsEditPopupOpen(true);
   };
 
+  const offenseTypeLabels = {
+    Bullying: "Light Offense",
+    Cheating: "Less Serious or Less Grave Offense",
+    Vandalism: "Serious or Grave Offense",
+  };
+  
+
   // Handle delete button click
   const handleDeleteOffense = async (offense) => {
     if (!window.confirm('Are you sure you want to delete this offense?')) {
@@ -281,7 +288,7 @@ const Records = () => {
               <td>{student.name}</td>
               <td>{student.grade}</td>
               <td>{student.section}</td>
-              <td>{offense.type}</td> {/* Ensure this matches the backend field */}
+              <td>{offenseTypeLabels[offense.type] || offense.type}</td> {/* Map raw value to label */}
               <td>{offense.reason}</td>
               <td>{offense.date}</td>
               <td>
