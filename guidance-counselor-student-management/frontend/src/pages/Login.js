@@ -17,15 +17,15 @@ const Login = () => {
         username,
         password,
       });
-
+  
       // Store authentication token or flag in localStorage
       localStorage.setItem('authToken', 'true');
-
+  
       // Show a success popup message
       alert(response.data.message);
-
+  
       // Navigate to the Dashboard page
-      navigate('/dashboard'); // Redirect to the dashboard
+      navigate('/'); // Redirect to the root route where Dashboard is rendered
     } catch (err) {
       // Show an error popup message
       setError(err.response?.data?.error || 'An error occurred');
