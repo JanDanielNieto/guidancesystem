@@ -3,12 +3,16 @@ from app.models import StudentRecord, OffenseRecord, User
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from werkzeug.security import check_password_hash  # Ensure this is imported
 from dateutil.parser import parse
+from flask_cors import CORS
 from datetime import datetime
 from app import db
 import pandas as pd
 import os
 
 main = Blueprint('main', __name__)
+
+CORS(main, resources={r"/*": {"origins": "https://guidancesystem.vercel.app"}})
+
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
