@@ -157,7 +157,7 @@ def get_students():
         offenses = OffenseRecord.query.filter_by(student_id=student.id).all()
         result.append({
             **student.to_dict(),
-            'offenses': [offense.to_dict() for offense in offenses]
+            'offenses': [offense.to_dict() for offense in offenses]  # Ensure offense_type is included
         })
     return jsonify(result)
 
@@ -293,11 +293,12 @@ def add_student_offense(student_id):
         return jsonify({'error': 'Student not found'}), 404
 
     try:
+        # Ensure offense_type is being saved correctly
         new_offense = OffenseRecord(
             student_id=student_id,
-            offense_type=data['offense_type'],  # Ensure this matches the frontend field
+            offense_type=data['offense_type'],  # This must match the frontend field
             reason=data.get('reason', ''),
-            additional_info=data.get('additional_info', ''),
+            date_time=datetime.now()  # Add a timestamp
         )
         db.session.add(new_offense)
         db.session.commit()

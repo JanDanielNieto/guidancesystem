@@ -47,19 +47,17 @@ class StudentRecord(db.Model):
         }
 
 class OffenseRecord(db.Model):
-    __tablename__ = 'offense_records'
-
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student_information.id', ondelete='CASCADE'), nullable=False)
-    offense_type = db.Column(db.String(50), nullable=False)
-    reason = db.Column(db.String(255))
-    additional_info = db.Column(db.String(255))
+    student_id = db.Column(db.Integer, db.ForeignKey('student_record.id'), nullable=False)
+    offense_type = db.Column(db.String(255), nullable=False)  # Ensure this field exists
+    reason = db.Column(db.Text, nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
         return {
-            'id': self.id,  # Include the offense ID
-            'type': self.offense_type,
+            'id': self.id,
+            'student_id': self.student_id,
+            'type': self.offense_type,  # Ensure this matches the frontend field
             'reason': self.reason,
             'date': self.date_time.strftime('%Y-%m-%d %H:%M:%S') if self.date_time else None
         }

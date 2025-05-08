@@ -275,23 +275,23 @@ const Records = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredStudents.map((student) =>
-            student.offenses.map((offense) => (
-              <tr key={`${student.id}-${offense.id}`}>
-                <td>{student.name}</td>
-                <td>{student.grade}</td>
-                <td>{student.section}</td>
-                <td>{offense.type}</td>
-                <td>{offense.reason}</td>
-                <td>{offense.date}</td>
-                <td>
-                  <button onClick={() => handleEditOffense(offense)}>Edit</button>
-                  <button onClick={() => handleDeleteOffense(offense)}>Delete</button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
+        {filteredStudents.map((student) =>
+          student.offenses.map((offense) => (
+            <tr key={`${student.id}-${offense.id}`}>
+              <td>{student.name}</td>
+              <td>{student.grade}</td>
+              <td>{student.section}</td>
+              <td>{offense.type}</td> {/* Ensure this matches the backend field */}
+              <td>{offense.reason}</td>
+              <td>{offense.date}</td>
+              <td>
+                <button onClick={() => handleEditOffense(offense)}>Edit</button>
+                <button onClick={() => handleDeleteOffense(offense)}>Delete</button>
+              </td>
+            </tr>
+          ))
+        )}
+      </tbody>
       </table>
 
       {/* Edit Offense Popup */}
