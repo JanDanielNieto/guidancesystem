@@ -17,7 +17,7 @@ const AddReport = () => {
 
   useEffect(() => {
     if (studentId) {
-      fetch(`${config.API_BASE_URL}/students/${studentId}`)
+      fetch(`${config.API_BASE_URL}/api/students/${studentId}`)
         .then((response) => response.json())
         .then((data) => setDetails(data))
         .catch((error) => console.error('Error fetching student details:', error));
