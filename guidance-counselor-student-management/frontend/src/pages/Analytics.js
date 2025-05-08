@@ -24,8 +24,11 @@ const Analytics = () => {
     const fetchData = async () => {
       try {
         // Fetch students and offenses
-        const studentResponse = await fetch(`${config.API_BASE_UR}/api/students`);
-        const offenseResponse = await fetch(`${config.API_BASE_UR}/api/offenses`);
+        const studentResponse = await fetch(`${config.API_BASE_URL}/api/students`);
+        const offenseResponse = await fetch(`${config.API_BASE_URL}/api/offenses`);
+        if (!studentResponse.ok || !offenseResponse.ok) {
+          throw new Error('Failed to fetch data from the server');
+        }
         const students = await studentResponse.json();
         const offenses = await offenseResponse.json();
         setStudentData(students);
