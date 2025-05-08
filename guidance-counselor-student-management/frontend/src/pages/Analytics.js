@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 import '../css/Analytics.css'; // Ensure the CSS file exists
+import config from '../config'; // Import the centralized config file
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
@@ -22,8 +23,9 @@ const Analytics = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const studentResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/students`);
-        const offenseResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/offenses`);
+        // Fetch students and offenses
+        const studentResponse = await fetch(`${config.API_BASE_UR}/api/students`);
+        const offenseResponse = await fetch(`${config.API_BASE_UR}/api/offenses`);
         const students = await studentResponse.json();
         const offenses = await offenseResponse.json();
         setStudentData(students);
