@@ -8,7 +8,7 @@ const EditStudent = () => {
 
   useEffect(() => {
     // Fetch the list of students from the API
-    axios.get(`${config.apiBaseUrl}/students`)
+    axios.get(`${config.API_BASE_URL}/api/students`)
       .then(response => {
         setStudents(response.data);
       })
@@ -29,7 +29,7 @@ const EditStudent = () => {
   const handleSave = (id) => {
     // Save the updated student information to the server
     const updatedStudent = students.find(student => student.id === id);
-    axios.put(`${config.apiBaseUrl}/students/${id}`, updatedStudent)
+    axios.put(`${config.API_BASE_URL}/api/students/${id}`, updatedStudent)
       .then(response => {
         alert('Student information updated successfully!');
       })

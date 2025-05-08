@@ -24,7 +24,7 @@ const Records = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get(`${config.apiBaseUrl}/students`);
+        const response = await axios.get(`${config.API_BASE_URL}/api/students`);
         setStudents(response.data);
         setFilteredStudents(response.data); // Initialize filteredStudents with all students
       } catch (error) {
@@ -58,13 +58,13 @@ const Records = () => {
 
     try {
       const response = await axios.delete(
-        `${config.apiBaseUrl}/offenses/${offense.id}`
+        `${config.API_BASE_URL}/api/offenses/${offense.id}`
       );
 
       if (response.status === 200) {
         alert('Offense deleted successfully.');
         // Refetch the updated list of students
-        const updatedStudents = await axios.get(`${config.apiBaseUrl}/students`);
+        const updatedStudents = await axios.get(`${config.API_BASE_URL}/api/students`);
         setStudents(updatedStudents.data);
         setFilteredStudents(updatedStudents.data); // Update filteredStudents as well
       } else {
@@ -101,11 +101,11 @@ const Records = () => {
     }
 
     try {
-      const response = await axios.post(`${config.apiBaseUrl}/offenses`, newOffense);
+      const response = await axios.post(`${config.API_BASE_URL}/api/offenses`, newOffense);
 
       if (response.status === 201) {
         alert('Offense added successfully.');
-        const updatedStudents = await axios.get(`${config.apiBaseUrl}/students`);
+        const updatedStudents = await axios.get(`${config.API_BASE_URL}/api/students`);
         setStudents(updatedStudents.data);
         setFilteredStudents(updatedStudents.data);
         setIsAddPopupOpen(false); // Close the popup
@@ -139,14 +139,14 @@ const Records = () => {
 
     try {
       const response = await axios.put(
-        `${config.apiBaseUrl}/offenses/${editedOffense.id}`,
+        `${config.API_BASE_URL}/api/offenses/${editedOffense.id}`,
         editedOffense
       );
 
       if (response.status === 200) {
         alert('Offense updated successfully.');
         // Refetch the updated list of students
-        const updatedStudents = await axios.get(`${config.apiBaseUrl}/students`);
+        const updatedStudents = await axios.get(`${config.API_BASE_URL}/api/students`);
         setStudents(updatedStudents.data);
         setFilteredStudents(updatedStudents.data); // Update filteredStudents as well
         setIsEditPopupOpen(false); // Close the popup

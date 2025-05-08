@@ -16,7 +16,7 @@ const StudentProfile = () => {
   useEffect(() => {
     const fetchStudent = async () => {
       try {
-        const response = await fetch(`${config.apiBaseUrl}/students/${lrn}`);
+        const response = await fetch(`${config.API_BASE_URL}/api/students/${lrn}`);
         if (!response.ok) {
           throw new Error('Failed to fetch student details');
         }
@@ -47,7 +47,7 @@ const StudentProfile = () => {
 
   const handleSaveEdit = async () => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/students/${editedStudent.id}`, {
+      const response = await fetch(`${config.API_BASE_URL}/api/students/${editedStudent.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ const StudentProfile = () => {
     formData.append('profile_image', selectedFile);
 
     try {
-      const response = await fetch(`${config.apiBaseUrl}/students/${lrn}/upload-profile-picture`, {
+      const response = await fetch(`${config.API_BASE_URL}/api/students/${lrn}/upload-profile-picture`, {
         method: 'POST',
         body: formData,
       });

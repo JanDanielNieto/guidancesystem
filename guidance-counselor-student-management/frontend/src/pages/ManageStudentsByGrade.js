@@ -39,7 +39,7 @@ const [newStudent, setNewStudent] = useState({
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch(`${config.API_BASE_URL}/students`);
+        const response = await fetch(`${config.API_BASE_URL}/api/students`);
         const data = await response.json();
         setStudents(data);
 
@@ -130,7 +130,7 @@ const [newStudent, setNewStudent] = useState({
     formData.append('file', file);
 
     try {
-      const response = await fetch(`${config.API_BASE_URL}/upload`, {
+      const response = await fetch(`${config.API_BASE_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -140,7 +140,7 @@ const [newStudent, setNewStudent] = useState({
         alert(result.message);
         setFile(null); // Clear the file input
         // Optionally, refresh the student list
-        const updatedStudentsResponse = await fetch(`${config.API_BASE_URL}/students`);
+        const updatedStudentsResponse = await fetch(`${config.API_BASE_URL}/api/students`);
         const updatedData = await updatedStudentsResponse.json();
         setStudents(updatedData);
 
@@ -167,7 +167,7 @@ const [newStudent, setNewStudent] = useState({
 
   const handleSaveAdd = async () => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/students`, {
+      const response = await fetch(`${config.API_BASE_URL}/api/students`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ const [newStudent, setNewStudent] = useState({
   
       if (response.ok) {
         alert('Student added successfully.');
-        const updatedStudents = await fetch(`${config.apiBaseUrl}/students`);
+        const updatedStudents = await fetch(`${config.API_BASE_URL}/api/students`);
         const updatedData = await updatedStudents.json();
         setStudents(updatedData);
   
@@ -222,7 +222,7 @@ const [newStudent, setNewStudent] = useState({
   // Handle delete student
   const handleDeleteStudent = async (id) => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/students/${id}`, {
+      const response = await fetch(`${config.API_BASE_URL}/api/students/${id}`, {
         method: 'DELETE',
       });
   
@@ -243,7 +243,7 @@ const [newStudent, setNewStudent] = useState({
   // Handle delete all students
   const handleDeleteAll = async () => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/delete_all_students`, {
+      const response = await fetch(`${config.API_BASE_URL}/api/delete_all_students`, {
         method: 'DELETE',
       });
 
@@ -294,7 +294,7 @@ const [newStudent, setNewStudent] = useState({
   // Save the edited student
   const handleSaveEdit = async () => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/students/${editedStudent.id}`, {
+      const response = await fetch(`${config.API_BASE_URL}/api/students/${editedStudent.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

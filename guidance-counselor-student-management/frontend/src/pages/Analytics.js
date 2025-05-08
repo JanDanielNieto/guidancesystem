@@ -10,7 +10,6 @@ import {
   Legend,
 } from 'chart.js';
 import '../css/Analytics.css'; // Ensure the CSS file exists
-import config from '../config';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);

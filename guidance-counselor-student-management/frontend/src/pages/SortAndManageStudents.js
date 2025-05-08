@@ -15,7 +15,7 @@ const SortAndManageStudents = () => {
     // Fetch all students from the backend
     const fetchStudents = async () => {
       try {
-        const response = await fetch(`${config.apiBaseUrl}/students`);
+        const response = await fetch(`${config.API_BASE_URL}/api/students`);
         const data = await response.json();
         setStudents(data);
         setFilteredStudents(data);
@@ -64,7 +64,7 @@ const SortAndManageStudents = () => {
     try {
       for (const studentId of selectedStudents) {
         // Use the new route for deleting students
-        await fetch(`${config.apiBaseUrl}/sort-and-manage/students/${studentId}`, {
+        await fetch(`${config.API_BASE_URL}/api/sort-and-manage/students/${studentId}`, {
           method: 'DELETE',
         });
       }
@@ -98,7 +98,7 @@ const SortAndManageStudents = () => {
   
     try {
         for (const studentId of selectedStudents) {
-            const response = await fetch(`${config.apiBaseUrl}/sort-and-manage/students/${studentId}`, {
+            const response = await fetch(`${config.API_BASE_URL}/api/sort-and-manage/students/${studentId}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',

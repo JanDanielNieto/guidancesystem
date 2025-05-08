@@ -17,7 +17,7 @@ const AddReport = () => {
 
   useEffect(() => {
     if (studentId) {
-      fetch(`${config.API_URL}/students/${studentId}`)
+      fetch(`${config.API_BASE_URL}/students/${studentId}`)
         .then((response) => response.json())
         .then((data) => setDetails(data))
         .catch((error) => console.error('Error fetching student details:', error));
@@ -27,7 +27,7 @@ const AddReport = () => {
     const handleSearch = async (e) => {
       e.preventDefault();
       try {
-        const response = await fetch(`${config.API_URL}/students/search?query=${searchTerm}`);
+        const response = await fetch(`${config.API_BASE_URL}/api/students/search?query=${searchTerm}`);
         const data = await response.json();
         setSuggestions(data); // Populate suggestions with the search results
         if (data.length === 1) {
@@ -69,7 +69,7 @@ const AddReport = () => {
     }
   
     try {
-      const response = await fetch(`${config.API_URL}/students/${details.id}/offenses`, {
+      const response = await fetch(`${config.API_BASE_URL}/api/students/${details.id}/offenses`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

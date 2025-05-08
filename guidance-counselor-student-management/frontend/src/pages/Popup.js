@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import config from '../config'; // Import the centralized config file
+import config from '../config'; 
 const Popup = ({ isOpen, onClose }) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -18,7 +18,7 @@ const Popup = ({ isOpen, onClose }) => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await axios.post(`${config.apiBaseUrl}/api/upload`, formData, {
+      const response = await axios.post(`${config.API_BASE_URL}/api/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
