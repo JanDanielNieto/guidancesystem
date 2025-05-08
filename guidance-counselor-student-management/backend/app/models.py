@@ -4,7 +4,7 @@ from flask_login import UserMixin
 
 
 class StudentRecord(db.Model):
-    __tablename__ = 'student_information'
+    __tablename__ = 'student_information'  # Correct table name
 
     id = db.Column(db.Integer, primary_key=True)
     lrn = db.Column(db.String(20), unique=True, nullable=False)  # Increased length
@@ -46,10 +46,13 @@ class StudentRecord(db.Model):
             'profile_image': self.profile_image  # Include the profile image path in the dictionary
         }
 
+
 class OffenseRecord(db.Model):
+    __tablename__ = 'offense_record'  # Add table name for clarity
+
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student_record.id'), nullable=False)
-    offense_type = db.Column(db.String(255), nullable=False)  # Ensure this field exists
+    student_id = db.Column(db.Integer, db.ForeignKey('student_information.id'), nullable=False)  # Correct ForeignKey
+    offense_type = db.Column(db.String(255), nullable=False)
     reason = db.Column(db.Text, nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -57,7 +60,7 @@ class OffenseRecord(db.Model):
         return {
             'id': self.id,
             'student_id': self.student_id,
-            'type': self.offense_type,  # Ensure this matches the frontend field
+            'type': self.offense_type,
             'reason': self.reason,
             'date': self.date_time.strftime('%Y-%m-%d %H:%M:%S') if self.date_time else None
         }
