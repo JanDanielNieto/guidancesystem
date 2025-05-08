@@ -213,9 +213,14 @@ def delete_student(id):
 @main.route('/api/delete_all_students', methods=['DELETE'])
 def delete_all_students():
     try:
+        # Delete all offenses first
+        db.session.query(OffenseRecord).delete()
+
+        # Delete all students
         db.session.query(StudentRecord).delete()
+
         db.session.commit()
-        return jsonify({'message': 'All student records deleted successfully!'}), 200
+        return jsonify({'message': 'All students and related offenses deleted successfully.'}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

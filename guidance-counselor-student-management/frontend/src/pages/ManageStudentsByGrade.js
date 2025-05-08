@@ -242,15 +242,19 @@ const [newStudent, setNewStudent] = useState({
 
   // Handle delete all students
   const handleDeleteAll = async () => {
+    if (!window.confirm('Are you sure you want to delete all students and their related offenses?')) {
+      return;
+    }
+  
     try {
       const response = await fetch(`${config.API_BASE_URL}/api/delete_all_students`, {
         method: 'DELETE',
       });
-
+  
       if (response.ok) {
-        alert('All students deleted successfully.');
-        setStudents([]);
-        setGradeCounts({});
+        alert('All students and related offenses deleted successfully.');
+        setStudents([]); // Clear the students state
+        setGradeCounts({}); // Reset the grade counts
       } else {
         const error = await response.json();
         alert(`Error: ${error.error}`);
@@ -261,7 +265,6 @@ const [newStudent, setNewStudent] = useState({
     }
   };
 
-  // Navigate to the profile page
   const handleViewProfile = () => {
     if (selectedStudent) {
       navigate(`/students/${selectedStudent.lrn}`);
