@@ -11,14 +11,15 @@ import Analytics from './pages/Analytics';
 import ManageStudentsByGrade from './pages/ManageStudentsByGrade';
 import SortAndManageStudents from './pages/SortAndManageStudents'; // Import the component
 
-
+// Utility function to check authentication
 const isAuthenticated = () => {
   // Check if the user is authenticated (e.g., by checking a token in localStorage)
   return !!localStorage.getItem('authToken');
 };
 
-const ProtectedRoute = ({ element }) => {
-  return isAuthenticated() ? element : <Navigate to="/login" />;
+// Refactored ProtectedRoute component
+const ProtectedRoute = ({ children }) => {
+  return isAuthenticated() ? children : <Navigate to="/login" />;
 };
 
 const AppContent = () => {
@@ -30,16 +31,82 @@ const AppContent = () => {
       {location.pathname !== '/login' && <Navbar />}
       <div className="container">
         <Routes>
+          {/* Public Route */}
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<ProtectedRoute element={<Dashboard />} />} />
-          <Route path="/students" element={<ProtectedRoute element={<ManageStudentsByGrade />} />} />
-          <Route path="/students/:lrn" element={<ProtectedRoute element={<StudentProfile />} />} />
-          <Route path="/records" element={<ProtectedRoute element={<Records />} />} />
-          <Route path="/addreport" element={<ProtectedRoute element={<AddReport />} />} />
-          <Route path="/editstudent" element={<ProtectedRoute element={<EditStudent />} />} />
-          <Route path="/analytics" element={<ProtectedRoute element={<Analytics />} />} />
-          <Route path="/manage-students-by-grade" element={<ProtectedRoute element={<ManageStudentsByGrade />} />} />
-          <Route path="/sort-and-manage" element={<ProtectedRoute element={<SortAndManageStudents />} />} /> {/* Add the route */}
+
+          {/* Protected Routes */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/students"
+            element={
+              <ProtectedRoute>
+                <ManageStudentsByGrade />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/students/:lrn"
+            element={
+              <ProtectedRoute>
+                <StudentProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/records"
+            element={
+              <ProtectedRoute>
+                <Records />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/addreport"
+            element={
+              <ProtectedRoute>
+                <AddReport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/editstudent"
+            element={
+              <ProtectedRoute>
+                <EditStudent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage-students-by-grade"
+            element={
+              <ProtectedRoute>
+                <ManageStudentsByGrade />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sort-and-manage"
+            element={
+              <ProtectedRoute>
+                <SortAndManageStudents />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </>
