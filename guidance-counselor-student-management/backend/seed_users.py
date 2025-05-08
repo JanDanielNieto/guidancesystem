@@ -2,17 +2,20 @@ from app import create_app, db
 from app.models import User
 from werkzeug.security import generate_password_hash  # Import for password hashing
 
+# Create the Flask app
 app = create_app()
 
+# Update the password for counselor2
 with app.app_context():
+    # Ensure the database tables exist
     db.create_all()
 
-    # Add guidance counselors with hashed passwords
-    counselor1 = User(username='counselor1', password=generate_password_hash('apexbssaaGD1', method='sha256'))
-    counselor2 = User(username='counselor2', password=generate_password_hash('apexbssaaaGD2', method='sha256'))
-
-    db.session.add(counselor1)
-    db.session.add(counselor2)
-    db.session.commit()
-
-    print('Guidance counselors added successfully!')
+    # Query for the user counselor2
+    counselor2 = User.query.filter_by(username='counselor2').first()
+    if counselor2:
+        # Update the password
+        counselor2.password = generate_password_hash('apexbssaaGD2', method='sha256')
+        db.session.commit()
+        print('Password for counselor2 updated successfully!')
+    else:
+        print('User counselor2 not found!')
