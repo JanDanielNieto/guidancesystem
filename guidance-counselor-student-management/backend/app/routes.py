@@ -282,25 +282,25 @@ def search_students():
 
 @main.route('/api/students/<int:student_id>/offenses', methods=['POST'])
 def add_student_offense(student_id):
-        data = request.json
-        student = StudentRecord.query.get(student_id)
-    
-        if not student:
-            return jsonify({'error': 'Student not found'}), 404
-    
-        try:
-            new_offense = OffenseRecord(
-                student_id=student_id,
-                offense_type=data['offense_type'],
-                reason=data['reason'],
-                additional_info=data.get('additional_info', ''),
-            )
-            db.session.add(new_offense)
-            db.session.commit()
-            return jsonify({'message': 'Offense added successfully'}), 201
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({'error': str(e)}), 500
+    data = request.json
+    student = StudentRecord.query.get(student_id)
+
+    if not student:
+        return jsonify({'error': 'Student not found'}), 404
+
+    try:
+        new_offense = OffenseRecord(
+            student_id=student_id,
+            offense_type=data['offense_type'],  # Ensure this matches the frontend field
+            reason=data.get('reason', ''),
+            additional_info=data.get('additional_info', ''),
+        )
+        db.session.add(new_offense)
+        db.session.commit()
+        return jsonify({'message': 'Offense added successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
         
 @main.route('/api/offenses', methods=['GET'])
 def get_offenses():
@@ -343,16 +343,8 @@ def edit_offense(id):
         return jsonify({'error': 'Offense not found'}), 404
 
     try:
-        # Validate required fields
-        if not data.get('type'):
-            return jsonify({'error': 'Offense type is required'}), 400
-        if not data.get('reason'):
-            return jsonify({'error': 'Reason is required'}), 400
-        if not data.get('date'):
-            return jsonify({'error': 'Date is required'}), 400
-
         # Update offense fields
-        offense.offense_type = data.get('type', offense.offense_type)
+        offense.offense_type = data.get('type', offense.offense_type)  # Ensure this matches the frontend field
         offense.reason = data.get('reason', offense.reason)
         offense.date_time = parse(data.get('date')) if data.get('date') else offense.date_time
 
@@ -360,7 +352,7 @@ def edit_offense(id):
         return jsonify({'message': 'Offense updated successfully!'}), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': f'An error occurred: {str(e)}'}), 500  
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500
     
 @main.route('/api/offenses', methods=['POST'])
 def add_offense():

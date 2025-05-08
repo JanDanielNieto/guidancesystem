@@ -74,7 +74,7 @@ const AddReport = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ offense_type: offenseType, reason }), // Reason can be empty
+        body: JSON.stringify({ offense_type: offenseType, reason }), // Ensure offense_type matches the backend
       });
   
       if (response.ok) {

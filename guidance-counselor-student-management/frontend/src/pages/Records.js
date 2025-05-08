@@ -136,20 +136,23 @@ const Records = () => {
       alert('No offense selected for editing.');
       return;
     }
-
+  
     try {
       const response = await axios.put(
         `${config.API_BASE_URL}/api/offenses/${editedOffense.id}`,
-        editedOffense
+        {
+          type: editedOffense.type, // Ensure this matches the backend field
+          reason: editedOffense.reason,
+          date: editedOffense.date,
+        }
       );
-
+  
       if (response.status === 200) {
         alert('Offense updated successfully.');
-        // Refetch the updated list of students
         const updatedStudents = await axios.get(`${config.API_BASE_URL}/api/students`);
         setStudents(updatedStudents.data);
-        setFilteredStudents(updatedStudents.data); // Update filteredStudents as well
-        setIsEditPopupOpen(false); // Close the popup
+        setFilteredStudents(updatedStudents.data);
+        setIsEditPopupOpen(false);
       } else {
         alert('Failed to update offense.');
       }
