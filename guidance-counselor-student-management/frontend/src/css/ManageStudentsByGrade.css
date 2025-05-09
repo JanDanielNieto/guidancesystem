@@ -245,3 +245,62 @@
   margin-top: 20px; /* Add spacing above the buttons */
   grid-column: span 3; /* Make the buttons span across all columns */
 }
+/* Info Button */
+.info-button {
+  margin-left: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Pop-Up Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Pop-Up Content */
+.popup-large {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+  text-align: left;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.popup-large h2 {
+  margin-bottom: 20px;
+}
+
+.popup-large ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.popup-large ul li {
+  margin-bottom: 10px;
+}
+
+.close-tutorial {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #dc3545;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}

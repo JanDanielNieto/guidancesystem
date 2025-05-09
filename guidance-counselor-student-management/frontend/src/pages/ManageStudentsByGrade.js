@@ -17,6 +17,7 @@ const ManageStudentsByGrade = () => {
   const [selectedSection, setSelectedSection] = useState(''); // Currently selected section
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State to toggle the edit popup
   const [editedStudent, setEditedStudent] = useState(null); // State to store the edited student
+  const [isUploadInfoOpen, setIsUploadInfoOpen] = useState(false); // State to toggle the upload info popup
   const [isAddPopupOpen, setIsAddPopupOpen] = useState(false); // State to toggle the add popup
 const [newStudent, setNewStudent] = useState({
   lrn: '',
@@ -329,6 +330,10 @@ const [newStudent, setNewStudent] = useState({
     setIsEditPopupOpen(false);
   };
 
+  const closeUploadInfo = () => {
+    setIsUploadInfoOpen(false);
+  };
+
   return (
     <div className="manage-students-container">
       <header className="manage-students-header">
@@ -344,6 +349,48 @@ const [newStudent, setNewStudent] = useState({
             {grade} ({gradeCounts[grade] || 0})
           </button>
         ))}
+        <div className="upload-container">
+        <input type="file" accept=".csv, .xlsx" onChange={handleFileChange} />
+        <button className="uploadbutton" onClick={handleUpload}>
+          Upload Data
+        </button>
+        <button className="info-button" onClick={() => setIsUploadInfoOpen(true)}>
+          Info
+        </button>
+      </div>
+
+      {isUploadInfoOpen && (
+        <div className="popup-overlay">
+          <div className="popup-large">
+            <h2>How to Upload a File</h2>
+            <p>
+              <strong>Accepted File Types:</strong> CSV, Excel (.xlsx)
+            </p>
+            <p>
+              <strong>File Format:</strong> The file should contain the following columns:
+            </p>
+            <ul>
+              <li><strong>LRN:</strong> Learner Reference Number (unique identifier for each student)</li>
+              <li><strong>Name:</strong> Full name of the student</li>
+              <li><strong>Grade:</strong> Grade level of the student (e.g., Grade 10)</li>
+              <li><strong>Section:</strong> Section of the student</li>
+              <li><strong>Sex:</strong> Gender of the student (M/F)</li>
+              <li><strong>Birthdate:</strong> Date of birth in YYYY-MM-DD format</li>
+              <li><strong>Mother Tongue:</strong> Primary language spoken by the student</li>
+              <li><strong>Religion:</strong> Religion of the student</li>
+              <li><strong>Barangay:</strong> Barangay of residence</li>
+              <li><strong>Municipality/City:</strong> Municipality or city of residence</li>
+              <li><strong>Father's Name:</strong> Name of the father</li>
+              <li><strong>Mother's Name:</strong> Name of the mother</li>
+              <li><strong>Guardian's Name:</strong> Name of the guardian (if applicable)</li>
+              <li><strong>Contact Number:</strong> Contact number of the guardian or parent</li>
+            </ul>
+            <button className="close-tutorial" onClick={closeUploadInfo}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       </div>
       <div className="buttons">
       <button className="button" onClick={() => setIsAddPopupOpen(true)}>
@@ -374,12 +421,6 @@ const [newStudent, setNewStudent] = useState({
             Delete All Data
           </button>
         )}
-        <div className="upload-container">
-          <input type="file" accept=".csv, .xlsx" onChange={handleFileChange} />
-          <button className="uploadbutton" onClick={handleUpload}>
-            Upload Data
-          </button>
-        </div>
         <div className="search-container">
           <input
             type="text"
@@ -722,6 +763,7 @@ const [newStudent, setNewStudent] = useState({
           </div>
         </div>
       )}
+      
     </div>
   );
 };
