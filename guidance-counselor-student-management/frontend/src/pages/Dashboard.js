@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import '../css/styles.css';
 
@@ -57,8 +57,8 @@ const Dashboard = () => {
           <button onClick={() => navigate('/records')}>Manage Records</button>
           <button onClick={() => navigate('/addreport')}>Add Report</button>
           <button onClick={() => navigate('/analytics')}>Analytics</button>
-          <button className="tutorial-button" onClick={() => setIsTutorialOpen(true)}>?</button>
         </div>
+        <button className="tutorial-button" onClick={() => setIsTutorialOpen(true)}>?</button>
       </div>
 
       {isTutorialOpen && (
@@ -83,6 +83,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
 
 export default Dashboard;
