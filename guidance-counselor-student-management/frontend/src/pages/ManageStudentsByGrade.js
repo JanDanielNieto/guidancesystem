@@ -375,7 +375,7 @@ const [newStudent, setNewStudent] = useState({
               <li><strong>Grade:</strong> Grade level of the student (e.g., Grade 10)</li>
               <li><strong>Section:</strong> Section of the student</li>
               <li><strong>Sex:</strong> Gender of the student (M/F)</li>
-              <li><strong>Birthdate:</strong> Date of birth in YYYY-MM-DD format</li>
+              <li><strong>BIRTH DATE (mm/dd/yyyy):</strong> Date of birth in YYYY-MM-DD format</li>
               <li><strong>Mother Tongue:</strong> Primary language spoken by the student</li>
               <li><strong>Religion:</strong> Religion of the student</li>
               <li><strong>Barangay:</strong> Barangay of residence</li>
