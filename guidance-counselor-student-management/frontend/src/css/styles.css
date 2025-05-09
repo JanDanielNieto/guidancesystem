@@ -243,8 +243,8 @@ body {
 
 /* Tutorial Button */
 .tutorial-button {
-  position: fixed;
-  top: 20px;
+  position: absolute;
+  top: 60px; /* Adjusted to place it just below the Navbar */
   right: 20px;
   background-color: #007bff;
   color: #fff;
