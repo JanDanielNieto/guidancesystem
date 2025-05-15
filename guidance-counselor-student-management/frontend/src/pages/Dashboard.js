@@ -55,7 +55,6 @@ const Dashboard = () => {
         <div className="button-container">
           <button onClick={() => navigate('/manage-students-by-grade')}>Manage Students</button>
           <button onClick={() => navigate('/records')}>Manage Records</button>
-          <button onClick={() => navigate('/addreport')}>Add Report</button>
           <button onClick={() => navigate('/analytics')}>Analytics</button>
         </div>
         <button className="tutorial-button" onClick={() => setIsTutorialOpen(true)}>?</button>
