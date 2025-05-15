@@ -22,7 +22,7 @@ const Analytics = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch students and offenses
+        // Fetch students and offenses from backend
         const studentResponse = await fetch(`${config.API_BASE_URL}/api/students`);
         const offenseResponse = await fetch(`${config.API_BASE_URL}/api/offenses`);
         if (!studentResponse.ok || !offenseResponse.ok) {
@@ -42,9 +42,9 @@ const Analytics = () => {
     fetchData();
   }, []);
 
-  // Calculate offenses by type (robust to property name)
+  // Group offenses by type (dynamically from database)
   const offensesByType = offenseData.reduce((acc, offense) => {
-    // Try different possible property names
+    // Use the actual field name from your OffenseRecord table
     const type =
       offense.offense_type ||
       offense.type ||
@@ -54,14 +54,15 @@ const Analytics = () => {
     return acc;
   }, {});
 
-  // Calculate students with offenses by grade
-  const studentsWithOffensesByGrade = studentData.reduce((acc, student) => {
-    // Check if student has offenses (array and not empty)
-    if (Array.isArray(student.offenses) && student.offenses.length > 0) {
-      acc[student.grade] = (acc[student.grade] || 0) + 1;
+  // Group students with offenses by grade
+  const studentsWithOffensesByGrade = {};
+  offenseData.forEach(offense => {
+    // Find the student for this offense
+    const student = studentData.find(s => s.id === offense.student_id);
+    if (student && student.grade) {
+      studentsWithOffensesByGrade[student.grade] = (studentsWithOffensesByGrade[student.grade] || 0) + 1;
     }
-    return acc;
-  }, {});
+  });
 
   // Prepare data for the pie chart
   const pieChartData = {
