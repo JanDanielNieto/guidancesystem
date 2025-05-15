@@ -92,9 +92,13 @@ const [newStudent, setNewStudent] = useState({
     setSelectedSection(''); // Reset the selected section
   };
 
+
+
   const handleGradeSelection = (grade) => {
     setSelectedGrade(grade);
   };
+
+
 
   // Handle sorting by section
   const handleSortBySection = (section) => {
@@ -112,9 +116,15 @@ const [newStudent, setNewStudent] = useState({
 
   // Filter students by the selected grade and search query
   const searchedStudents = filteredStudents.filter((student) =>
-    student.name.toLowerCase().includes(searchQuery.toLowerCase())
+    student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    student.lrn.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const studentsByGradeAndSection = students.filter(
+    (student) =>
+      student.grade === selectedGrade &&
+      (selectedSection === '' || student.section === selectedSection)
+  );
   // Handle file selection
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -474,20 +484,20 @@ const [newStudent, setNewStudent] = useState({
             </tr>
           </thead>
           <tbody>
-            {filteredStudents.map((student) => (
-              <tr
-                key={student.id}
-                onClick={() => setSelectedStudent(student)}
-                onDoubleClick={() => handleRowDoubleClick(student)}
-                className={selectedStudent?.id === student.id ? 'selected' : ''}
-              >
-                <td>{student.lrn}</td>
-                <td>{student.name}</td>
-                <td>{student.grade}</td>
-                <td>{student.section}</td>
-              </tr>
-            ))}
-          </tbody>
+          {searchedStudents.map((student) => (
+            <tr
+              key={student.id}
+              onClick={() => setSelectedStudent(student)}
+              onDoubleClick={() => handleRowDoubleClick(student)}
+              className={selectedStudent?.id === student.id ? 'selected' : ''}
+            >
+              <td>{student.lrn}</td>
+              <td>{student.name}</td>
+              <td>{student.grade}</td>
+              <td>{student.section}</td>
+            </tr>
+          ))}
+        </tbody>
         </table>
       </div>
       {isAddPopupOpen && (
