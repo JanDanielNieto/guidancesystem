@@ -51,10 +51,10 @@ class StudentRecord(db.Model):
         }
 
 class OffenseRecord(db.Model):
-    __tablename__ = 'offense_record'  # Add table name for clarity
+    __tablename__ = 'offense_record'
 
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student_information.id'), nullable=False)  # Correct ForeignKey
+    student_id = db.Column(db.Integer, db.ForeignKey('student_information.id'), nullable=False)
     offense_type = db.Column(db.String(255), nullable=False)
     reason = db.Column(db.Text, nullable=True)
     date_time = db.Column(db.DateTime, default=datetime.utcnow)
@@ -63,11 +63,10 @@ class OffenseRecord(db.Model):
         return {
             'id': self.id,
             'student_id': self.student_id,
-            'type': self.offense_type,
+            'offense_type': self.offense_type,  # <-- use the raw field name
             'reason': self.reason,
-            'date': self.date_time.strftime('%Y-%m-%d %H:%M:%S') if self.date_time else None
+            'date_time': self.date_time.strftime('%Y-%m-%d %H:%M:%S') if self.date_time else None
         }
-
 
 class User(db.Model, UserMixin):  # Move this class outside of OffenseRecord
     __tablename__ = 'users'
