@@ -368,8 +368,8 @@ def edit_offense(id):
 def add_offense():
     data = request.json
     student_id = data.get('studentId')
-    offense_type = data.get('type')
-    reason = data.get('reason', '')  # Optional field
+    offense_type = data.get('type')  # <-- This is the user input
+    reason = data.get('reason', '')
 
     if not student_id or not offense_type:
         return jsonify({'error': 'Student ID and offense type are required'}), 400
@@ -381,7 +381,7 @@ def add_offense():
     try:
         new_offense = OffenseRecord(
             student_id=student_id,
-            offense_type=offense_type,
+            offense_type=offense_type,  # <-- Store user input directly
             reason=reason,
             date_time=datetime.now()
         )

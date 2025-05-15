@@ -50,13 +50,6 @@ const Records = () => {
     setIsEditPopupOpen(true);
   };
 
-  const offenseTypeLabels = {
-    Bullying: "Light Offense",
-    Cheating: "Less Serious or Less Grave Offense",
-    Vandalism: "Serious or Grave Offense",
-  };
-  
-
   // Handle delete button click
   const handleDeleteOffense = async (offense) => {
     if (!window.confirm('Are you sure you want to delete this offense?')) {
@@ -243,11 +236,12 @@ const Records = () => {
             name="type"
             value={newOffense.type}
             onChange={handleAddChange}
+            required
           >
-            <option value="">Select Offense Type</option>
-            <option value="Bullying">Light Offense</option>
-            <option value="Cheating">Less Serious or Less Grave Offense</option>
-            <option value="Vandalism">Serious or Grave Offense</option>
+            <option value="">Select type of offense</option>
+            <option value="Light Offense">Light Offense</option>
+            <option value="Less Serious or Less Grave Offense">Less Serious or Less Grave Offense</option>
+            <option value="Serious or Grave Offense">Serious or Grave Offense</option>
           </select>
         </label>
         <label>
@@ -288,7 +282,7 @@ const Records = () => {
               <td>{student.name}</td>
               <td>{student.grade}</td>
               <td>{student.section}</td>
-              <td>{offenseTypeLabels[offense.type] || offense.type}</td> {/* Map raw value to label */}
+              <td>{offense.type || offense.offense_type}</td>              
               <td>{offense.reason}</td>
               <td>{offense.date}</td>
               <td>
