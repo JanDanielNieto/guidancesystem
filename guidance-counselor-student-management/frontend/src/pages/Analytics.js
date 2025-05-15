@@ -42,14 +42,10 @@ const Analytics = () => {
     fetchData();
   }, []);
 
-  // Group offenses by type (dynamically from database)
+  // Group offenses by the actual offense_type value from the database
   const offensesByType = offenseData.reduce((acc, offense) => {
-    // Use the actual field name from your OffenseRecord table
-    const type =
-      offense.offense_type ||
-      offense.type ||
-      offense.offenseType ||
-      'Unknown';
+    // Use the exact value from the offense record
+    const type = offense.offense_type || offense.type || offense.offenseType || 'Unknown';
     acc[type] = (acc[type] || 0) + 1;
     return acc;
   }, {});
