@@ -9,10 +9,9 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import '../css/Analytics.css'; // Ensure the CSS file exists
-import config from '../config'; // Import the centralized config file
+import '../css/Analytics.css';
+import config from '../config';
 
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 const Analytics = () => {
@@ -43,15 +42,22 @@ const Analytics = () => {
     fetchData();
   }, []);
 
-  // Calculate offenses by type
+  // Calculate offenses by type (robust to property name)
   const offensesByType = offenseData.reduce((acc, offense) => {
-    acc[offense.type] = (acc[offense.type] || 0) + 1;
+    // Try different possible property names
+    const type =
+      offense.offense_type ||
+      offense.type ||
+      offense.offenseType ||
+      'Unknown';
+    acc[type] = (acc[type] || 0) + 1;
     return acc;
   }, {});
 
   // Calculate students with offenses by grade
   const studentsWithOffensesByGrade = studentData.reduce((acc, student) => {
-    if (student.offenses.length > 0) {
+    // Check if student has offenses (array and not empty)
+    if (Array.isArray(student.offenses) && student.offenses.length > 0) {
       acc[student.grade] = (acc[student.grade] || 0) + 1;
     }
     return acc;
@@ -63,8 +69,14 @@ const Analytics = () => {
     datasets: [
       {
         data: Object.values(offensesByType),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+        backgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+          '#FF9F40', '#B2FF66', '#FF66B2', '#66B2FF', '#B266FF'
+        ],
+        hoverBackgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+          '#FF9F40', '#B2FF66', '#FF66B2', '#66B2FF', '#B266FF'
+        ],
       },
     ],
   };
@@ -87,7 +99,11 @@ const Analytics = () => {
   const totalStudents = studentData.length;
   const totalOffenses = offenseData.length;
   const mostCommonOffense =
-    Object.keys(offensesByType).reduce((a, b) => (offensesByType[a] > offensesByType[b] ? a : b), 'N/A');
+    Object.keys(offensesByType).length > 0
+      ? Object.keys(offensesByType).reduce((a, b) =>
+          offensesByType[a] > offensesByType[b] ? a : b
+        )
+      : 'N/A';
 
   if (loading) {
     return <p>Loading analytics...</p>;
