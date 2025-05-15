@@ -400,15 +400,33 @@ const [newStudent, setNewStudent] = useState({
           Edit Student
         </button>
         <button
-          className="button"
-          onClick={() =>
-            selectedStudent
-            ? alert(`Delete Student: ${selectedStudent.name}`)
-            : alert('Please select a student to delete.')
-          }
-        >
-          Delete Student
-        </button>
+  className="button"
+  onClick={async () => {
+    if (!selectedStudent) {
+      alert('Please select a student to delete.');
+      return;
+    }
+    if (window.confirm(`Are you sure you want to delete ${selectedStudent.name}?`)) {
+      try {
+        const response = await fetch(`${config.API_BASE_URL}/api/students/${selectedStudent.id}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          alert('Student deleted successfully.');
+          setStudents(students.filter((student) => student.id !== selectedStudent.id));
+          setSelectedStudent(null);
+        } else {
+          const error = await response.json();
+          alert(`Error: ${error.error}`);
+        }
+      } catch (error) {
+        alert('An error occurred while deleting the student.');
+      }
+    }
+  }}
+>
+  Delete Student
+</button>
         <button
           className="button"
           onClick={handleViewProfile}
